@@ -1,13 +1,11 @@
 package org.coffeehouse;
 
-import org.coffeehouse.repository.InMemoryIRepository;
-import org.coffeehouse.repository.IRepository;
-import org.coffeehouse.service.OrderService;
-import org.coffeehouse.ui.Console;
+import org.coffeehouse.ui.ConsoleView;
+import org.coffeehouse.ui.Controller;
 
 public class App {
     public static void main(String[] args) {
-        Console console = new Console();
-        console.runMenu();
+        Controller controller = new Controller();
+        controller.runApp();
     }
 }
