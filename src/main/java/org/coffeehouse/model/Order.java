@@ -2,21 +2,14 @@ package org.coffeehouse.model;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 
-public class Order {
+public class Order extends AbstractEntity<Long> {
 
-    private Long id;
     private Double totalCost;
     private LocalDateTime orderDateTime;
     private Collection<Coffee> orderedCoffeeList;
 
-    public Order() {
-    }
-
-    public Order(Long id, LocalDateTime orderDateTime, Collection<Coffee> orderedCoffeeList) {
-        this.id = id;
-        this.orderDateTime = orderDateTime;
+    public Order(Collection<Coffee> orderedCoffeeList) {
         this.orderedCoffeeList = orderedCoffeeList;
     }
 

@@ -7,77 +7,87 @@ import static java.util.Arrays.asList;
 
 public enum CoffeeType {
 
-    ESPRESSO {
+    ESPRESSO("Espresso") {
         @Override
-        public Collection<Ingredients> getRecipe() {
-            Collection<Ingredients> ingredients = new ArrayList<>();
+        public Collection<Ingredient> getRecipe() {
+            Collection<Ingredient> ingredients = new ArrayList<>();
             ingredients.addAll(asList(
-                    Ingredients.ESPRESSO_SHOT,
-                    Ingredients.ESPRESSO_SHOT));
+                    Ingredient.ESPRESSO_SHOT,
+                    Ingredient.ESPRESSO_SHOT));
 
             return ingredients;
         }
     },
 
-    MACHIATTO {
+    MACHIATTO("Machiatto") {
         @Override
-        public Collection<Ingredients> getRecipe() {
+        public Collection<Ingredient> getRecipe() {
 
-            Collection<Ingredients> ingredients = new ArrayList<>();
+            Collection<Ingredient> ingredients = new ArrayList<>();
             ingredients.addAll(asList(
-                    Ingredients.ESPRESSO_SHOT,
-                    Ingredients.ESPRESSO_SHOT,
-                    Ingredients.MILK_FOAM));
+                    Ingredient.ESPRESSO_SHOT,
+                    Ingredient.ESPRESSO_SHOT,
+                    Ingredient.MILK_FOAM));
 
             return ingredients;
         }
     },
 
-    CAFFEE_LATTE {
+    CAFFEE_LATTE("Caffee Latte") {
         @Override
-        public Collection<Ingredients> getRecipe() {
+        public Collection<Ingredient> getRecipe() {
 
-            Collection<Ingredients> ingredients = new ArrayList<>();
+            Collection<Ingredient> ingredients = new ArrayList<>();
             ingredients.addAll(asList(
-                    Ingredients.ESPRESSO_SHOT,
-                    Ingredients.STEAMED_MILK,
-                    Ingredients.STEAMED_MILK,
-                    Ingredients.MILK_FOAM));
+                    Ingredient.ESPRESSO_SHOT,
+                    Ingredient.STEAMED_MILK,
+                    Ingredient.STEAMED_MILK,
+                    Ingredient.MILK_FOAM));
 
             return ingredients;
         }
     },
 
-    CAPPUCCINO {
+    CAPPUCCINO("Cappuccino") {
         @Override
-        public Collection<Ingredients> getRecipe() {
+        public Collection<Ingredient> getRecipe() {
 
-            Collection<Ingredients> ingredients = new ArrayList<>();
+            Collection<Ingredient> ingredients = new ArrayList<>();
             ingredients.addAll(asList(
-                    Ingredients.ESPRESSO_SHOT,
-                    Ingredients.STEAMED_MILK,
-                    Ingredients.MILK_FOAM,
-                    Ingredients.MILK_FOAM));
+                    Ingredient.ESPRESSO_SHOT,
+                    Ingredient.STEAMED_MILK,
+                    Ingredient.MILK_FOAM,
+                    Ingredient.MILK_FOAM));
 
             return ingredients;
         }
     },
 
-    CAFFEE_MIEL {
+    CAFFEE_MIEL("Caffee Miel") {
         @Override
-        public Collection<Ingredients> getRecipe() {
+        public Collection<Ingredient> getRecipe() {
 
-            Collection<Ingredients> ingredients = new ArrayList<>();
+            Collection<Ingredient> ingredients = new ArrayList<>();
             ingredients.addAll(asList(
-                    Ingredients.BLACK_COFFEE,
-                    Ingredients.BLACK_COFFEE,
-                    Ingredients.HONEY,
-                    Ingredients.CINNAMON,
-                    Ingredients.STEAMED_MILK));
+                    Ingredient.BLACK_COFFEE,
+                    Ingredient.BLACK_COFFEE,
+                    Ingredient.HONEY,
+                    Ingredient.CINNAMON,
+                    Ingredient.STEAMED_MILK));
 
             return ingredients;
         }
     };
 
-    public abstract Collection<Ingredients> getRecipe();
+    private String name;
+
+    public abstract Collection<Ingredient> getRecipe();
+
+    CoffeeType(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

@@ -1,31 +1,29 @@
 package org.coffeehouse.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class Coffee extends CoffeeBase<Long> {
 
     private Double price;
     private String customerName;
-    private Collection<Ingredients> extraIngredientsList;
-    private Collection<Order> orderList;
+    private Collection<Ingredient> extraIngredientList = new ArrayList<>();
 
     public Coffee() {
     }
 
-    public Coffee(Long id,
-                  CoffeeType coffeeType,
-                  WhereToDrink whereToDrink,
-                  String costumerName,
-                  Collection<Ingredients> extraIngredientsList,
-                  Collection<Order> orderList) {
-
-        this.customerName = costumerName;
-        this.customerName = costumerName;
-        this.extraIngredientsList = extraIngredientsList;
-    }
-
     public Double getPrice() {
-        return price; //TODO some logic here
+
+        Double baseCoffeePrice = super.getCoffeeType().getRecipe()
+                .stream()
+                .mapToDouble(Ingredient::getIngredientPrice)
+                .sum();
+        Double extraIngredientsPrice = extraIngredientList
+                .stream()
+                .mapToDouble(Ingredient::getIngredientPrice)
+                .sum();
+
+        return baseCoffeePrice + extraIngredientsPrice;
     }
 
     public String getCustomerName() {
@@ -36,19 +34,11 @@ public class Coffee extends CoffeeBase<Long> {
         this.customerName = customerName;
     }
 
-    public Collection<Ingredients> getExtraIngredientsList() {
-        return extraIngredientsList;
+    public Collection<Ingredient> getExtraIngredientsList() {
+        return extraIngredientList;
     }
 
-    public void setExtraIngredientsList(Collection<Ingredients> extraIngredientsList) {
-        this.extraIngredientsList = extraIngredientsList;
-    }
-
-    public Collection<Order> getOrderList() {
-        return orderList;
-    }
-
-    public void setOrderList(Collection<Order> orderList) {
-        this.orderList = orderList;
+    public void addExtraIngredient(Ingredient extraIngredient) {
+        this.extraIngredientList.add(extraIngredient);
     }
 }

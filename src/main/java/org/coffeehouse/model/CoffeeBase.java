@@ -1,21 +1,12 @@
 package org.coffeehouse.model;
 
-public abstract class CoffeeBase<ID> {
+public abstract class CoffeeBase<ID> extends AbstractEntity<ID> {
 
-    protected ID id;
     private CoffeeType coffeeType;
     private WhereToDrink whereToDrink;
 
     public enum WhereToDrink {
         PICK_UP, TO_GO
-    }
-
-    public ID getId() {
-        return id;
-    }
-
-    public void setId(ID id) {
-        this.id = id;
     }
 
     public CoffeeType getCoffeeType() {
