@@ -5,23 +5,22 @@ import org.coffeehouse.repository.IRepository;
 import org.coffeehouse.repository.InMemoryIRepository;
 import org.coffeehouse.service.IOrder;
 import org.coffeehouse.service.OrderService;
+import org.coffeehouse.utils.Input;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Scanner;
 
 public class Controller {
 
     private IOrder orderService;
     private IRepository repository;
-    private Scanner scanner;
     private Collection<Coffee> customerCoffeeOrder;
     private IView consoleView;
+    private final Input input = new Input();
 
     public Controller() {
         this.repository = new InMemoryIRepository();
         this.orderService = new OrderService(repository);
-        this.scanner = new Scanner(System.in);
         this.customerCoffeeOrder = new ArrayList<>();
         this.consoleView = new ConsoleView();
     }
@@ -30,7 +29,7 @@ public class Controller {
 
         consoleView.printCoffeeOptionList();
         while (true) {
-            String option = scanner.next();
+            String option = input.readline();
             if (option.equalsIgnoreCase("x")) {
                 consoleView.goodByeMessage();
                 break;
@@ -104,7 +103,7 @@ public class Controller {
 
         consoleView.printIngredientsOptionList();
         while (true) {
-            String option = scanner.next();
+            String option = input.readline();;
             if (option.equalsIgnoreCase("x")) {
                 return;
             }
@@ -158,10 +157,7 @@ public class Controller {
     private void getCustomerName(Coffee coffeeToBuild) {
 
         consoleView.askForName();
-
-        Scanner scanner = new Scanner(System.in);
-        String customerName = scanner.next();
-
+        String customerName = input.readline();;
         coffeeToBuild.setCustomerName(customerName);
     }
 
@@ -169,7 +165,7 @@ public class Controller {
 
         consoleView.askWhereToDrink();
         while (true) {
-            String option = scanner.next(); //ToDo: add the option to go back
+            String option = input.readline();; //ToDo: add the option to go back
             switch (option) {
                 case "1":
                     coffeeToBuild.setWhereToDrink(CoffeeBase.WhereToDrink.PICK_UP);
