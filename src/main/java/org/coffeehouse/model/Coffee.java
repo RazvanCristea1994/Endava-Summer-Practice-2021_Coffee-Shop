@@ -6,6 +6,7 @@ import java.util.Collection;
 public class Coffee extends CoffeeBase<Long> {
 
     private Double price;
+    private Double cost;
     private String customerName;
     private Collection<Ingredient> extraIngredientList = new ArrayList<>();
 
@@ -16,14 +17,28 @@ public class Coffee extends CoffeeBase<Long> {
 
         Double baseCoffeePrice = super.getCoffeeType().getRecipe()
                 .stream()
-                .mapToDouble(Ingredient::getIngredientPrice)
+                .mapToDouble(Ingredient::getIngredientSellingPrice)
                 .sum();
         Double extraIngredientsPrice = extraIngredientList
                 .stream()
-                .mapToDouble(Ingredient::getIngredientPrice)
+                .mapToDouble(Ingredient::getIngredientSellingPrice)
                 .sum();
 
         return baseCoffeePrice + extraIngredientsPrice;
+    }
+
+    public Double getCost() {
+
+        Double baseCoffeeCost = super.getCoffeeType().getRecipe()
+                .stream()
+                .mapToDouble(Ingredient::getIngredientCost)
+                .sum();
+        Double extraIngredientsCost = extraIngredientList
+                .stream()
+                .mapToDouble(Ingredient::getIngredientCost)
+                .sum();
+
+        return baseCoffeeCost + extraIngredientsCost;
     }
 
     public String getCustomerName() {

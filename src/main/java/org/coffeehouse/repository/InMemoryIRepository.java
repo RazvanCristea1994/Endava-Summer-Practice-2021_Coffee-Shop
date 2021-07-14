@@ -25,7 +25,9 @@ public class InMemoryIRepository<ID, T extends AbstractEntity<ID>> implements IR
     public Iterable<T> findAll() {
 
         List<T> results = new ArrayList<>();
-        results.forEach(database.values()::add);
+        for (T entity : database.values()) {
+            results.add(entity);
+        }
 
         return results;
     }

@@ -22,10 +22,16 @@ public class OrderService implements IOrder {
 
     public Order placeOrder(Order order) {
 
-        order.setId(OrderService.id++);
-        order.setTotalCost(order.getOrderedCoffeeList()
+        order.setId(++OrderService.id);
+        order.setTotalRevenue(order.getOrderedCoffeeList()
                 .stream()
                 .mapToDouble(Coffee::getPrice)
+                .sum());
+        order.setOrderDateTime(LocalDateTime.now());
+
+        order.setTotalCost(order.getOrderedCoffeeList()
+                .stream()
+                .mapToDouble(Coffee::getCost)
                 .sum());
         order.setOrderDateTime(LocalDateTime.now());
 
@@ -36,5 +42,23 @@ public class OrderService implements IOrder {
             OrderService.id--;
             return null;
         }
+    }
+
+    public Collection<Order> findAll() {
+
+        Iterable<Order> orders = this.repository.findAll();
+        Collection<Order> orderCollection = new ArrayList<>();
+        orders.forEach(orderCollection::add);
+
+        return orderCollection;
+    }
+
+    public Double getProfit() {
+
+        Collection<Order> orderCollection = findAll();
+        Double revenueToday = orderCollection.stream().mapToDouble(Order::getTotalRevenue).sum();
+        Double costToday = orderCollection.stream().mapToDouble(Order::getTotalCost).sum();
+
+        return revenueToday - costToday;
     }
 }

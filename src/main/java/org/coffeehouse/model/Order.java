@@ -5,6 +5,7 @@ import java.util.Collection;
 
 public class Order extends AbstractEntity<Long> {
 
+    private Double totalRevenue;
     private Double totalCost;
     private LocalDateTime orderDateTime;
     private Collection<Coffee> orderedCoffeeList;
@@ -19,6 +20,14 @@ public class Order extends AbstractEntity<Long> {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Double getTotalRevenue() {
+        return totalRevenue;
+    }
+
+    public void setTotalRevenue(Double totalRevenue) {
+        this.totalRevenue = totalRevenue;
     }
 
     public Double getTotalCost() {

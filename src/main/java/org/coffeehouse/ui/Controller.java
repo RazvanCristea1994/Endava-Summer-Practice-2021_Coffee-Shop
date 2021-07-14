@@ -69,7 +69,7 @@ public class Controller {
                     getCustomerName(coffeeToBuild);
                     chooseWhereToDrink(coffeeToBuild);
                     Order lastOrder = placeOrder(coffeeToBuild);
-                    consoleView.printCheck(lastOrder);
+                    consoleView.printCheck(lastOrder, orderService.getProfit());
                     this.customerCoffeeOrder = new ArrayList<>();
                     break;
                 default:
@@ -103,7 +103,8 @@ public class Controller {
 
         consoleView.printIngredientsOptionList();
         while (true) {
-            String option = input.readline();;
+            String option = input.readline();
+            ;
             if (option.equalsIgnoreCase("x")) {
                 return;
             }
@@ -157,7 +158,8 @@ public class Controller {
     private void getCustomerName(Coffee coffeeToBuild) {
 
         consoleView.askForName();
-        String customerName = input.readline();;
+        String customerName = input.readline();
+        ;
         coffeeToBuild.setCustomerName(customerName);
     }
 
@@ -165,7 +167,8 @@ public class Controller {
 
         consoleView.askWhereToDrink();
         while (true) {
-            String option = input.readline();; //ToDo: add the option to go back
+            String option = input.readline();
+            ; //ToDo: add the option to go back
             switch (option) {
                 case "1":
                     coffeeToBuild.setWhereToDrink(CoffeeBase.WhereToDrink.PICK_UP);
@@ -201,6 +204,6 @@ public class Controller {
 
         void invalidOptionMessage();
 
-        void printCheck(Order lastOrder);
+        void printCheck(Order lastOrder, Double profit);
     }
 }

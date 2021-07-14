@@ -2,6 +2,7 @@ package org.coffeehouse.ui;
 
 import org.coffeehouse.model.*;
 import org.coffeehouse.utils.Utils;
+
 public class ConsoleView implements Controller.IView {
 
     public void printCoffeeOptionList() {
@@ -65,7 +66,7 @@ public class ConsoleView implements Controller.IView {
         System.out.println("\nInvalid option\n");
     }
 
-    public void printCheck(Order lastOrder) {      //ToDo some pretty format needed here
+    public void printCheck(Order lastOrder, Double profit) {      //ToDo some pretty format needed here
 
         System.out.println("===========================================================");
         System.out.println("\t\t\t\t" + Utils.SHOP_NAME);
@@ -76,12 +77,12 @@ public class ConsoleView implements Controller.IView {
                     System.out.println("\tExtra Ingredients:");
                     coffee.getExtraIngredientsList().forEach(ingredient -> {
                         System.out.print("\t+" + ingredient.getIngredientName());
-                        System.out.println("\t\t" + ingredient.getIngredientPrice());
+                        System.out.println("\t\t" + ingredient.getIngredientSellingPrice());
                     });
                 }
         );
-        System.out.println("\t\t\t\t\t\t\tTotal: " + lastOrder.getTotalCost());
-        System.out.println(Utils.SHOP_NAME + "'s profit for today," + lastOrder.getOrderDateTime() + " is "); //ToDo: Ask what profit means
+        System.out.println("\t\t\t\t\t\t\tTotal: " + lastOrder.getTotalRevenue());
+        System.out.println(Utils.SHOP_NAME + "'s profit for today," + lastOrder.getOrderDateTime() + " is " + profit); //ToDo: Ask what profit means
         System.out.println("===========================================================");
     }
 }
