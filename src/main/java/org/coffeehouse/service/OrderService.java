@@ -4,9 +4,11 @@ import org.coffeehouse.model.Coffee;
 import org.coffeehouse.model.Order;
 import org.coffeehouse.repository.IRepository;
 
-import java.time.LocalDateTime;
+import java.time.*;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -53,11 +55,28 @@ public class OrderService implements IOrder {
         return orderCollection;
     }
 
-    public Double getProfit() {
+    public Double getTotalProfit() {
 
         Collection<Order> orderCollection = findAll();
-        Double revenueToday = orderCollection.stream().mapToDouble(Order::getTotalRevenue).sum();
-        Double costToday = orderCollection.stream().mapToDouble(Order::getTotalCost).sum();
+        Double revenueTotal = orderCollection.stream().mapToDouble(Order::getTotalRevenue).sum();
+        Double costTotal = orderCollection.stream().mapToDouble(Order::getTotalCost).sum();
+
+        return revenueTotal - costTotal;
+    }
+
+    public Double getTotalProfitForToday() {
+
+        Collection<Order> orderCollection = findAll();
+
+        Double revenueToday = orderCollection.stream()
+                .filter(order -> order.getOrderDateTime()
+                        .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
+                .mapToDouble(Order::getTotalRevenue).sum();
+
+        Double costToday = orderCollection.stream()
+                .filter(order -> order.getOrderDateTime()
+                        .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
+                .mapToDouble(Order::getTotalCost).sum();
 
         return revenueToday - costToday;
     }

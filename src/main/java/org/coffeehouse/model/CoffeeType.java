@@ -17,6 +17,11 @@ public enum CoffeeType {
 
             return ingredients;
         }
+
+        @Override
+        public Double getPrice() {
+            return getRecipe().stream().mapToDouble(Ingredient::getIngredientSellingPrice).sum();
+        }
     },
 
     MACHIATTO("Machiatto") {
@@ -30,6 +35,11 @@ public enum CoffeeType {
                     Ingredient.MILK_FOAM));
 
             return ingredients;
+        }
+
+        @Override
+        public Double getPrice() {
+            return getRecipe().stream().mapToDouble(Ingredient::getIngredientSellingPrice).sum();
         }
     },
 
@@ -46,6 +56,11 @@ public enum CoffeeType {
 
             return ingredients;
         }
+
+        @Override
+        public Double getPrice() {
+            return getRecipe().stream().mapToDouble(Ingredient::getIngredientSellingPrice).sum();
+        }
     },
 
     CAPPUCCINO("Cappuccino") {
@@ -60,6 +75,11 @@ public enum CoffeeType {
                     Ingredient.MILK_FOAM));
 
             return ingredients;
+        }
+
+        @Override
+        public Double getPrice() {
+            return getRecipe().stream().mapToDouble(Ingredient::getIngredientSellingPrice).sum();
         }
     },
 
@@ -77,11 +97,18 @@ public enum CoffeeType {
 
             return ingredients;
         }
+
+        @Override
+        public Double getPrice() {
+            return getRecipe().stream().mapToDouble(Ingredient::getIngredientSellingPrice).sum();
+        }
     };
 
     private String name;
 
     public abstract Collection<Ingredient> getRecipe();
+
+    public abstract Double getPrice();
 
     CoffeeType(String name) {
         this.name = name;

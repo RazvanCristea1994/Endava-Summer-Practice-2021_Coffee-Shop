@@ -15,50 +15,55 @@ public class Controller {
     private IOrder orderService;
     private IRepository repository;
     private Collection<Coffee> customerCoffeeOrder;
+    private String customerName;
     private IView consoleView;
-    private final Input input = new Input();
+    private final Input input;
 
     public Controller() {
         this.repository = new InMemoryIRepository();
         this.orderService = new OrderService(repository);
         this.customerCoffeeOrder = new ArrayList<>();
         this.consoleView = new ConsoleView();
+        this.input = new Input();
     }
 
-    public void runApp() { //ToDo: each coffee to have it's owner name, not the order
+                             //ToDo: Show the total price in real time and the order list
+                            //ToDo: Erase any coffee from the orderList while building it
+    public void runApp() {  //ToDo: Rethink this method
 
-        consoleView.printCoffeeOptionList();
         while (true) {
+
+            Coffee coffeeToBuild = new Coffee();
+            if (this.customerName == null) {
+                getCustomerName(coffeeToBuild);
+            }
+
+            consoleView.printCoffeeOptionList();
             String option = input.readline();
             if (option.equalsIgnoreCase("x")) {
                 consoleView.goodByeMessage();
                 break;
             }
-            Coffee coffeeToBuild = new Coffee();
+
             switch (option) {
                 case "1":
-                    addEspresso(coffeeToBuild);
-                    getExtraIngredients(coffeeToBuild);
+                    buildEspresso(coffeeToBuild);
                     this.customerCoffeeOrder.add(coffeeToBuild);
                     break;
                 case "2":
-                    addMachiatto(coffeeToBuild);
-                    getExtraIngredients(coffeeToBuild);
+                    buildMachiatto(coffeeToBuild);
                     this.customerCoffeeOrder.add(coffeeToBuild);
                     break;
                 case "3":
-                    addCaffeeLate(coffeeToBuild);
-                    getExtraIngredients(coffeeToBuild);
+                    buildCaffeeLate(coffeeToBuild);
                     this.customerCoffeeOrder.add(coffeeToBuild);
                     break;
                 case "4":
-                    addCappuccino(coffeeToBuild);
-                    getExtraIngredients(coffeeToBuild);
+                    buildCappuccino(coffeeToBuild);
                     this.customerCoffeeOrder.add(coffeeToBuild);
                     break;
                 case "5":
-                    addCaffeeMiel(coffeeToBuild);
-                    getExtraIngredients(coffeeToBuild);
+                    buildCaffeeMiel(coffeeToBuild);
                     this.customerCoffeeOrder.add(coffeeToBuild);
                     break;
                 case "6":
@@ -66,45 +71,70 @@ public class Controller {
                         consoleView.errorOrderMessage();
                         break;
                     }
-                    getCustomerName(coffeeToBuild);
-                    chooseWhereToDrink(coffeeToBuild);
-                    Order lastOrder = placeOrder(coffeeToBuild);
-                    consoleView.printCheck(lastOrder, orderService.getProfit());
-                    this.customerCoffeeOrder = new ArrayList<>();
+                    Order currentOrder = buildOrder();
+                    Order placedOrder = placeOrder(currentOrder);
+                    consoleView.printCheck(placedOrder, orderService.getTotalProfitForToday(), this.customerName);
+                    prepareForNewOrder();
                     break;
                 default:
                     consoleView.invalidOptionMessage();
             }
-            consoleView.printCoffeeOptionList();
         }
     }
 
-    private void addEspresso(Coffee coffeeToBuild) {
+    private void buildEspresso(Coffee coffeeToBuild) {
+
         coffeeToBuild.setCoffeeType(CoffeeType.ESPRESSO);
+        setExtraIngredients(coffeeToBuild);
+        coffeeToBuild.setCustomerName(this.customerName);
     }
 
-    private void addMachiatto(Coffee coffeeToBuild) {
+    private void buildMachiatto(Coffee coffeeToBuild) {
+
         coffeeToBuild.setCoffeeType(CoffeeType.MACHIATTO);
+        setExtraIngredients(coffeeToBuild);
+        coffeeToBuild.setCustomerName(this.customerName);
     }
 
-    private void addCaffeeLate(Coffee coffeeToBuild) {
+    private void buildCaffeeLate(Coffee coffeeToBuild) {
+
         coffeeToBuild.setCoffeeType(CoffeeType.CAFFEE_LATTE);
+        setExtraIngredients(coffeeToBuild);
+        coffeeToBuild.setCustomerName(this.customerName);
     }
 
-    private void addCappuccino(Coffee coffeeToBuild) {
+    private void buildCappuccino(Coffee coffeeToBuild) {
+
         coffeeToBuild.setCoffeeType(CoffeeType.CAPPUCCINO);
+        setExtraIngredients(coffeeToBuild);
+        coffeeToBuild.setCustomerName(this.customerName);
     }
 
-    private void addCaffeeMiel(Coffee coffeeToBuild) {
+    private void buildCaffeeMiel(Coffee coffeeToBuild) {
+
         coffeeToBuild.setCoffeeType(CoffeeType.CAFFEE_MIEL);
+        setExtraIngredients(coffeeToBuild);
+        coffeeToBuild.setCustomerName(this.customerName);
     }
 
-    private void getExtraIngredients(Coffee coffeeToBuild) {
+    private Order buildOrder() {
+
+        Order currentOrder = new Order();
+        setWhereToDrink(currentOrder);
+        if (currentOrder.getWhereToDrink() == null) {
+            return null;
+        }
+        currentOrder.setOrderedCoffeeList(this.customerCoffeeOrder);
+
+        return currentOrder;
+    }
+
+    private void setExtraIngredients(Coffee coffeeToBuild) {
 
         consoleView.printIngredientsOptionList();
         while (true) {
             String option = input.readline();
-            ;
+
             if (option.equalsIgnoreCase("x")) {
                 return;
             }
@@ -149,7 +179,7 @@ public class Controller {
                     coffeeToBuild.addExtraIngredient(Ingredient.BLACK_COFFEE);
                     break;
                 default:
-                    System.out.println("Invalid option");
+                    consoleView.invalidOptionMessage();
             }
             consoleView.printIngredientsOptionList();
         }
@@ -159,22 +189,24 @@ public class Controller {
 
         consoleView.askForName();
         String customerName = input.readline();
-        ;
-        coffeeToBuild.setCustomerName(customerName);
+
+        this.customerName = customerName;
     }
 
-    private void chooseWhereToDrink(Coffee coffeeToBuild) {
+    private void setWhereToDrink(Order currentOrder) {
 
         consoleView.askWhereToDrink();
         while (true) {
             String option = input.readline();
-            ; //ToDo: add the option to go back
+            //ToDo: add the option to go back
             switch (option) {
                 case "1":
-                    coffeeToBuild.setWhereToDrink(CoffeeBase.WhereToDrink.PICK_UP);
+                    currentOrder.setWhereToDrink(Order.WhereToDrink.PICK_UP);
                     return;
                 case "2":
-                    coffeeToBuild.setWhereToDrink(CoffeeBase.WhereToDrink.TO_GO);
+                    currentOrder.setWhereToDrink(Order.WhereToDrink.TO_GO);
+                    return;
+                case "X":
                     return;
                 default:
                     consoleView.invalidOptionMessage();
@@ -182,10 +214,15 @@ public class Controller {
         }
     }
 
-    private Order placeOrder(Coffee coffeeToBuild) {
+    private Order placeOrder(Order order) {
 
-        Order order = new Order(this.customerCoffeeOrder);
         return orderService.placeOrder(order);
+    }
+
+    private void prepareForNewOrder() {
+
+        this.customerCoffeeOrder = new ArrayList<>();
+        this.customerName = null;
     }
 
     public interface IView {
@@ -204,6 +241,6 @@ public class Controller {
 
         void invalidOptionMessage();
 
-        void printCheck(Order lastOrder, Double profit);
+        void printCheck(Order lastOrder, Double profit, String customerName);
     }
 }

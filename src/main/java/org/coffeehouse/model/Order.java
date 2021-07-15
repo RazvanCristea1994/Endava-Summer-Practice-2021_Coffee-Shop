@@ -9,9 +9,27 @@ public class Order extends AbstractEntity<Long> {
     private Double totalCost;
     private LocalDateTime orderDateTime;
     private Collection<Coffee> orderedCoffeeList;
+    private WhereToDrink whereToDrink;
 
     public Order(Collection<Coffee> orderedCoffeeList) {
         this.orderedCoffeeList = orderedCoffeeList;
+    }
+
+    public Order() {
+    }
+
+    public enum WhereToDrink {
+        PICK_UP("pick-up"), TO_GO("to-go");
+
+        private String name;
+
+        WhereToDrink(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
     public Long getId() {
@@ -52,5 +70,13 @@ public class Order extends AbstractEntity<Long> {
 
     public void setOrderedCoffeeList(Collection<Coffee> orderedCoffeeList) {
         this.orderedCoffeeList = orderedCoffeeList;
+    }
+
+    public WhereToDrink getWhereToDrink() {
+        return whereToDrink;
+    }
+
+    public void setWhereToDrink(WhereToDrink whereToDrink) {
+        this.whereToDrink = whereToDrink;
     }
 }

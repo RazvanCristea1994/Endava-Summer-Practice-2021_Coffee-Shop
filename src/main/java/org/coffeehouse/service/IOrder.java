@@ -10,6 +10,8 @@ public interface IOrder {
 
     Collection<Order> findAll();
 
-    Double getProfit();
+    Double getTotalProfit();
+
+    Double getTotalProfitForToday();
     //ToDo
 }

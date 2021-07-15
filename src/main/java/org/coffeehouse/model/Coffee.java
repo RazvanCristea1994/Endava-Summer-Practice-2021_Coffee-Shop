@@ -15,10 +15,8 @@ public class Coffee extends CoffeeBase<Long> {
 
     public Double getPrice() {
 
-        Double baseCoffeePrice = super.getCoffeeType().getRecipe()
-                .stream()
-                .mapToDouble(Ingredient::getIngredientSellingPrice)
-                .sum();
+        Double baseCoffeePrice = super.getCoffeeType().getPrice();
+
         Double extraIngredientsPrice = extraIngredientList
                 .stream()
                 .mapToDouble(Ingredient::getIngredientSellingPrice)
