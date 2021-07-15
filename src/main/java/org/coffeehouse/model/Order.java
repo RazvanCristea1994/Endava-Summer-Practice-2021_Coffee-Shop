@@ -1,13 +1,14 @@
 package org.coffeehouse.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class Order extends AbstractEntity<Long> {
 
     private Double totalRevenue;
     private LocalDateTime orderDateTime;
-    private Collection<Coffee> orderedCoffeeList;
+    private Collection<Coffee> orderedCoffeeList = new ArrayList<>();
     private WhereToDrink whereToDrink;
 
     public Order() {
@@ -36,7 +37,11 @@ public class Order extends AbstractEntity<Long> {
     }
 
     public Double getTotalRevenue() {
-        return totalRevenue;
+
+        return getOrderedCoffeeList()
+                .stream()
+                .mapToDouble(Coffee::getPrice)
+                .sum();
     }
 
     public void setTotalRevenue(Double totalRevenue) {
@@ -57,6 +62,10 @@ public class Order extends AbstractEntity<Long> {
 
     public void setOrderedCoffeeList(Collection<Coffee> orderedCoffeeList) {
         this.orderedCoffeeList = orderedCoffeeList;
+    }
+
+    public void addCoffeeToOrder(Coffee coffee) {
+        this.orderedCoffeeList.add(coffee);
     }
 
     public WhereToDrink getWhereToDrink() {

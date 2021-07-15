@@ -68,6 +68,12 @@ public class ConsoleView implements Controller.IView {
         System.out.println("\nInvalid option\n");
     }
 
+    public void printUnknownError() {
+        System.out.println("Unknown error. Please try again.");
+    }
+
+    ;
+
     public void askToCancelMessage() {
         System.out.println("\nThe order has been placed. You can still cancel it [X] or continue [C]\n");
     }
@@ -82,11 +88,35 @@ public class ConsoleView implements Controller.IView {
 
     public void printCheck(Order lastOrder, Double profit, String customerName) {      //ToDo some pretty format needed here
 
+        printCheckHeader(customerName);
+        printOrdersAndPrices(lastOrder);
+        printCheckFooter(lastOrder, profit);
+    }
+
+    public void printOrderListToBuild(Order orderToBuild, String customerName) {
+
+        printCheckHeader(customerName);
+        printOrdersAndPrices(orderToBuild);
+    }
+
+    private void printCheckHeader(String customerName) { //ToDo: Better format here
+
         System.out.println("===========================================================");
-        System.out.println(lastOrder.getWhereToDrink().getName().toUpperCase() + "\t\t\t\t" + Utils.SHOP_NAME);
+        System.out.println("\t\t\t\t\t" + Utils.SHOP_NAME);
         System.out.println("===========================================================");
         System.out.println(customerName.toUpperCase() + "'s Coffee Type" + "\t\t\t\t\t\t" + "Price");
-        lastOrder.getOrderedCoffeeList().forEach(coffee -> {
+    }
+
+    private void printCheckFooter(Order order, Double profit) {
+        System.out.println("===========================================================");
+        System.out.println(order.getWhereToDrink().getName().toUpperCase());
+        System.out.println("Today profit: " + profit + "$ \t\t\t" + order.getOrderDateTime().format(Utils.FORMATTER));
+        System.out.println("===========================================================\n");
+    }
+
+    private void printOrdersAndPrices(Order order) {
+
+        order.getOrderedCoffeeList().forEach(coffee -> {
                     System.out.println(coffee.getCoffeeType().getName() + "\t\t\t\t\t\t" + coffee.getPrice() + "$");
                     coffee.getExtraIngredientsList().forEach(ingredient -> {
                         System.out.print("\t+" + ingredient.getIngredientName());
@@ -94,9 +124,6 @@ public class ConsoleView implements Controller.IView {
                     });
                 }
         );
-        System.out.println("\t\t\t\t\t\t\tTotal: " + lastOrder.getTotalRevenue() + "$");
-        System.out.println("===========================================================");
-        System.out.println("Today profit: " + profit + "$ \t\t\t" + lastOrder.getOrderDateTime().format(Utils.FORMATTER));
-        System.out.println("===========================================================\n");
+        System.out.println("\t\t\t\t\t\t\tTotal: " + order.getTotalRevenue() + "$");
     }
 }

@@ -14,7 +14,7 @@ public class Controller {
 
     private IOrder orderService;
     private IRepository<Long, Order> repository;
-    private Collection<Coffee> customerCoffeeOrder;
+    private Order customerOrder = new Order();
     private String customerName;
     private IView consoleView;
     private final Input input;
@@ -23,7 +23,6 @@ public class Controller {
     public Controller() {
         this.repository = new InMemoryIRepository<>();
         this.orderService = new OrderService(repository);
-        this.customerCoffeeOrder = new ArrayList<>();
         this.consoleView = new ConsoleView();
         this.input = new Input();
     }
@@ -43,32 +42,38 @@ public class Controller {
 
             switch (option.toUpperCase()) {
                 case "1":
-                    buildEspresso(coffeeToBuild);
-                    this.customerCoffeeOrder.add(coffeeToBuild);
+                    this.customerOrder.addCoffeeToOrder(buildEspresso(coffeeToBuild));
+                    this.consoleView.printOrderListToBuild(this.customerOrder, this.customerName);
                     break;
                 case "2":
-                    buildMachiatto(coffeeToBuild);
-                    this.customerCoffeeOrder.add(coffeeToBuild);
+                    this.customerOrder.addCoffeeToOrder(buildMachiatto(coffeeToBuild));
+                    this.consoleView.printOrderListToBuild(this.customerOrder, this.customerName);
                     break;
                 case "3":
-                    buildCaffeeLate(coffeeToBuild);
-                    this.customerCoffeeOrder.add(coffeeToBuild);
+                    this.customerOrder.addCoffeeToOrder(buildCaffeeLate(coffeeToBuild));
+                    this.consoleView.printOrderListToBuild(this.customerOrder, this.customerName);
                     break;
                 case "4":
-                    buildCappuccino(coffeeToBuild);
-                    this.customerCoffeeOrder.add(coffeeToBuild);
+                    this.customerOrder.addCoffeeToOrder(buildCappuccino(coffeeToBuild));
+                    this.consoleView.printOrderListToBuild(this.customerOrder, this.customerName);
                     break;
                 case "5":
-                    buildCaffeeMiel(coffeeToBuild);
-                    this.customerCoffeeOrder.add(coffeeToBuild);
+                    this.customerOrder.addCoffeeToOrder(buildCaffeeMiel(coffeeToBuild));
+                    this.consoleView.printOrderListToBuild(this.customerOrder, this.customerName);
                     break;
                 case "6":
-                    if (this.customerCoffeeOrder.isEmpty()) {
+                    if (this.customerOrder.getOrderedCoffeeList().isEmpty()) {
                         consoleView.errorOrderMessage();
                         break;
                     }
-                    Order currentOrder = buildOrder();
-                    this.placedOrder = orderService.placeOrder(currentOrder);
+                    setWhereToDrink(this.customerOrder);
+                    if (this.customerOrder.getWhereToDrink() == null) {
+                        break;
+                    }
+                    this.placedOrder = orderService.placeOrder(this.customerOrder);
+                    if (this.placedOrder == null) {
+                        this.consoleView.printUnknownError();
+                    }
                     break;
                 case "X":
                     consoleView.goodByeMessage();
@@ -86,51 +91,49 @@ public class Controller {
         }
     }
 
-    private void buildEspresso(Coffee coffeeToBuild) {
+    private Coffee buildEspresso(Coffee coffeeToBuild) {
 
         coffeeToBuild.setCoffeeType(CoffeeType.ESPRESSO);
         setExtraIngredients(coffeeToBuild);
         coffeeToBuild.setCustomerName(this.customerName);
+
+        return coffeeToBuild;
     }
 
-    private void buildMachiatto(Coffee coffeeToBuild) {
+    private Coffee buildMachiatto(Coffee coffeeToBuild) {
 
         coffeeToBuild.setCoffeeType(CoffeeType.MACHIATTO);
         setExtraIngredients(coffeeToBuild);
         coffeeToBuild.setCustomerName(this.customerName);
+
+        return coffeeToBuild;
     }
 
-    private void buildCaffeeLate(Coffee coffeeToBuild) {
+    private Coffee buildCaffeeLate(Coffee coffeeToBuild) {
 
         coffeeToBuild.setCoffeeType(CoffeeType.CAFFEE_LATTE);
         setExtraIngredients(coffeeToBuild);
         coffeeToBuild.setCustomerName(this.customerName);
+
+        return coffeeToBuild;
     }
 
-    private void buildCappuccino(Coffee coffeeToBuild) {
+    private Coffee buildCappuccino(Coffee coffeeToBuild) {
 
         coffeeToBuild.setCoffeeType(CoffeeType.CAPPUCCINO);
         setExtraIngredients(coffeeToBuild);
         coffeeToBuild.setCustomerName(this.customerName);
+
+        return coffeeToBuild;
     }
 
-    private void buildCaffeeMiel(Coffee coffeeToBuild) {
+    private Coffee buildCaffeeMiel(Coffee coffeeToBuild) {
 
         coffeeToBuild.setCoffeeType(CoffeeType.CAFFEE_MIEL);
         setExtraIngredients(coffeeToBuild);
         coffeeToBuild.setCustomerName(this.customerName);
-    }
 
-    private Order buildOrder() {
-
-        Order currentOrder = new Order();
-        setWhereToDrink(currentOrder);
-        if (currentOrder.getWhereToDrink() == null) {
-            return null;
-        }
-        currentOrder.setOrderedCoffeeList(this.customerCoffeeOrder);
-
-        return currentOrder;
+        return coffeeToBuild;
     }
 
     private void setExtraIngredients(Coffee coffeeToBuild) {
@@ -246,7 +249,7 @@ public class Controller {
 
     private void prepareForNewOrder() {
 
-        this.customerCoffeeOrder = new ArrayList<>();
+        this.customerOrder = new Order();
         this.customerName = null;
         this.placedOrder = null;
     }
@@ -267,12 +270,16 @@ public class Controller {
 
         void invalidOptionMessage();
 
+        void printUnknownError();
+
         void askToCancelMessage();
 
         void orderCanceledMessage();
 
         void enjoyCoffeeMessage();
 
-        void printCheck(Order lastOrder, Double profit, String customerName);
+        void printCheck(Order placedOrder, Double profit, String customerName);
+
+        void printOrderListToBuild(Order orderToBuild, String customerName);
     }
 }

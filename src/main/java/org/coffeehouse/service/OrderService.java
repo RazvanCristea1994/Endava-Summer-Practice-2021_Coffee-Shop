@@ -23,12 +23,6 @@ public class OrderService implements IOrder {
     public Order placeOrder(Order order) {
 
         order.setId(++OrderService.id);
-        order.setTotalRevenue(order.getOrderedCoffeeList()
-                .stream()
-                .mapToDouble(Coffee::getPrice)
-                .sum());
-        order.setOrderDateTime(LocalDateTime.now());
-
         order.setOrderDateTime(LocalDateTime.now());
 
         try {
