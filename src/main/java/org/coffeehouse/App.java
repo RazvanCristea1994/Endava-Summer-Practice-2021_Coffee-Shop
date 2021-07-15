@@ -1,6 +1,5 @@
 package org.coffeehouse;
 
-import org.coffeehouse.ui.ConsoleView;
 import org.coffeehouse.ui.Controller;
 
 public class App {

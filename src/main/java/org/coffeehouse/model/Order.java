@@ -11,10 +11,6 @@ public class Order extends AbstractEntity<Long> {
     private Collection<Coffee> orderedCoffeeList;
     private WhereToDrink whereToDrink;
 
-    public Order(Collection<Coffee> orderedCoffeeList) {
-        this.orderedCoffeeList = orderedCoffeeList;
-    }
-
     public Order() {
     }
 

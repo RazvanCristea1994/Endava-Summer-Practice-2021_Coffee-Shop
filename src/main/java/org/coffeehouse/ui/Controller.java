@@ -27,8 +27,8 @@ public class Controller {
         this.input = new Input();
     }
 
-                             //ToDo: Show the total price in real time and the order list
-                            //ToDo: Erase any coffee from the orderList while building it
+    //ToDo: Show the total price in real time and the order list
+    //ToDo: Erase any coffee from the orderList while building it
     public void runApp() {  //ToDo: Rethink this method
 
         while (true) {

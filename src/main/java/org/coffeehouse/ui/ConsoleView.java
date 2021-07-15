@@ -69,7 +69,7 @@ public class ConsoleView implements Controller.IView {
     }
 
     public void printCheck(Order lastOrder, Double profit, String customerName) {      //ToDo some pretty format needed here
-                                                                                        //ToDo: Cancel order
+        //ToDo: Cancel order
         System.out.println("===========================================================");
         System.out.println(lastOrder.getWhereToDrink().getName().toUpperCase() + "\t\t\t\t" + Utils.SHOP_NAME);
         System.out.println("===========================================================");
@@ -82,9 +82,9 @@ public class ConsoleView implements Controller.IView {
                     });
                 }
         );
-        System.out.println("\t\t\t\t\t\t\tTotal: " + lastOrder.getTotalRevenue()+ "$");
+        System.out.println("\t\t\t\t\t\t\tTotal: " + lastOrder.getTotalRevenue() + "$");
         System.out.println("===========================================================");
-        System.out.println("Today profit: " + profit + "$ \t\t\t"  + lastOrder.getOrderDateTime().format(Utils.FORMATTER));
+        System.out.println("Today profit: " + profit + "$ \t\t\t" + lastOrder.getOrderDateTime().format(Utils.FORMATTER));
         System.out.println("===========================================================\n");
     }
 }
