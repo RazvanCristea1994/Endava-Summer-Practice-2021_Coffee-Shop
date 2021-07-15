@@ -4,10 +4,12 @@ import org.coffeehouse.model.Coffee;
 import org.coffeehouse.model.Order;
 import org.coffeehouse.repository.IRepository;
 
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class OrderService implements IOrder {
@@ -25,22 +27,22 @@ public class OrderService implements IOrder {
         order.setId(++OrderService.id);
         order.setOrderDateTime(LocalDateTime.now());
 
-        try {
-            Optional<Order> result = this.repository.save(order);
-            return order;
-        } catch (Exception e) {
+        Optional<Order> result = this.repository.save(order);
+        if (!result.isEmpty()) {
             OrderService.id--;
             return null;
+        } else {
+            return order;
         }
     }
 
-    public Collection<Order> findAll() {
+    public List<Order> findAll() {
 
         Iterable<Order> orders = this.repository.findAll();
-        Collection<Order> orderCollection = new ArrayList<>();
-        orders.forEach(orderCollection::add);
+        List<Order> orderList = new ArrayList<>();
+        orders.forEach(orderList::add);
 
-        return orderCollection;
+        return orderList;
     }
 
     public Double getTotalProfit() {

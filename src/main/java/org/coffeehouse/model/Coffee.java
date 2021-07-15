@@ -3,7 +3,7 @@ package org.coffeehouse.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Coffee extends CoffeeBase<Long> {
+public class Coffee extends CoffeeBase<Integer> {
 
     private String customerName;
     private Collection<Ingredient> extraIngredientList = new ArrayList<>();

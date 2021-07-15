@@ -1,6 +1,8 @@
 package org.coffeehouse.ui;
 
-import org.coffeehouse.model.*;
+import org.coffeehouse.model.CoffeeType;
+import org.coffeehouse.model.Ingredient;
+import org.coffeehouse.model.Order;
 import org.coffeehouse.utils.Utils;
 
 import java.util.stream.Collectors;
@@ -16,7 +18,9 @@ public class ConsoleView implements Controller.IView {
                         "4 - " + CoffeeType.CAPPUCCINO.getName() + "\t" + CoffeeType.CAPPUCCINO.getPrice() + "$\t" + CoffeeType.CAPPUCCINO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
                         "5 - " + CoffeeType.CAFFEE_MIEL.getName() + "\t" + CoffeeType.CAFFEE_MIEL.getPrice() + "$\t" + CoffeeType.CAFFEE_MIEL.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
                         "---------------------\n" +
-                        "6 - Place my order\n" +
+                        "6 - Remove an added coffee\n" +
+                        "---------------------\n" +
+                        "7 - Place my order\n" +
                         "X - Exit\n"
         );
     }
@@ -43,11 +47,11 @@ public class ConsoleView implements Controller.IView {
         );
     }
 
-    public void askForName() {
+    public void printAskName() {
         System.out.println("\nProvide a name to your order, please:\n");
     }
 
-    public void askWhereToDrink() {
+    public void printAskWhereToDrink() {
         System.out.println(
                 "\n" + "Choose where you would like to drink:\n" +
                         "1 - Pick-Up\n" +
@@ -56,16 +60,20 @@ public class ConsoleView implements Controller.IView {
                         "X - Go back and order more coffee\n");
     }
 
-    public void goodByeMessage() {
+    public void printGoodByeMessage() {
         System.out.println("\n" + Utils.SHOP_NAME + " wishes you an incredible day!");
     }
 
-    public void errorOrderMessage() {
+    public void printErrorOrderMessage() {
         System.out.println("\nPlease choose one of our amazing coffees first");
     }
 
-    public void invalidOptionMessage() {
+    public void printInvalidOptionMessage() {
         System.out.println("\nInvalid option\n");
+    }
+
+    public void printInvalidId() {
+        System.out.println("\nInvalid ID\n");
     }
 
     public void printUnknownError() {
@@ -74,15 +82,19 @@ public class ConsoleView implements Controller.IView {
 
     ;
 
-    public void askToCancelMessage() {
+    public void printAskToCancelMessage() {
         System.out.println("\nThe order has been placed. You can still cancel it [X] or continue [C]\n");
     }
 
-    public void orderCanceledMessage() {
+    public void printAskForCoffeeId() {
+        System.out.println("\nID: ");
+    }
+
+    public void printOrderCanceledMessage() {
         System.out.println("\nYour order has been canceled\n");
     }
 
-    public void enjoyCoffeeMessage() {
+    public void printEnjoyCoffeeMessage() {
         System.out.println("\nEnjoy your coffee\n");
     }
 
@@ -117,7 +129,7 @@ public class ConsoleView implements Controller.IView {
     private void printOrdersAndPrices(Order order) {
 
         order.getOrderedCoffeeList().forEach(coffee -> {
-                    System.out.println(coffee.getCoffeeType().getName() + "\t\t\t\t\t\t" + coffee.getPrice() + "$");
+                    System.out.println("#" + coffee.getId() + " - " + coffee.getCoffeeType().getName() + "\t\t\t\t\t\t" + coffee.getPrice() + "$");
                     coffee.getExtraIngredientsList().forEach(ingredient -> {
                         System.out.print("\t+" + ingredient.getIngredientName());
                         System.out.println("\t\t" + ingredient.getIngredientSellingPrice() + "$");

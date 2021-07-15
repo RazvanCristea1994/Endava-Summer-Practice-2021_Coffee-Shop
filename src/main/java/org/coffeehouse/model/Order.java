@@ -2,14 +2,15 @@ package org.coffeehouse.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public class Order extends AbstractEntity<Long> {
 
     private Double totalRevenue;
     private LocalDateTime orderDateTime;
-    private Collection<Coffee> orderedCoffeeList = new ArrayList<>();
+    private List<Coffee> orderedCoffeeList = new ArrayList<>();
     private WhereToDrink whereToDrink;
+    private Long coffeeId = 0L;
 
     public Order() {
     }
@@ -32,8 +33,8 @@ public class Order extends AbstractEntity<Long> {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long orderId) {
+        super.id = orderId;
     }
 
     public Double getTotalRevenue() {
@@ -44,10 +45,6 @@ public class Order extends AbstractEntity<Long> {
                 .sum();
     }
 
-    public void setTotalRevenue(Double totalRevenue) {
-        this.totalRevenue = totalRevenue;
-    }
-
     public LocalDateTime getOrderDateTime() {
         return orderDateTime;
     }
@@ -56,16 +53,20 @@ public class Order extends AbstractEntity<Long> {
         this.orderDateTime = orderDateTime;
     }
 
-    public Collection<Coffee> getOrderedCoffeeList() {
+    public List<Coffee> getOrderedCoffeeList() {
         return orderedCoffeeList;
     }
 
-    public void setOrderedCoffeeList(Collection<Coffee> orderedCoffeeList) {
-        this.orderedCoffeeList = orderedCoffeeList;
+    public void addCoffeeToOrder(Coffee coffee) {
+
+        setCoffeeIdEqualToIndex(coffee);
+        this.orderedCoffeeList.add(coffee);
     }
 
-    public void addCoffeeToOrder(Coffee coffee) {
-        this.orderedCoffeeList.add(coffee);
+    private void setCoffeeIdEqualToIndex(Coffee coffee) {
+
+        Integer size = Integer.valueOf(this.orderedCoffeeList.size());
+        coffee.setId(size--);
     }
 
     public WhereToDrink getWhereToDrink() {

@@ -1,14 +1,15 @@
 package org.coffeehouse.ui;
 
-import org.coffeehouse.model.*;
+
+import org.coffeehouse.model.Coffee;
+import org.coffeehouse.model.CoffeeType;
+import org.coffeehouse.model.Ingredient;
+import org.coffeehouse.model.Order;
 import org.coffeehouse.repository.IRepository;
 import org.coffeehouse.repository.InMemoryIRepository;
 import org.coffeehouse.service.IOrder;
 import org.coffeehouse.service.OrderService;
 import org.coffeehouse.utils.Input;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class Controller {
 
@@ -27,7 +28,6 @@ public class Controller {
         this.input = new Input();
     }
 
-    //ToDo: Show the total price in real time and the order list
     //ToDo: Erase any coffee from the orderList while building it
     public void runApp() {  //ToDo: Rethink this method
 
@@ -62,8 +62,14 @@ public class Controller {
                     this.consoleView.printOrderListToBuild(this.customerOrder, this.customerName);
                     break;
                 case "6":
+                    if (!removeCoffeeFromCustomerOrder()) {
+                        this.consoleView.printInvalidId();
+                    }
+                    this.consoleView.printOrderListToBuild(this.customerOrder, this.customerName);
+                    break;
+                case "7":
                     if (this.customerOrder.getOrderedCoffeeList().isEmpty()) {
-                        consoleView.errorOrderMessage();
+                        consoleView.printErrorOrderMessage();
                         break;
                     }
                     setWhereToDrink(this.customerOrder);
@@ -76,15 +82,15 @@ public class Controller {
                     }
                     break;
                 case "X":
-                    consoleView.goodByeMessage();
+                    consoleView.printGoodByeMessage();
                     return;
                 default:
-                    consoleView.invalidOptionMessage();
+                    consoleView.printInvalidOptionMessage();
             }
 
             if (placedOrder != null) {
                 consoleView.printCheck(placedOrder, orderService.getTotalProfitForToday(), this.customerName);
-                possibilityToCancel(placedOrder);
+                givePossibilityToCancelOrder(placedOrder);
 
                 prepareForNewOrder();
             }
@@ -185,7 +191,7 @@ public class Controller {
                 case "X":
                     return;
                 default:
-                    consoleView.invalidOptionMessage();
+                    consoleView.printInvalidOptionMessage();
             }
             consoleView.printIngredientsOptionList();
         }
@@ -193,19 +199,30 @@ public class Controller {
 
     private void getCustomerName() {
 
-        consoleView.askForName();
+        consoleView.printAskName();
         String ourCustomerName = input.readline();
 
         this.customerName = ourCustomerName;
     }
 
+    private boolean removeCoffeeFromCustomerOrder() {
+
+        consoleView.printAskForCoffeeId();
+        Long coffeeId = input.readLong();
+        try {
+            Coffee coffee = this.customerOrder.getOrderedCoffeeList().get(coffeeId.intValue());
+            return this.customerOrder.getOrderedCoffeeList().remove(coffee);
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
     private void setWhereToDrink(Order currentOrder) {
 
-        consoleView.askWhereToDrink();
+        consoleView.printAskWhereToDrink();
         while (true) {
             String option = input.readline();
 
-            //ToDo: add the option to go back
             switch (option.toUpperCase()) {
                 case "1":
                     currentOrder.setWhereToDrink(Order.WhereToDrink.PICK_UP);
@@ -216,23 +233,23 @@ public class Controller {
                 case "X":
                     return;
                 default:
-                    consoleView.invalidOptionMessage();
+                    consoleView.printInvalidOptionMessage();
             }
         }
     }
 
-    private void possibilityToCancel(Order placedOrder) {
+    private void givePossibilityToCancelOrder(Order placedOrder) {
 
         if (cancelOrder(placedOrder) == null) {
-            this.consoleView.enjoyCoffeeMessage();
+            this.consoleView.printEnjoyCoffeeMessage();
         } else {
-            this.consoleView.orderCanceledMessage();
+            this.consoleView.printOrderCanceledMessage();
         }
     }
 
     private Order cancelOrder(Order placedOrder) {
 
-        this.consoleView.askToCancelMessage();
+        this.consoleView.printAskToCancelMessage();
         while (true) {
             String option = input.readline();
             switch (option.toUpperCase()) {
@@ -242,7 +259,7 @@ public class Controller {
                 case "C":
                     return null;
                 default:
-                    consoleView.invalidOptionMessage();
+                    consoleView.printInvalidOptionMessage();
             }
         }
     }
@@ -260,23 +277,27 @@ public class Controller {
 
         void printIngredientsOptionList();
 
-        void askForName();
+        void printAskName();
 
-        void askWhereToDrink();
+        void printAskWhereToDrink();
 
-        void goodByeMessage();
+        void printGoodByeMessage();
 
-        void errorOrderMessage();
+        void printErrorOrderMessage();
 
-        void invalidOptionMessage();
+        void printInvalidOptionMessage();
+
+        void printInvalidId();
 
         void printUnknownError();
 
-        void askToCancelMessage();
+        void printAskToCancelMessage();
 
-        void orderCanceledMessage();
+        void printAskForCoffeeId();
 
-        void enjoyCoffeeMessage();
+        void printOrderCanceledMessage();
+
+        void printEnjoyCoffeeMessage();
 
         void printCheck(Order placedOrder, Double profit, String customerName);
 

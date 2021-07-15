@@ -11,7 +11,19 @@ public class Input {
             return scanner.next();
         } catch (Exception e) {
             System.out.println("A string is expected.");
+            scanner.next();
             return readline();
+        }
+    }
+
+    public Long readLong() {
+
+        try {
+            return scanner.nextLong();
+        } catch (Exception e) {
+            System.out.println("A numeric value is expected.");
+            scanner.next();
+            return readLong();
         }
     }
 }
