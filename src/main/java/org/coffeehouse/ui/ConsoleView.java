@@ -68,8 +68,20 @@ public class ConsoleView implements Controller.IView {
         System.out.println("\nInvalid option\n");
     }
 
+    public void askToCancelMessage() {
+        System.out.println("\nThe order has been placed. You can still cancel it [X] or continue [C]\n");
+    }
+
+    public void orderCanceledMessage() {
+        System.out.println("\nYour order has been canceled\n");
+    }
+
+    public void enjoyCoffeeMessage() {
+        System.out.println("\nEnjoy your coffee\n");
+    }
+
     public void printCheck(Order lastOrder, Double profit, String customerName) {      //ToDo some pretty format needed here
-        //ToDo: Cancel order
+
         System.out.println("===========================================================");
         System.out.println(lastOrder.getWhereToDrink().getName().toUpperCase() + "\t\t\t\t" + Utils.SHOP_NAME);
         System.out.println("===========================================================");

@@ -5,8 +5,6 @@ import java.util.Collection;
 
 public class Coffee extends CoffeeBase<Long> {
 
-    private Double price;
-    private Double cost;
     private String customerName;
     private Collection<Ingredient> extraIngredientList = new ArrayList<>();
 

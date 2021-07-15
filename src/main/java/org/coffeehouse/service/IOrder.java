@@ -13,5 +13,7 @@ public interface IOrder {
     Double getTotalProfit();
 
     Double getTotalProfitForToday();
+
+    Order cancelOrder(Long id);
     //ToDo
 }

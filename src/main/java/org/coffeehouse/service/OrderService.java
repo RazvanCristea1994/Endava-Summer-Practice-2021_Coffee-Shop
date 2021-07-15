@@ -29,10 +29,6 @@ public class OrderService implements IOrder {
                 .sum());
         order.setOrderDateTime(LocalDateTime.now());
 
-        order.setTotalCost(order.getOrderedCoffeeList()
-                .stream()
-                .mapToDouble(Coffee::getCost)
-                .sum());
         order.setOrderDateTime(LocalDateTime.now());
 
         try {
@@ -57,7 +53,9 @@ public class OrderService implements IOrder {
 
         Collection<Order> orderCollection = findAll();
         Double revenueTotal = orderCollection.stream().mapToDouble(Order::getTotalRevenue).sum();
-        Double costTotal = orderCollection.stream().mapToDouble(Order::getTotalCost).sum();
+        Double costTotal = orderCollection.stream()
+                .flatMap(coffee -> coffee.getOrderedCoffeeList().stream())
+                .mapToDouble(Coffee::getCost).sum();
 
         return revenueTotal - costTotal;
     }
@@ -74,8 +72,15 @@ public class OrderService implements IOrder {
         Double costToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
-                .mapToDouble(Order::getTotalCost).sum();
+                .flatMap(coffee -> coffee.getOrderedCoffeeList().stream())
+                .mapToDouble(Coffee::getCost).sum();
 
         return revenueToday - costToday;
+    }
+
+    public Order cancelOrder(Long id) {
+
+        Optional<Order> result = repository.delete(id);
+        return result.orElse(null);
     }
 }

@@ -13,14 +13,15 @@ import java.util.Collection;
 public class Controller {
 
     private IOrder orderService;
-    private IRepository repository;
+    private IRepository<Long, Order> repository;
     private Collection<Coffee> customerCoffeeOrder;
     private String customerName;
     private IView consoleView;
     private final Input input;
+    private Order placedOrder;
 
     public Controller() {
-        this.repository = new InMemoryIRepository();
+        this.repository = new InMemoryIRepository<>();
         this.orderService = new OrderService(repository);
         this.customerCoffeeOrder = new ArrayList<>();
         this.consoleView = new ConsoleView();
@@ -32,20 +33,15 @@ public class Controller {
     public void runApp() {  //ToDo: Rethink this method
 
         while (true) {
-
             Coffee coffeeToBuild = new Coffee();
             if (this.customerName == null) {
-                getCustomerName(coffeeToBuild);
+                getCustomerName();
             }
 
             consoleView.printCoffeeOptionList();
             String option = input.readline();
-            if (option.equalsIgnoreCase("x")) {
-                consoleView.goodByeMessage();
-                break;
-            }
 
-            switch (option) {
+            switch (option.toUpperCase()) {
                 case "1":
                     buildEspresso(coffeeToBuild);
                     this.customerCoffeeOrder.add(coffeeToBuild);
@@ -72,12 +68,20 @@ public class Controller {
                         break;
                     }
                     Order currentOrder = buildOrder();
-                    Order placedOrder = placeOrder(currentOrder);
-                    consoleView.printCheck(placedOrder, orderService.getTotalProfitForToday(), this.customerName);
-                    prepareForNewOrder();
+                    this.placedOrder = orderService.placeOrder(currentOrder);
                     break;
+                case "X":
+                    consoleView.goodByeMessage();
+                    return;
                 default:
                     consoleView.invalidOptionMessage();
+            }
+
+            if (placedOrder != null) {
+                consoleView.printCheck(placedOrder, orderService.getTotalProfitForToday(), this.customerName);
+                possibilityToCancel(placedOrder);
+
+                prepareForNewOrder();
             }
         }
     }
@@ -135,10 +139,7 @@ public class Controller {
         while (true) {
             String option = input.readline();
 
-            if (option.equalsIgnoreCase("x")) {
-                return;
-            }
-            switch (option) {
+            switch (option.toUpperCase()) {
                 case "1":
                     coffeeToBuild.addExtraIngredient(Ingredient.MILK);
                     break;
@@ -178,6 +179,8 @@ public class Controller {
                 case "13":
                     coffeeToBuild.addExtraIngredient(Ingredient.BLACK_COFFEE);
                     break;
+                case "X":
+                    return;
                 default:
                     consoleView.invalidOptionMessage();
             }
@@ -185,12 +188,12 @@ public class Controller {
         }
     }
 
-    private void getCustomerName(Coffee coffeeToBuild) {
+    private void getCustomerName() {
 
         consoleView.askForName();
-        String customerName = input.readline();
+        String ourCustomerName = input.readline();
 
-        this.customerName = customerName;
+        this.customerName = ourCustomerName;
     }
 
     private void setWhereToDrink(Order currentOrder) {
@@ -198,8 +201,9 @@ public class Controller {
         consoleView.askWhereToDrink();
         while (true) {
             String option = input.readline();
+
             //ToDo: add the option to go back
-            switch (option) {
+            switch (option.toUpperCase()) {
                 case "1":
                     currentOrder.setWhereToDrink(Order.WhereToDrink.PICK_UP);
                     return;
@@ -214,15 +218,37 @@ public class Controller {
         }
     }
 
-    private Order placeOrder(Order order) {
+    private void possibilityToCancel(Order placedOrder) {
 
-        return orderService.placeOrder(order);
+        if (cancelOrder(placedOrder) == null) {
+            this.consoleView.enjoyCoffeeMessage();
+        } else {
+            this.consoleView.orderCanceledMessage();
+        }
+    }
+
+    private Order cancelOrder(Order placedOrder) {
+
+        this.consoleView.askToCancelMessage();
+        while (true) {
+            String option = input.readline();
+            switch (option.toUpperCase()) {
+                case "X":
+                    this.orderService.cancelOrder(placedOrder.getId());
+                    return placedOrder;
+                case "C":
+                    return null;
+                default:
+                    consoleView.invalidOptionMessage();
+            }
+        }
     }
 
     private void prepareForNewOrder() {
 
         this.customerCoffeeOrder = new ArrayList<>();
         this.customerName = null;
+        this.placedOrder = null;
     }
 
     public interface IView {
@@ -240,6 +266,12 @@ public class Controller {
         void errorOrderMessage();
 
         void invalidOptionMessage();
+
+        void askToCancelMessage();
+
+        void orderCanceledMessage();
+
+        void enjoyCoffeeMessage();
 
         void printCheck(Order lastOrder, Double profit, String customerName);
     }
