@@ -16,14 +16,14 @@ public class Input {
         }
     }
 
-    public Long readLong() {
+    public int readInt() {
 
         try {
-            return scanner.nextLong();
+            return scanner.nextInt();
         } catch (Exception e) {
             System.out.println("A numeric value is expected.");
-            scanner.next();
-            return readLong();
+            scanner.nextInt();
+            return readInt();
         }
     }
 }

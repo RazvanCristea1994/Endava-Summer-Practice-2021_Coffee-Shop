@@ -32,7 +32,7 @@ public class OrderService implements IOrder {
             OrderService.id--;
             return null;
         } else {
-            return order;
+            return new Order(order);
         }
     }
 
@@ -45,12 +45,31 @@ public class OrderService implements IOrder {
         return orderList;
     }
 
+    public Order findOrder(Long id) {
+
+        Optional<Order> result = this.repository.find(id);
+        if (result.isPresent()) {
+            return new Order(result.get());
+        }
+        return null;
+    }
+
+    public Order update(Order order) {
+
+        order.setOrderDateTime(LocalDateTime.now());
+        Optional<Order> result = this.repository.update(order);
+        if (result.isPresent()) {
+            return new Order(result.get());
+        }
+        return null;
+    }
+
     public Double getTotalProfit() {
 
         Collection<Order> orderCollection = findAll();
         Double revenueTotal = orderCollection.stream().mapToDouble(Order::getTotalRevenue).sum();
         Double costTotal = orderCollection.stream()
-                .flatMap(coffee -> coffee.getOrderedCoffeeList().stream())
+                .flatMap(coffee -> coffee.getOrderCoffeeList().stream())
                 .mapToDouble(Coffee::getCost).sum();
 
         return revenueTotal - costTotal;
@@ -68,15 +87,19 @@ public class OrderService implements IOrder {
         Double costToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
-                .flatMap(coffee -> coffee.getOrderedCoffeeList().stream())
+                .flatMap(coffee -> coffee.getOrderCoffeeList().stream())
                 .mapToDouble(Coffee::getCost).sum();
 
         return revenueToday - costToday;
     }
 
-    public Order cancelOrder(Long id) {
+    public Order deleteOrder(Long id) {
 
         Optional<Order> result = repository.delete(id);
-        return result.orElse(null);
+        if (result.isPresent()) {
+            OrderService.id--;
+            return new Order(result.get());
+        }
+        return null;
     }
 }

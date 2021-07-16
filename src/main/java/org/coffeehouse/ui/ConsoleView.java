@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class ConsoleView implements Controller.IView {
 
-    public void printCoffeeOptionList() {
+    public void printCoffeeOptionListMessage() {
         System.out.println(
                 "\n" + Utils.SHOP_NAME + "\n" +
                         "1 - " + CoffeeType.ESPRESSO.getName() + "\t" + CoffeeType.ESPRESSO.getPrice() + "$\t" + CoffeeType.ESPRESSO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
@@ -21,13 +21,15 @@ public class ConsoleView implements Controller.IView {
                         "6 - Remove an added coffee\n" +
                         "---------------------\n" +
                         "7 - Place my order\n" +
+                        "---------------------\n" +
+                        "8 - Print all orders\n" +
                         "X - Exit\n"
         );
     }
 
-    public void printIngredientsOptionList() {
+    public void printIngredientsOptionListMessage() {
         System.out.println(
-                "\n" + Utils.SHOP_NAME + "\n\n" +
+                Utils.SHOP_NAME + "\n\n" +
                         "Choose our awesome extra ingredients:\n" +
                         "1  - " + Ingredient.MILK.getIngredientName() + "\t" + Ingredient.MILK.getIngredientSellingPrice() + "$\n" +
                         "2  - " + Ingredient.HONEY.getIngredientName() + "\t" + Ingredient.HONEY.getIngredientSellingPrice() + "$\n" +
@@ -47,11 +49,11 @@ public class ConsoleView implements Controller.IView {
         );
     }
 
-    public void printAskName() {
+    public void printAskNameMessage() {
         System.out.println("\nProvide a name to your order, please:\n");
     }
 
-    public void printAskWhereToDrink() {
+    public void printAskWhereToDrinkMessage() {
         System.out.println(
                 "\n" + "Choose where you would like to drink:\n" +
                         "1 - Pick-Up\n" +
@@ -64,7 +66,7 @@ public class ConsoleView implements Controller.IView {
         System.out.println("\n" + Utils.SHOP_NAME + " wishes you an incredible day!");
     }
 
-    public void printErrorOrderMessage() {
+    public void printOrderEmptyMessage() {
         System.out.println("\nPlease choose one of our amazing coffees first");
     }
 
@@ -72,21 +74,22 @@ public class ConsoleView implements Controller.IView {
         System.out.println("\nInvalid option\n");
     }
 
-    public void printInvalidId() {
+    public void printInvalidIdMessage() {
         System.out.println("\nInvalid ID\n");
     }
 
-    public void printUnknownError() {
-        System.out.println("Unknown error. Please try again.");
+    public void printMenuAfterOrderPlacedMessage() {
+        System.out.println("\nThe order has been placed.\n" +
+                "\t[C] Continue\n" +
+                "\t[E] Edit\n" +
+                "\t[X] Cancel\n");
     }
 
-    ;
-
-    public void printAskToCancelMessage() {
-        System.out.println("\nThe order has been placed. You can still cancel it [X] or continue [C]\n");
+    public void printUpdateOrderMessage() {
+        System.out.println("Edit your order:");
     }
 
-    public void printAskForCoffeeId() {
+    public void printAskForCoffeeIdMessage() {
         System.out.println("\nID: ");
     }
 
@@ -98,17 +101,19 @@ public class ConsoleView implements Controller.IView {
         System.out.println("\nEnjoy your coffee\n");
     }
 
-    public void printCheck(Order lastOrder, Double profit, String customerName) {      //ToDo some pretty format needed here
+    public void printCheckMessage(Order lastOrder, Double profit) {      //ToDo some pretty format needed here
 
-        printCheckHeader(customerName);
+        printCheckHeader(lastOrder.getOrderCoffeeList().get(0).getCustomerName());
         printOrdersAndPrices(lastOrder);
         printCheckFooter(lastOrder, profit);
     }
 
-    public void printOrderListToBuild(Order orderToBuild, String customerName) {
 
-        printCheckHeader(customerName);
+    public void printOrderListToBuildMessage(Order orderToBuild) {
+
+        printCheckHeader(orderToBuild.getOrderCoffeeList().get(0).getCustomerName());
         printOrdersAndPrices(orderToBuild);
+        printOrderToBuildFooter();
     }
 
     private void printCheckHeader(String customerName) { //ToDo: Better format here
@@ -126,10 +131,14 @@ public class ConsoleView implements Controller.IView {
         System.out.println("===========================================================\n");
     }
 
+    private void printOrderToBuildFooter() {
+        System.out.println("===========================================================\n");
+    }
+
     private void printOrdersAndPrices(Order order) {
 
-        order.getOrderedCoffeeList().forEach(coffee -> {
-                    System.out.println("#" + coffee.getId() + " - " + coffee.getCoffeeType().getName() + "\t\t\t\t\t\t" + coffee.getPrice() + "$");
+        order.getOrderCoffeeList().forEach(coffee -> {
+                    System.out.println("#" + order.getOrderCoffeeList().indexOf(coffee) + " - " + coffee.getCoffeeType().getName() + "\t\t\t\t\t\t" + coffee.getPrice() + "$");
                     coffee.getExtraIngredientsList().forEach(ingredient -> {
                         System.out.print("\t+" + ingredient.getIngredientName());
                         System.out.println("\t\t" + ingredient.getIngredientSellingPrice() + "$");

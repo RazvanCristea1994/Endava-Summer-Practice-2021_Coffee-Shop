@@ -2,18 +2,21 @@ package org.coffeehouse.service;
 
 import org.coffeehouse.model.Order;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface IOrder {
 
     Order placeOrder(Order IOrder);
 
-    Collection<Order> findAll();
+    List<Order> findAll();
+
+    Order findOrder(Long id);
+
+    Order update(Order order);
 
     Double getTotalProfit();
 
     Double getTotalProfitForToday();
 
-    Order cancelOrder(Long id);
-    //ToDo Update
+    Order deleteOrder(Long id);
 }

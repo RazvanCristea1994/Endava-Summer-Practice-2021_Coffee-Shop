@@ -6,13 +6,18 @@ import java.util.List;
 
 public class Order extends AbstractEntity<Long> {
 
-    private Double totalRevenue;
     private LocalDateTime orderDateTime;
-    private List<Coffee> orderedCoffeeList = new ArrayList<>();
+    private List<Coffee> orderCoffeeList = new ArrayList<>();
     private WhereToDrink whereToDrink;
-    private Long coffeeId = 0L;
 
     public Order() {
+    }
+
+    public Order(Order order) {
+        super.setId(order.getId());
+        order.getOrderCoffeeList().forEach(this.orderCoffeeList::add);
+        this.setOrderDateTime(order.getOrderDateTime());
+        this.setWhereToDrink(order.getWhereToDrink());
     }
 
     public enum WhereToDrink {
@@ -29,17 +34,9 @@ public class Order extends AbstractEntity<Long> {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long orderId) {
-        super.id = orderId;
-    }
-
     public Double getTotalRevenue() {
 
-        return getOrderedCoffeeList()
+        return getOrderCoffeeList()
                 .stream()
                 .mapToDouble(Coffee::getPrice)
                 .sum();
@@ -53,20 +50,12 @@ public class Order extends AbstractEntity<Long> {
         this.orderDateTime = orderDateTime;
     }
 
-    public List<Coffee> getOrderedCoffeeList() {
-        return orderedCoffeeList;
+    public List<Coffee> getOrderCoffeeList() {
+        return orderCoffeeList;
     }
 
     public void addCoffeeToOrder(Coffee coffee) {
-
-        setCoffeeIdEqualToIndex(coffee);
-        this.orderedCoffeeList.add(coffee);
-    }
-
-    private void setCoffeeIdEqualToIndex(Coffee coffee) {
-
-        Integer size = Integer.valueOf(this.orderedCoffeeList.size());
-        coffee.setId(size--);
+        this.orderCoffeeList.add(coffee);
     }
 
     public WhereToDrink getWhereToDrink() {
@@ -75,5 +64,9 @@ public class Order extends AbstractEntity<Long> {
 
     public void setWhereToDrink(WhereToDrink whereToDrink) {
         this.whereToDrink = whereToDrink;
+    }
+
+    public void setOrderCoffeeList(List<Coffee> orderCoffeeList) {
+        this.orderCoffeeList = orderCoffeeList;
     }
 }
