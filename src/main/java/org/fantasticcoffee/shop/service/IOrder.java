@@ -1,6 +1,6 @@
-package org.coffeehouse.service;
+package org.fantasticcoffee.shop.service;
 
-import org.coffeehouse.model.Order;
+import org.fantasticcoffee.shop.model.Order;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public interface IOrder {
 
     List<Order> findAll();
 
-    Order findOrder(Long id);
+    Order findOrder(Integer id);
 
     Order update(Order order);
 
@@ -18,5 +18,5 @@ public interface IOrder {
 
     Double getTotalProfitForToday();
 
-    Order deleteOrder(Long id);
+    Order deleteOrder(Integer id);
 }

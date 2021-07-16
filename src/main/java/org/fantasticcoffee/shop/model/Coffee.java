@@ -1,9 +1,9 @@
-package org.coffeehouse.model;
+package org.fantasticcoffee.shop.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Coffee extends CoffeeBase<Integer> {
+public class Coffee extends CoffeeBase {
 
     private String customerName;
     private Collection<Ingredient> extraIngredientList = new ArrayList<>();
@@ -13,7 +13,7 @@ public class Coffee extends CoffeeBase<Integer> {
 
     public Double getPrice() {
 
-        Double baseCoffeePrice = super.getCoffeeType().getPrice();
+        Double baseCoffeePrice = this.getCoffeeType().getPrice();
 
         Double extraIngredientsPrice = extraIngredientList
                 .stream()
@@ -25,7 +25,7 @@ public class Coffee extends CoffeeBase<Integer> {
 
     public Double getCost() {
 
-        Double baseCoffeeCost = super.getCoffeeType().getRecipe()
+        Double baseCoffeeCost = this.getCoffeeType().getRecipe()
                 .stream()
                 .mapToDouble(Ingredient::getIngredientCost)
                 .sum();

@@ -1,21 +1,21 @@
-package org.coffeehouse.ui;
+package org.fantasticcoffee.shop.ui;
 
-import org.coffeehouse.model.Coffee;
-import org.coffeehouse.model.CoffeeType;
-import org.coffeehouse.model.Ingredient;
-import org.coffeehouse.model.Order;
-import org.coffeehouse.repository.IRepository;
-import org.coffeehouse.repository.InMemoryIRepository;
-import org.coffeehouse.service.IOrder;
-import org.coffeehouse.service.OrderService;
-import org.coffeehouse.utils.Input;
+import org.fantasticcoffee.shop.model.Coffee;
+import org.fantasticcoffee.shop.model.CoffeeType;
+import org.fantasticcoffee.shop.model.Ingredient;
+import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.repository.IRepository;
+import org.fantasticcoffee.shop.repository.InMemoryIRepository;
+import org.fantasticcoffee.shop.service.IOrder;
+import org.fantasticcoffee.shop.service.OrderService;
+import org.fantasticcoffee.shop.utils.Input;
 
 import java.util.List;
 
 public class Controller {
 
     private IOrder orderService;
-    private IRepository<Long, Order> repository;
+    private IRepository<Order> repository;
     private Order orderToBuild = new Order();
     private String customerName;
     private IView consoleView;
@@ -29,8 +29,7 @@ public class Controller {
         this.input = new Input();
     }
 
-    //ToDo: Erase any coffee from the orderList while building it
-    public void runApp() {  //ToDo: Rethink this method
+    public void runApp() {
 
         while (true) {
             Coffee coffeeToBuild = new Coffee();
@@ -63,17 +62,25 @@ public class Controller {
                     this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
                     break;
                 case "6":
-                    removeCoffeeFromCustomerOrder();
+                    this.orderToBuild.addCoffeeToOrder(buildDefault(coffeeToBuild));
                     this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
                     break;
                 case "7":
+                    removeCoffeeFromCustomerOrder();
+                    if (!this.orderToBuild.getOrderCoffeeList().isEmpty()) {
+                        this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
+                    } else {
+                        this.consoleView.printEmptyList();
+                    }
+                    break;
+                case "8":
                     if (this.orderToBuild.getOrderCoffeeList().isEmpty()) {
                         consoleView.printOrderEmptyMessage();
                         break;
                     }
                     placeOrderOrUpdate();
                     break;
-                case "8":
+                case "9":
                     printAllOrders();
                     break;
                 case "X":
@@ -99,7 +106,8 @@ public class Controller {
         } else {
             this.placedOrder = this.orderService.update(this.orderToBuild);
         }
-        this.orderToBuild = new Order(placedOrder);
+        this.orderToBuild = new Order();
+        this.orderToBuild = this.orderToBuild.copyOrderObject(placedOrder);
     }
 
     private Coffee buildEspresso(Coffee coffeeToBuild) {
@@ -147,6 +155,52 @@ public class Controller {
         return coffeeToBuild;
     }
 
+    private Coffee buildDefault(Coffee coffeeToBuild) {
+
+        coffeeToBuild.setCoffeeType(CoffeeType.DEFAULT);
+        chooseCoffeeType(coffeeToBuild);
+        setExtraIngredients(coffeeToBuild);
+        coffeeToBuild.setCustomerName(this.customerName);
+
+        return coffeeToBuild;
+    }
+
+    private void chooseCoffeeType(Coffee coffeeToBuild) {
+
+        consoleView.printCoffeeShotsOptionListMessage();
+        while (true) {
+            int shotsNumber = 0;
+            String option = input.readline();
+
+            switch (option.toUpperCase()) {
+                case "1":
+                    shotsNumber = chooseShotsNumber();
+                    for (int i = 0; i < shotsNumber; i++) {
+                        coffeeToBuild.addExtraIngredient(Ingredient.ESPRESSO_SHOT);
+                    }
+                    return;
+                case "2":
+                    shotsNumber = chooseShotsNumber();
+                    for (int i = 0; i < shotsNumber; i++) {
+                        coffeeToBuild.addExtraIngredient(Ingredient.BLACK_COFFEE);
+                    }
+                    return;
+                case "X":
+                    return;
+                default:
+                    consoleView.printInvalidOptionMessage();
+            }
+        }
+    }
+
+    private int chooseShotsNumber() {
+
+        this.consoleView.printAskShotsNumber();
+        int shotsNumber = this.input.readInt();
+
+        return shotsNumber;
+    }
+
     private void setExtraIngredients(Coffee coffeeToBuild) {
 
         consoleView.printIngredientsOptionListMessage();
@@ -187,17 +241,12 @@ public class Controller {
                 case "11":
                     coffeeToBuild.addExtraIngredient(Ingredient.ICE_CUBES);
                     break;
-                case "12":
-                    coffeeToBuild.addExtraIngredient(Ingredient.ESPRESSO_SHOT);
-                    break;
-                case "13":
-                    coffeeToBuild.addExtraIngredient(Ingredient.BLACK_COFFEE);
-                    break;
                 case "X":
                     return;
                 default:
                     consoleView.printInvalidOptionMessage();
             }
+            consoleView.printChosenIngredientsForCurrentCoffee(coffeeToBuild);
             consoleView.printIngredientsOptionListMessage();
         }
     }
@@ -297,7 +346,13 @@ public class Controller {
 
         void printCoffeeOptionListMessage();
 
+        void printCoffeeShotsOptionListMessage();
+
+        void printAskShotsNumber();
+
         void printIngredientsOptionListMessage();
+
+        void printChosenIngredientsForCurrentCoffee(Coffee coffeeToBuild);
 
         void printAskNameMessage();
 
@@ -306,6 +361,8 @@ public class Controller {
         void printGoodByeMessage();
 
         void printOrderEmptyMessage();
+
+        void printEmptyList();
 
         void printInvalidOptionMessage();
 

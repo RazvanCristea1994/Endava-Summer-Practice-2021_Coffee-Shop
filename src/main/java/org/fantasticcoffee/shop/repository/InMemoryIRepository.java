@@ -1,6 +1,6 @@
-package org.coffeehouse.repository;
+package org.fantasticcoffee.shop.repository;
 
-import org.coffeehouse.model.AbstractEntity;
+import org.fantasticcoffee.shop.model.AbstractEntity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ArrayList;
 
-public class InMemoryIRepository<ID, T extends AbstractEntity<ID>> implements IRepository<ID, T> {
+public class InMemoryIRepository<T extends AbstractEntity> implements IRepository<T> {
 
-    private Map<ID, T> database;
+    private Map<Integer, T> database;
 
     public InMemoryIRepository() {
         this.database = new HashMap<>();
@@ -37,7 +37,7 @@ public class InMemoryIRepository<ID, T extends AbstractEntity<ID>> implements IR
     }
 
     @Override
-    public Optional<T> find(ID id) {
+    public Optional<T> find(Integer id) {
 
         if (id == null) {
             throw new IllegalArgumentException("ID cannot be null");
@@ -55,7 +55,7 @@ public class InMemoryIRepository<ID, T extends AbstractEntity<ID>> implements IR
     }
 
     @Override
-    public Optional<T> delete(ID id) {
+    public Optional<T> delete(Integer id) {
 
         if (id == null) {
             throw new IllegalArgumentException("ID cannot be null");

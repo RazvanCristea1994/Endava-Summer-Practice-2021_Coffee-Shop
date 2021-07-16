@@ -1,4 +1,4 @@
-package org.coffeehouse.utils;
+package org.fantasticcoffee.shop.utils;
 
 import java.util.Scanner;
 

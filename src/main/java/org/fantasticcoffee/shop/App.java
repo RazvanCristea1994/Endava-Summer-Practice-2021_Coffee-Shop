@@ -1,6 +1,6 @@
-package org.coffeehouse;
+package org.fantasticcoffee.shop;
 
-import org.coffeehouse.ui.Controller;
+import org.fantasticcoffee.shop.ui.Controller;
 
 public class App {
     public static void main(String[] args) {

@@ -1,10 +1,10 @@
-package org.coffeehouse.model;
+package org.fantasticcoffee.shop.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Order extends AbstractEntity<Long> {
+public class Order extends AbstractEntity {
 
     private LocalDateTime orderDateTime;
     private List<Coffee> orderCoffeeList = new ArrayList<>();
@@ -13,11 +13,13 @@ public class Order extends AbstractEntity<Long> {
     public Order() {
     }
 
-    public Order(Order order) {
-        super.setId(order.getId());
+    public Order copyOrderObject(Order order) {
+        this.setId(order.getId());
         order.getOrderCoffeeList().forEach(this.orderCoffeeList::add);
         this.setOrderDateTime(order.getOrderDateTime());
         this.setWhereToDrink(order.getWhereToDrink());
+
+        return this;
     }
 
     public enum WhereToDrink {

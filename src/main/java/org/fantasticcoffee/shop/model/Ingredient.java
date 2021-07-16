@@ -1,4 +1,4 @@
-package org.coffeehouse.model;
+package org.fantasticcoffee.shop.model;
 
 public enum Ingredient {
 

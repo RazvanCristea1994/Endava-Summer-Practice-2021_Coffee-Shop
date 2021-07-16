@@ -1,6 +1,6 @@
-package org.coffeehouse.model;
+package org.fantasticcoffee.shop.model;
 
-public abstract class CoffeeBase<ID> extends AbstractEntity<ID> {
+public abstract class CoffeeBase extends AbstractEntity {
 
     private CoffeeType coffeeType;
 

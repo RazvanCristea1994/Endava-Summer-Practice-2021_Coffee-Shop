@@ -1,4 +1,4 @@
-package org.coffeehouse.model;
+package org.fantasticcoffee.shop.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,6 +76,13 @@ public enum CoffeeType {
                     Ingredient.STEAMED_MILK));
 
             return ingredients;
+        }
+    },
+
+    DEFAULT("My Creation") {
+        @Override
+        public Collection<Ingredient> getRecipe() {
+            return new ArrayList<>();
         }
     };
 

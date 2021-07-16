@@ -1,8 +1,8 @@
-package org.coffeehouse.service;
+package org.fantasticcoffee.shop.service;
 
-import org.coffeehouse.model.Coffee;
-import org.coffeehouse.model.Order;
-import org.coffeehouse.repository.IRepository;
+import org.fantasticcoffee.shop.model.Coffee;
+import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.repository.IRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -14,11 +14,11 @@ import java.util.Optional;
 
 public class OrderService implements IOrder {
 
-    private final IRepository<Long, Order> repository;
+    private final IRepository<Order> repository;
 
-    private static Long id = -1L;
+    private static Integer id = -1;
 
-    public OrderService(IRepository<Long, Order> repository) {
+    public OrderService(IRepository<Order> repository) {
         this.repository = repository;
     }
 
@@ -32,7 +32,8 @@ public class OrderService implements IOrder {
             OrderService.id--;
             return null;
         } else {
-            return new Order(order);
+            Order copyOrder = new Order();
+            return copyOrder.copyOrderObject(order);
         }
     }
 
@@ -45,11 +46,12 @@ public class OrderService implements IOrder {
         return orderList;
     }
 
-    public Order findOrder(Long id) {
+    public Order findOrder(Integer id) {
 
         Optional<Order> result = this.repository.find(id);
         if (result.isPresent()) {
-            return new Order(result.get());
+            Order copyOrder = new Order();
+            return copyOrder.copyOrderObject(result.get());
         }
         return null;
     }
@@ -59,7 +61,8 @@ public class OrderService implements IOrder {
         order.setOrderDateTime(LocalDateTime.now());
         Optional<Order> result = this.repository.update(order);
         if (result.isPresent()) {
-            return new Order(result.get());
+            Order copyOrder = new Order();
+            return copyOrder.copyOrderObject(order);
         }
         return null;
     }
@@ -93,12 +96,13 @@ public class OrderService implements IOrder {
         return revenueToday - costToday;
     }
 
-    public Order deleteOrder(Long id) {
+    public Order deleteOrder(Integer id) {
 
         Optional<Order> result = repository.delete(id);
         if (result.isPresent()) {
             OrderService.id--;
-            return new Order(result.get());
+            Order copyOrder = new Order();
+            return copyOrder.copyOrderObject(result.get());
         }
         return null;
     }
