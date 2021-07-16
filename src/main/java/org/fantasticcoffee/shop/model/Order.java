@@ -13,13 +13,15 @@ public class Order extends AbstractEntity {
     public Order() {
     }
 
-    public Order copyOrderObject(Order order) {
-        this.setId(order.getId());
-        order.getOrderCoffeeList().forEach(this.orderCoffeeList::add);
-        this.setOrderDateTime(order.getOrderDateTime());
-        this.setWhereToDrink(order.getWhereToDrink());
+    public static Order copyOrderObject(Order order) {
 
-        return this;
+        Order copyOrder = new Order();
+        copyOrder.setId(order.getId());
+        order.getOrderCoffeeList().forEach(copyOrder.orderCoffeeList::add);
+        copyOrder.setOrderDateTime(order.getOrderDateTime());
+        copyOrder.setWhereToDrink(order.getWhereToDrink());
+
+        return copyOrder;
     }
 
     public enum WhereToDrink {

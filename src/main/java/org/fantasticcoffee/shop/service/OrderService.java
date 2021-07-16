@@ -32,8 +32,7 @@ public class OrderService implements IOrder {
             OrderService.id--;
             return null;
         } else {
-            Order copyOrder = new Order();
-            return copyOrder.copyOrderObject(order);
+            return Order.copyOrderObject(order);
         }
     }
 
@@ -50,8 +49,7 @@ public class OrderService implements IOrder {
 
         Optional<Order> result = this.repository.find(id);
         if (result.isPresent()) {
-            Order copyOrder = new Order();
-            return copyOrder.copyOrderObject(result.get());
+            return Order.copyOrderObject(result.get());
         }
         return null;
     }
@@ -61,8 +59,7 @@ public class OrderService implements IOrder {
         order.setOrderDateTime(LocalDateTime.now());
         Optional<Order> result = this.repository.update(order);
         if (result.isPresent()) {
-            Order copyOrder = new Order();
-            return copyOrder.copyOrderObject(order);
+            return Order.copyOrderObject(order);
         }
         return null;
     }
@@ -101,8 +98,7 @@ public class OrderService implements IOrder {
         Optional<Order> result = repository.delete(id);
         if (result.isPresent()) {
             OrderService.id--;
-            Order copyOrder = new Order();
-            return copyOrder.copyOrderObject(result.get());
+            return Order.copyOrderObject(result.get());
         }
         return null;
     }
