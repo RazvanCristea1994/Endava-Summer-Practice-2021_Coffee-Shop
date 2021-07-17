@@ -6,189 +6,198 @@ import org.fantasticcoffee.shop.model.Ingredient;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.repository.IRepository;
 import org.fantasticcoffee.shop.repository.InMemoryIRepository;
+import org.fantasticcoffee.shop.service.ICoffee;
 import org.fantasticcoffee.shop.service.IOrder;
-import org.fantasticcoffee.shop.service.OrderService;
+import org.fantasticcoffee.shop.service.impl.CoffeeService;
+import org.fantasticcoffee.shop.service.impl.OrderService;
 import org.fantasticcoffee.shop.utils.Input;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Controller {
 
-    private IOrder orderService;
-    private IRepository<Order> repository;
-    private Order orderToBuild = new Order();
+    private final IOrder orderService;
+    private final IRepository<Order> repository;
+    private final ICoffee coffeeService;
     private String customerName;
-    private IView consoleView;
+    private final IView consoleView;
     private final Input input;
-    private Order placedOrder;
 
     public Controller() {
         this.repository = new InMemoryIRepository<>();
-        this.orderService = new OrderService(repository);
+        this.coffeeService = new CoffeeService();
+        this.orderService = new OrderService(repository, coffeeService);
         this.consoleView = new ConsoleView();
         this.input = new Input();
     }
 
     public void runApp() {
 
+        List<Coffee> coffeeList = new ArrayList<>();
         while (true) {
-            Coffee coffeeToBuild = new Coffee();
             if (this.customerName == null) {
                 getCustomerName();
             }
 
-            consoleView.printCoffeeOptionListMessage();
+            consoleView.printMainMenu();
             String option = input.readline();
-
             switch (option.toUpperCase()) {
-                case "1":
-                    this.orderToBuild.addCoffeeToOrder(buildEspresso(coffeeToBuild));
-                    this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
-                    break;
-                case "2":
-                    this.orderToBuild.addCoffeeToOrder(buildMachiatto(coffeeToBuild));
-                    this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
-                    break;
-                case "3":
-                    this.orderToBuild.addCoffeeToOrder(buildCaffeeLate(coffeeToBuild));
-                    this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
-                    break;
-                case "4":
-                    this.orderToBuild.addCoffeeToOrder(buildCappuccino(coffeeToBuild));
-                    this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
-                    break;
-                case "5":
-                    this.orderToBuild.addCoffeeToOrder(buildCaffeeMiel(coffeeToBuild));
-                    this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
-                    break;
-                case "6":
-                    this.orderToBuild.addCoffeeToOrder(buildDefault(coffeeToBuild));
-                    this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
-                    break;
-                case "7":
-                    removeCoffeeFromCustomerOrder();
-                    if (!this.orderToBuild.getOrderCoffeeList().isEmpty()) {
-                        this.consoleView.printOrderListToBuildMessage(this.orderToBuild);
-                    } else {
-                        this.consoleView.printEmptyList();
-                    }
-                    break;
-                case "8":
-                    if (this.orderToBuild.getOrderCoffeeList().isEmpty()) {
+                case "1" -> selectCoffee(coffeeList);
+                case "2" -> removeCoffeeFromCustomerList(coffeeList);
+                case "3" -> {
+                    if (coffeeList.isEmpty()) {
                         consoleView.printOrderEmptyMessage();
                         break;
                     }
-                    placeOrderOrUpdate();
-                    break;
-                case "9":
-                    printAllOrders();
-                    break;
-                case "X":
+                    coffeeList = placeOrder(coffeeList);
+                }
+                case "4" -> printAllOrders();
+                case "5" -> updateOrder();
+                case "6" -> cancelOrder();
+                case "X" -> {
                     consoleView.printGoodByeMessage();
                     return;
-                default:
-                    consoleView.printInvalidOptionMessage();
+                }
+                default -> consoleView.printInvalidOptionMessage();
             }
-
-            manageOrderIfPlaced();
         }
     }
 
-    private void placeOrderOrUpdate() {
+    private void cancelOrder() {
 
-        setWhereToDrink(this.orderToBuild);
-        if (this.orderToBuild.getWhereToDrink() == null) {
+        this.consoleView.printAskForIdMessage();
+        Integer orderId = this.input.readInt();
+
+        this.orderService.deleteOrder(orderId);
+        this.consoleView.printOrderCanceledMessage();
+    }
+
+    private void updateOrder() {
+
+        this.consoleView.printAskForIdMessage();
+        Integer orderId = this.input.readInt();
+
+        Order order = this.orderService.findOrder(orderId);
+        if (order == null) {
+            this.consoleView.printInvalidIdMessage();
             return;
         }
+        order = this.orderService.update(updateMenu(order));
+        this.consoleView.printCheckMessage(order, this.orderService.getTotalOrderPrice(order), this.orderService.getTotalProfitForToday());
+    }
 
-        if (this.orderToBuild.getId() == null) {
-            this.placedOrder = this.orderService.placeOrder(this.orderToBuild);
-        } else {
-            this.placedOrder = this.orderService.update(this.orderToBuild);
+    private Order updateMenu(Order order) {
+
+        List<Coffee> coffeeList = order.getCoffeeList();
+        while (true) {
+            if (!order.getCoffeeList().isEmpty()) {
+                this.consoleView.printCoffeeListMessage(order.getCoffeeList());
+            }
+            consoleView.printUpdateOrderMessage();
+            String option = input.readline();
+            switch (option.toUpperCase()) {
+                case "1" -> selectCoffee(coffeeList);
+                case "2" -> removeCoffeeFromCustomerList(coffeeList);
+                case "3" -> {
+                    order.setOrderCoffeeList(coffeeList);
+                    return order;
+                }
+                default -> consoleView.printInvalidOptionMessage();
+            }
         }
-        this.orderToBuild = new Order();
-        this.orderToBuild = this.orderToBuild.copyOrderObject(placedOrder);
     }
 
-    private Coffee buildEspresso(Coffee coffeeToBuild) {
+    private List<Coffee> selectCoffee(List<Coffee> coffeeList) {
 
-        coffeeToBuild.setCoffeeType(CoffeeType.ESPRESSO);
-        setExtraIngredients(coffeeToBuild);
-        coffeeToBuild.setCustomerName(this.customerName);
+        while (true) {
+            consoleView.printCoffeeOptionListMessage(this.coffeeService.getCoffeePrice(CoffeeType.ESPRESSO),
+                    this.coffeeService.getCoffeePrice(CoffeeType.MACHIATTO),
+                    this.coffeeService.getCoffeePrice(CoffeeType.CAFFEE_LATTE),
+                    this.coffeeService.getCoffeePrice(CoffeeType.CAPPUCCINO),
+                    this.coffeeService.getCoffeePrice(CoffeeType.CAFFEE_MIEL)
+            );
 
-        return coffeeToBuild;
+            String option = input.readline();
+            switch (option.toUpperCase()) {
+                case "1" -> {
+                    coffeeList.add(new Coffee(this.customerName, CoffeeType.ESPRESSO, chooseExtraIngredients()));
+                    this.consoleView.printCoffeeListMessage(coffeeList);
+                }
+                case "2" -> {
+                    coffeeList.add(new Coffee(this.customerName, CoffeeType.MACHIATTO, chooseExtraIngredients()));
+                    this.consoleView.printCoffeeListMessage(coffeeList);
+                }
+                case "3" -> {
+                    coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_LATTE, chooseExtraIngredients()));
+                    this.consoleView.printCoffeeListMessage(coffeeList);
+                }
+                case "4" -> {
+                    coffeeList.add(new Coffee(this.customerName, CoffeeType.CAPPUCCINO, chooseExtraIngredients()));
+                    this.consoleView.printCoffeeListMessage(coffeeList);
+                }
+                case "5" -> {
+                    coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_MIEL, chooseExtraIngredients()));
+                    this.consoleView.printCoffeeListMessage(coffeeList);
+                }
+                case "6" -> {
+                    List<Ingredient> ingredientList = new ArrayList<>();
+                    ingredientList.addAll(chooseCoffeeShots());
+                    ingredientList.addAll(chooseExtraIngredients());
+                    coffeeList.add(new Coffee(this.customerName, CoffeeType.DEFAULT, ingredientList));
+                    this.consoleView.printCoffeeListMessage(coffeeList);
+                }
+                case "X" -> {
+                    return coffeeList;
+                }
+                default -> consoleView.printInvalidOptionMessage();
+            }
+        }
     }
 
-    private Coffee buildMachiatto(Coffee coffeeToBuild) {
+    private List<Coffee> placeOrder(List<Coffee> coffeeList) {
 
-        coffeeToBuild.setCoffeeType(CoffeeType.MACHIATTO);
-        setExtraIngredients(coffeeToBuild);
-        coffeeToBuild.setCustomerName(this.customerName);
+        Order.WhereToDrink whereToDrink = setWhereToDrink();
 
-        return coffeeToBuild;
+        Order order = this.orderService.placeOrder(new Order(LocalDateTime.now(), coffeeList, whereToDrink));
+        if (order == null) {
+            this.consoleView.unknownError();
+            return coffeeList;
+        }
+        this.consoleView.printCheckMessage(order, this.orderService.getTotalOrderPrice(order), this.orderService.getTotalProfitForToday());
+        this.consoleView.printEnjoyCoffeeMessage();
+        this.customerName = null;
+        return new ArrayList<>();
     }
 
-    private Coffee buildCaffeeLate(Coffee coffeeToBuild) {
+    private List<Ingredient> chooseCoffeeShots() {
 
-        coffeeToBuild.setCoffeeType(CoffeeType.CAFFEE_LATTE);
-        setExtraIngredients(coffeeToBuild);
-        coffeeToBuild.setCustomerName(this.customerName);
-
-        return coffeeToBuild;
-    }
-
-    private Coffee buildCappuccino(Coffee coffeeToBuild) {
-
-        coffeeToBuild.setCoffeeType(CoffeeType.CAPPUCCINO);
-        setExtraIngredients(coffeeToBuild);
-        coffeeToBuild.setCustomerName(this.customerName);
-
-        return coffeeToBuild;
-    }
-
-    private Coffee buildCaffeeMiel(Coffee coffeeToBuild) {
-
-        coffeeToBuild.setCoffeeType(CoffeeType.CAFFEE_MIEL);
-        setExtraIngredients(coffeeToBuild);
-        coffeeToBuild.setCustomerName(this.customerName);
-
-        return coffeeToBuild;
-    }
-
-    private Coffee buildDefault(Coffee coffeeToBuild) {
-
-        coffeeToBuild.setCoffeeType(CoffeeType.DEFAULT);
-        chooseCoffeeType(coffeeToBuild);
-        setExtraIngredients(coffeeToBuild);
-        coffeeToBuild.setCustomerName(this.customerName);
-
-        return coffeeToBuild;
-    }
-
-    private void chooseCoffeeType(Coffee coffeeToBuild) {
-
+        List<Ingredient> ingredientList = new ArrayList<>();
         consoleView.printCoffeeShotsOptionListMessage();
         while (true) {
             int shotsNumber = 0;
             String option = input.readline();
 
             switch (option.toUpperCase()) {
-                case "1":
+                case "1" -> {
                     shotsNumber = chooseShotsNumber();
                     for (int i = 0; i < shotsNumber; i++) {
-                        coffeeToBuild.addExtraIngredient(Ingredient.ESPRESSO_SHOT);
+                        ingredientList.add(Ingredient.ESPRESSO_SHOT);
                     }
-                    return;
-                case "2":
+                    return ingredientList;
+                }
+                case "2" -> {
                     shotsNumber = chooseShotsNumber();
                     for (int i = 0; i < shotsNumber; i++) {
-                        coffeeToBuild.addExtraIngredient(Ingredient.BLACK_COFFEE);
+                        ingredientList.add(Ingredient.BLACK_COFFEE);
                     }
-                    return;
-                case "X":
-                    return;
-                default:
-                    consoleView.printInvalidOptionMessage();
+                    return ingredientList;
+                }
+                case "X" -> {
+                    return new ArrayList<>();
+                }
+                default -> consoleView.printInvalidOptionMessage();
             }
         }
     }
@@ -201,52 +210,32 @@ public class Controller {
         return shotsNumber;
     }
 
-    private void setExtraIngredients(Coffee coffeeToBuild) {
+    private List<Ingredient> chooseExtraIngredients() {
 
         consoleView.printIngredientsOptionListMessage();
+        List<Ingredient> ingredientList = new ArrayList<>();
+
         while (true) {
             String option = input.readline();
 
             switch (option.toUpperCase()) {
-                case "1":
-                    coffeeToBuild.addExtraIngredient(Ingredient.MILK);
-                    break;
-                case "2":
-                    coffeeToBuild.addExtraIngredient(Ingredient.HONEY);
-                    break;
-                case "3":
-                    coffeeToBuild.addExtraIngredient(Ingredient.SYRUP);
-                    break;
-                case "4":
-                    coffeeToBuild.addExtraIngredient(Ingredient.STEAMED_MILK);
-                    break;
-                case "5":
-                    coffeeToBuild.addExtraIngredient(Ingredient.MILK_FOAM);
-                    break;
-                case "6":
-                    coffeeToBuild.addExtraIngredient(Ingredient.SWEETENED_CONDENSED_MILK);
-                    break;
-                case "7":
-                    coffeeToBuild.addExtraIngredient(Ingredient.ICE_CREAM);
-                    break;
-                case "8":
-                    coffeeToBuild.addExtraIngredient(Ingredient.WHIPPED_CREAM);
-                    break;
-                case "9":
-                    coffeeToBuild.addExtraIngredient(Ingredient.CINNAMON);
-                    break;
-                case "10":
-                    coffeeToBuild.addExtraIngredient(Ingredient.HOT_WATER);
-                    break;
-                case "11":
-                    coffeeToBuild.addExtraIngredient(Ingredient.ICE_CUBES);
-                    break;
-                case "X":
-                    return;
-                default:
-                    consoleView.printInvalidOptionMessage();
+                case "1" -> ingredientList.add(Ingredient.MILK);
+                case "2" -> ingredientList.add(Ingredient.HONEY);
+                case "3" -> ingredientList.add(Ingredient.SYRUP);
+                case "4" -> ingredientList.add(Ingredient.STEAMED_MILK);
+                case "5" -> ingredientList.add(Ingredient.MILK_FOAM);
+                case "6" -> ingredientList.add(Ingredient.SWEETENED_CONDENSED_MILK);
+                case "7" -> ingredientList.add(Ingredient.ICE_CREAM);
+                case "8" -> ingredientList.add(Ingredient.WHIPPED_CREAM);
+                case "9" -> ingredientList.add(Ingredient.CINNAMON);
+                case "10" -> ingredientList.add(Ingredient.HOT_WATER);
+                case "11" -> ingredientList.add(Ingredient.ICE_CUBES);
+                case "X" -> {
+                    return ingredientList;
+                }
+                default -> consoleView.printInvalidOptionMessage();
             }
-            consoleView.printChosenIngredientsForCurrentCoffee(coffeeToBuild);
+            consoleView.printChosenIngredientsForCurrentCoffee(ingredientList);
             consoleView.printIngredientsOptionListMessage();
         }
     }
@@ -259,92 +248,69 @@ public class Controller {
         this.customerName = ourCustomerName;
     }
 
-    private void removeCoffeeFromCustomerOrder() {
+    private List<Coffee> removeCoffeeFromCustomerList(List<Coffee> coffeeList) {
 
-        consoleView.printAskForCoffeeIdMessage();
+        if (!coffeeList.isEmpty()) {
+            this.consoleView.printCoffeeListMessage(coffeeList);
+        } else {
+            this.consoleView.printEmptyList();
+            return coffeeList;
+        }
+        consoleView.printAskForIdMessage();
         int coffeeIndex = input.readInt();
         try {
-            Coffee coffee = this.orderToBuild.getOrderCoffeeList().get(coffeeIndex);
-            this.orderToBuild.getOrderCoffeeList().remove(coffee);
+            Coffee coffee = coffeeList.get(coffeeIndex);
+            coffeeList.remove(coffee);
         } catch (IndexOutOfBoundsException e) {
             this.consoleView.printInvalidIdMessage();
         }
+
+        if (!coffeeList.isEmpty()) {
+            this.consoleView.printCoffeeListMessage(coffeeList);
+        } else {
+            this.consoleView.printEmptyList();
+        }
+
+        return coffeeList;
     }
 
-    private void setWhereToDrink(Order currentOrder) {
+    private Order.WhereToDrink setWhereToDrink() {
 
         consoleView.printAskWhereToDrinkMessage();
         while (true) {
             String option = input.readline();
 
             switch (option.toUpperCase()) {
-                case "1":
-                    currentOrder.setWhereToDrink(Order.WhereToDrink.PICK_UP);
-                    return;
-                case "2":
-                    currentOrder.setWhereToDrink(Order.WhereToDrink.TO_GO);
-                    return;
-                case "X":
-                    return;
-                default:
-                    consoleView.printInvalidOptionMessage();
-            }
-        }
-    }
-
-    private String continueCancelOrEditOrder(Order placedOrder) {
-
-        this.consoleView.printMenuAfterOrderPlacedMessage();
-        while (true) {
-            String option = input.readline();
-            switch (option.toUpperCase()) {
-                case "C":
-                    this.consoleView.printEnjoyCoffeeMessage();
-                    return "C";
-                case "E":
-                    this.consoleView.printUpdateOrderMessage();
-                    return "E";
-                case "X":
-                    this.orderService.deleteOrder(placedOrder.getId());
-                    this.consoleView.printOrderCanceledMessage();
-                    return "X";
-                default:
-                    consoleView.printInvalidOptionMessage();
-            }
-        }
-    }
-
-    private void manageOrderIfPlaced() {
-
-        if (placedOrder != null) {
-            consoleView.printCheckMessage(placedOrder, orderService.getTotalProfitForToday());
-
-            String option = continueCancelOrEditOrder(placedOrder);
-            if (option.equalsIgnoreCase("C") || option.equalsIgnoreCase("X")) {
-                prepareForNewOrder();
-                this.orderToBuild = new Order();
-            } else {
-                orderToBuild = orderService.findOrder(orderToBuild.getId());
-                placedOrder = null;
+                case "1" -> {
+                    return Order.WhereToDrink.PICK_UP;
+                }
+                case "2" -> {
+                    return Order.WhereToDrink.TO_GO;
+                }
+                default -> consoleView.printInvalidOptionMessage();
             }
         }
     }
 
     private void printAllOrders() {
+
         List<Order> orderList = this.orderService.findAll();
-        orderList.forEach(o -> this.consoleView.printOrderListToBuildMessage(o));
+        if (orderList.isEmpty()) {
+            this.consoleView.printEmptyList();
+        }
+        orderList.forEach(this.consoleView::printAllOrders);
     }
 
-    private void prepareForNewOrder() {
-
-        this.orderToBuild = new Order();
-        this.customerName = null;
-        this.placedOrder = null;
-    }
 
     public interface IView {
 
-        void printCoffeeOptionListMessage();
+        void printMainMenu();
+
+        void printCoffeeOptionListMessage(Double espressoPrice,
+                                          Double machiattoPrice,
+                                          Double caffeeLatePrice,
+                                          Double cappuccinoPrice,
+                                          Double caffeeMielPrice);
 
         void printCoffeeShotsOptionListMessage();
 
@@ -352,7 +318,7 @@ public class Controller {
 
         void printIngredientsOptionListMessage();
 
-        void printChosenIngredientsForCurrentCoffee(Coffee coffeeToBuild);
+        void printChosenIngredientsForCurrentCoffee(List<Ingredient> ingredientList);
 
         void printAskNameMessage();
 
@@ -368,18 +334,20 @@ public class Controller {
 
         void printInvalidIdMessage();
 
-        void printMenuAfterOrderPlacedMessage();
-
         void printUpdateOrderMessage();
 
-        void printAskForCoffeeIdMessage();
+        void printAskForIdMessage();
 
         void printOrderCanceledMessage();
 
         void printEnjoyCoffeeMessage();
 
-        void printCheckMessage(Order placedOrder, Double profit);
+        void printCheckMessage(Order placedOrder, Double priceOrder, Double profitToday);
 
-        void printOrderListToBuildMessage(Order orderToBuild);
+        void printCoffeeListMessage(List<Coffee> coffeeList);
+
+        void printAllOrders(Order order);
+
+        void unknownError();
     }
 }

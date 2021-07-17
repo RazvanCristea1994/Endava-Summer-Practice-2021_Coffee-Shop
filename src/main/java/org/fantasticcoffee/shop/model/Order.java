@@ -13,11 +13,17 @@ public class Order extends AbstractEntity {
     public Order() {
     }
 
-    public static Order copyOrderObject(Order order) {
+    public Order(LocalDateTime orderDateTime, List<Coffee> orderCoffeeList, WhereToDrink whereToDrink) {
+        this.orderDateTime = orderDateTime;
+        this.orderCoffeeList = orderCoffeeList;
+        this.whereToDrink = whereToDrink;
+    }
+
+    public static Order copyOrderObject(Order order) { //ToDo: read about clone() method
 
         Order copyOrder = new Order();
         copyOrder.setId(order.getId());
-        order.getOrderCoffeeList().forEach(copyOrder.orderCoffeeList::add);
+        order.getCoffeeList().forEach(copyOrder.orderCoffeeList::add);
         copyOrder.setOrderDateTime(order.getOrderDateTime());
         copyOrder.setWhereToDrink(order.getWhereToDrink());
 
@@ -38,14 +44,6 @@ public class Order extends AbstractEntity {
         }
     }
 
-    public Double getTotalRevenue() {
-
-        return getOrderCoffeeList()
-                .stream()
-                .mapToDouble(Coffee::getPrice)
-                .sum();
-    }
-
     public LocalDateTime getOrderDateTime() {
         return orderDateTime;
     }
@@ -54,12 +52,8 @@ public class Order extends AbstractEntity {
         this.orderDateTime = orderDateTime;
     }
 
-    public List<Coffee> getOrderCoffeeList() {
+    public List<Coffee> getCoffeeList() {
         return orderCoffeeList;
-    }
-
-    public void addCoffeeToOrder(Coffee coffee) {
-        this.orderCoffeeList.add(coffee);
     }
 
     public WhereToDrink getWhereToDrink() {

@@ -16,6 +16,8 @@ public interface IOrder {
 
     Double getTotalProfit();
 
+    Double getTotalOrderPrice(Order order);
+
     Double getTotalProfitForToday();
 
     Order deleteOrder(Integer id);

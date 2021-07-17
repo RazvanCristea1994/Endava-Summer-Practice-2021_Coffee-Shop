@@ -16,13 +16,13 @@ public class Input {
         }
     }
 
-    public int readInt() {
+    public Integer readInt() {
 
         try {
             return scanner.nextInt();
         } catch (Exception e) {
             System.out.println("A numeric value is expected.");
-            scanner.nextInt();
+            scanner.next();
             return readInt();
         }
     }

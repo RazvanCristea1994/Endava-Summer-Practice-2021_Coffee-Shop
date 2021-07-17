@@ -90,10 +90,6 @@ public enum CoffeeType {
 
     public abstract Collection<Ingredient> getRecipe();
 
-    public Double getPrice() {
-        return getRecipe().stream().mapToDouble(Ingredient::getIngredientSellingPrice).sum();
-    }
-
     CoffeeType(String name) {
         this.name = name;
     }

@@ -1,8 +1,9 @@
-package org.fantasticcoffee.shop.service;
+package org.fantasticcoffee.shop.service.impl;
 
-import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.repository.IRepository;
+import org.fantasticcoffee.shop.service.ICoffee;
+import org.fantasticcoffee.shop.service.IOrder;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,11 +16,13 @@ import java.util.Optional;
 public class OrderService implements IOrder {
 
     private final IRepository<Order> repository;
+    private ICoffee coffeeService;
 
     private static Integer id = -1;
 
-    public OrderService(IRepository<Order> repository) {
+    public OrderService(IRepository<Order> repository, ICoffee coffeeService) {
         this.repository = repository;
+        this.coffeeService = coffeeService;
     }
 
     public Order placeOrder(Order order) {
@@ -67,12 +70,21 @@ public class OrderService implements IOrder {
     public Double getTotalProfit() {
 
         Collection<Order> orderCollection = findAll();
-        Double revenueTotal = orderCollection.stream().mapToDouble(Order::getTotalRevenue).sum();
+        Double revenueTotal = orderCollection.stream()
+                .mapToDouble(order -> order.getCoffeeList().stream()
+                        .mapToDouble(coffee ->
+                                this.coffeeService.getCoffeePrice(coffee)).sum()).sum();
+
         Double costTotal = orderCollection.stream()
-                .flatMap(coffee -> coffee.getOrderCoffeeList().stream())
-                .mapToDouble(Coffee::getCost).sum();
+                .mapToDouble(order -> order.getCoffeeList().stream()
+                        .mapToDouble(coffee ->
+                                this.coffeeService.getCoffeeCost(coffee)).sum()).sum();
 
         return revenueTotal - costTotal;
+    }
+
+    public Double getTotalOrderPrice(Order order) {
+        return order.getCoffeeList().stream().mapToDouble(coffee -> this.coffeeService.getCoffeePrice(coffee)).sum();
     }
 
     public Double getTotalProfitForToday() {
@@ -82,13 +94,16 @@ public class OrderService implements IOrder {
         Double revenueToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
-                .mapToDouble(Order::getTotalRevenue).sum();
+                .mapToDouble(order -> order.getCoffeeList().stream()
+                        .mapToDouble(coffee ->
+                                this.coffeeService.getCoffeePrice(coffee)).sum()).sum();
 
         Double costToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
-                .flatMap(coffee -> coffee.getOrderCoffeeList().stream())
-                .mapToDouble(Coffee::getCost).sum();
+                .mapToDouble(order -> order.getCoffeeList().stream()
+                        .mapToDouble(coffee ->
+                                this.coffeeService.getCoffeeCost(coffee)).sum()).sum();
 
         return revenueToday - costToday;
     }

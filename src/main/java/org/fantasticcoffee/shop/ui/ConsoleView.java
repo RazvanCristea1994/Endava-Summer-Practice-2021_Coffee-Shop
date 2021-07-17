@@ -6,87 +6,102 @@ import org.fantasticcoffee.shop.model.Ingredient;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.utils.Utils;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ConsoleView implements Controller.IView {
     //ToDo pretty format needed in this class - printf stuff
-    public void printCoffeeOptionListMessage() {
-        System.out.println(
-                "\n" + Utils.SHOP_NAME + "\n" +
-                        "1 - " + CoffeeType.ESPRESSO.getName() + "\t\t" + CoffeeType.ESPRESSO.getPrice() + "$\t" + CoffeeType.ESPRESSO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
-                        "2 - " + CoffeeType.MACHIATTO.getName() + "\t\t" + CoffeeType.MACHIATTO.getPrice() + "$\t" + CoffeeType.MACHIATTO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
-                        "3 - " + CoffeeType.CAFFEE_LATTE.getName() + "\t" + CoffeeType.CAFFEE_LATTE.getPrice() + "$\t" + CoffeeType.CAFFEE_LATTE.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
-                        "4 - " + CoffeeType.CAPPUCCINO.getName() + "\t\t" + CoffeeType.CAPPUCCINO.getPrice() + "$\t" + CoffeeType.CAPPUCCINO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
-                        "5 - " + CoffeeType.CAFFEE_MIEL.getName() + "\t\t" + CoffeeType.CAFFEE_MIEL.getPrice() + "$\t" + CoffeeType.CAFFEE_MIEL.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
-                        "6 - Be creative. Build your own Fantastic Coffee\n" +
-                        "---------------------\n" +
-                        "7 - Remove an added coffee\n" +
-                        "---------------------\n" +
-                        "8 - Place my order\n" +
-                        "---------------------\n" +
-                        "9 - Print all orders\n" +
-                        "X - Exit\n"
+
+    public void printMainMenu() {
+        System.out.println("\n" + Utils.SHOP_NAME + "\n" +
+                "1 - Select a coffee\n" +
+                "2 - Remove a coffee\n" +
+                "3 - Place Order\n" +
+                "4 - Print all orders\n" +
+                "5 - Update order\n" +
+                "6 - Cancel order\n");
+    }
+
+    public void printUpdateOrderMessage() {
+        System.out.println("Edit your order:\n" +
+                "1 - Select a coffee\n" +
+                "2 - Remove a coffee\n" +
+                "3 - Place Order\n");
+    }
+
+    public void printCoffeeOptionListMessage(Double espressoPrice,
+                                             Double machiattoPrice,
+                                             Double caffeeLatePrice,
+                                             Double cappuccinoPrice,
+                                             Double caffeeMielPrice) {
+        System.out.println("\n" + Utils.SHOP_NAME + "\n" +
+                "1 - " + CoffeeType.ESPRESSO.getName() + "\t\t" + espressoPrice + "$\t" + CoffeeType.ESPRESSO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "2 - " + CoffeeType.MACHIATTO.getName() + "\t\t" + machiattoPrice + "$\t" + CoffeeType.MACHIATTO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "3 - " + CoffeeType.CAFFEE_LATTE.getName() + "\t" + caffeeLatePrice + "$\t" + CoffeeType.CAFFEE_LATTE.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "4 - " + CoffeeType.CAPPUCCINO.getName() + "\t\t" + cappuccinoPrice + "$\t" + CoffeeType.CAPPUCCINO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "5 - " + CoffeeType.CAFFEE_MIEL.getName() + "\t\t" + caffeeMielPrice + "$\t" + CoffeeType.CAFFEE_MIEL.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "6 - Be creative. Build your own Fantastic Coffee\n" +
+                "---------------------\n" +
+                "X - Exit\n"
         );
     }
 
     public void printCoffeeShotsOptionListMessage() {
 
-        System.out.println(
-                "\n" + Utils.SHOP_NAME + "\n" +
-                        "1 - " + Ingredient.ESPRESSO_SHOT.getIngredientName() + "\t" + Ingredient.ESPRESSO_SHOT.getIngredientSellingPrice() + "$\n" +
-                        "2 - " + Ingredient.BLACK_COFFEE.getIngredientName() + "\t" + Ingredient.BLACK_COFFEE.getIngredientSellingPrice() + "$\n"
+        System.out.println("\n" + Utils.SHOP_NAME + "\n" +
+                "1 - " + Ingredient.ESPRESSO_SHOT.getIngredientName() + "\t" + Ingredient.ESPRESSO_SHOT.getIngredientSellingPrice() + "$\n" +
+                "2 - " + Ingredient.BLACK_COFFEE.getIngredientName() + "\t" + Ingredient.BLACK_COFFEE.getIngredientSellingPrice() + "$\n"
         );
-    }
-
-    public void printAskShotsNumber() {
-        System.out.println("\nHow many shots would you like?\n");
-    }
-
-    public void printEmptyList() {
-        System.out.println("\nYour order list is empty now.\n");
     }
 
     public void printIngredientsOptionListMessage() {
-        System.out.println(
-                Utils.SHOP_NAME + "\n\n" +
-                        "Choose our awesome extra ingredients:\n" +
-                        "1  - " + Ingredient.MILK.getIngredientName() + "\t" + Ingredient.MILK.getIngredientSellingPrice() + "$\n" +
-                        "2  - " + Ingredient.HONEY.getIngredientName() + "\t" + Ingredient.HONEY.getIngredientSellingPrice() + "$\n" +
-                        "3  - " + Ingredient.SYRUP.getIngredientName() + "\t" + Ingredient.SYRUP.getIngredientSellingPrice() + "$\n" +
-                        "4  - " + Ingredient.STEAMED_MILK.getIngredientName() + "\t" + Ingredient.STEAMED_MILK.getIngredientSellingPrice() + "\n" +
-                        "5  - " + Ingredient.MILK_FOAM.getIngredientName() + "\t" + Ingredient.MILK_FOAM.getIngredientSellingPrice() + "$\n" +
-                        "6  - " + Ingredient.SWEETENED_CONDENSED_MILK.getIngredientName() + "\t" + Ingredient.SWEETENED_CONDENSED_MILK.getIngredientSellingPrice() + "$\n" +
-                        "7  - " + Ingredient.ICE_CREAM.getIngredientName() + "\t" + Ingredient.ICE_CREAM.getIngredientSellingPrice() + "$\n" +
-                        "8  - " + Ingredient.WHIPPED_CREAM.getIngredientName() + "\t" + Ingredient.WHIPPED_CREAM.getIngredientSellingPrice() + "$\n" +
-                        "9  - " + Ingredient.CINNAMON.getIngredientName() + "\t" + Ingredient.CINNAMON.getIngredientSellingPrice() + "$\n" +
-                        "10 - " + Ingredient.HOT_WATER.getIngredientName() + "\t" + Ingredient.HOT_WATER.getIngredientSellingPrice() + "$\n" +
-                        "11 - " + Ingredient.ICE_CUBES.getIngredientName() + "\t" + Ingredient.ICE_CUBES.getIngredientSellingPrice() + "$\n" +
-                        "---------------------------------------\n" +
-                        "X  - No, thanks"
+        System.out.println(Utils.SHOP_NAME + "\n\n" +
+                "Choose our awesome extra ingredients:\n" +
+                "1  - " + Ingredient.MILK.getIngredientName() + "\t" + Ingredient.MILK.getIngredientSellingPrice() + "$\n" +
+                "2  - " + Ingredient.HONEY.getIngredientName() + "\t" + Ingredient.HONEY.getIngredientSellingPrice() + "$\n" +
+                "3  - " + Ingredient.SYRUP.getIngredientName() + "\t" + Ingredient.SYRUP.getIngredientSellingPrice() + "$\n" +
+                "4  - " + Ingredient.STEAMED_MILK.getIngredientName() + "\t" + Ingredient.STEAMED_MILK.getIngredientSellingPrice() + "\n" +
+                "5  - " + Ingredient.MILK_FOAM.getIngredientName() + "\t" + Ingredient.MILK_FOAM.getIngredientSellingPrice() + "$\n" +
+                "6  - " + Ingredient.SWEETENED_CONDENSED_MILK.getIngredientName() + "\t" + Ingredient.SWEETENED_CONDENSED_MILK.getIngredientSellingPrice() + "$\n" +
+                "7  - " + Ingredient.ICE_CREAM.getIngredientName() + "\t" + Ingredient.ICE_CREAM.getIngredientSellingPrice() + "$\n" +
+                "8  - " + Ingredient.WHIPPED_CREAM.getIngredientName() + "\t" + Ingredient.WHIPPED_CREAM.getIngredientSellingPrice() + "$\n" +
+                "9  - " + Ingredient.CINNAMON.getIngredientName() + "\t" + Ingredient.CINNAMON.getIngredientSellingPrice() + "$\n" +
+                "10 - " + Ingredient.HOT_WATER.getIngredientName() + "\t" + Ingredient.HOT_WATER.getIngredientSellingPrice() + "$\n" +
+                "11 - " + Ingredient.ICE_CUBES.getIngredientName() + "\t" + Ingredient.ICE_CUBES.getIngredientSellingPrice() + "$\n" +
+                "---------------------------------------\n" +
+                "X  - No, thanks"
         );
     }
 
-    public void printChosenIngredientsForCurrentCoffee(Coffee coffeeToBuild) {
+    public void printChosenIngredientsForCurrentCoffee(List<Ingredient> ingredientList) {
 
-        printOrderToBuildClosingLine();
-        System.out.println(coffeeToBuild.getCoffeeType().getName() + " " + coffeeToBuild.getCoffeeType().getPrice());
-        coffeeToBuild.getExtraIngredientsList().forEach(ingredient ->
+        printClosingLine();
+        ingredientList.forEach(ingredient ->
                 System.out.print("\t+" + ingredient.getIngredientName() + "\t" + ingredient.getIngredientSellingPrice() + "$\n"));
-        System.out.println("Total: " + coffeeToBuild.getPrice() + "$");
-        printOrderToBuildClosingLine();
+        printClosingLine();
     }
 
     public void printAskNameMessage() {
         System.out.println("\nWelcome! Provide a name to your order, please:\n");
     }
 
+    public void printAskShotsNumber() {
+        System.out.println("\nHow many shots would you like?\n");
+    }
+
     public void printAskWhereToDrinkMessage() {
-        System.out.println(
-                "\n" + "Choose where you would like to drink:\n" +
-                        "1 - Pick-Up\n" +
-                        "2 - To-Go\n" +
-                        "----------------------\n" +
-                        "X - Go back and order more coffee\n");
+        System.out.println("\n" + "Choose where you would like to drink:\n" +
+                "1 - Pick-Up\n" +
+                "2 - To-Go\n"
+        );
+    }
+
+    public void printAskForIdMessage() {
+        System.out.println("\nID: ");
+    }
+
+    public void unknownError() {
+        System.out.println("Unknown Error");
     }
 
     public void printGoodByeMessage() {
@@ -105,73 +120,82 @@ public class ConsoleView implements Controller.IView {
         System.out.println("\nInvalid ID\n");
     }
 
-    public void printMenuAfterOrderPlacedMessage() {
-        System.out.println("\nThe order has been placed.\n" +
-                "\t[C] Continue\n" +
-                "\t[E] Edit\n" +
-                "\t[X] Cancel\n");
-    }
-
-    public void printUpdateOrderMessage() {
-        System.out.println("Edit your order:");
-    }
-
-    public void printAskForCoffeeIdMessage() {
-        System.out.println("\nID: ");
+    public void printEmptyList() {
+        System.out.println("\nYour order list is empty now.\n");
     }
 
     public void printOrderCanceledMessage() {
-        System.out.println("\nYour order has been canceled\n");
+        System.out.println("\nIf present, your order has been canceled\n");
     }
 
     public void printEnjoyCoffeeMessage() {
         System.out.println("\nEnjoy your coffee\n");
     }
 
-    public void printCheckMessage(Order lastOrder, Double profit) {
+    public void printCheckMessage(Order order, Double priceOrder, Double profitToday) {
 
-        printCheckHeader(lastOrder.getOrderCoffeeList().get(0).getCustomerName());
-        printOrdersAndPrices(lastOrder);
-        printCheckFooter(lastOrder, profit);
+        printHeaderOnCheck(order.getCoffeeList().get(0).getCustomerName());
+        printIdOnCheck(order.getId());
+        printItemsOnCheck(order.getCoffeeList());
+        printTotalPriceOnCheck(priceOrder);
+        printFooterOnCheck(order, profitToday);
     }
 
+    public void printCoffeeListMessage(List<Coffee> coffeeList) {
 
-    public void printOrderListToBuildMessage(Order orderToBuild) {
-
-        printCheckHeader(orderToBuild.getOrderCoffeeList().get(0).getCustomerName());
-        printOrdersAndPrices(orderToBuild);
-        printOrderToBuildClosingLine();
+        printHeaderOnCheck(coffeeList.get(0).getCustomerName());
+        printItemsOnCheck(coffeeList);
+        printClosingLine();
     }
 
-    private void printCheckHeader(String customerName) {
+    public void printAllOrders(Order order) {
 
-        printOrderToBuildClosingLine();
-        System.out.println("\t\t\t\t\t" + Utils.SHOP_NAME);
-        printOrderToBuildClosingLine();
-        System.out.println(customerName.toUpperCase() + "'s Coffee Type" + "\t\t\t\t\t\t" + "Price");
+        printHeaderOnCheck(order.getCoffeeList().get(0).getCustomerName());
+        printIdOnCheck(order.getId());
+        printItemsOnCheck(order.getCoffeeList());
+        printClosingLine();
     }
 
-    private void printCheckFooter(Order order, Double profit) {
-        printOrderToBuildClosingLine();
-        System.out.println(order.getWhereToDrink().getName().toUpperCase());
-        System.out.println("Today profit: " + profit + "$ \t\t\t" + order.getOrderDateTime().format(Utils.FORMATTER));
-        printOrderToBuildClosingLine();
-    }
+    public void printItemsOnCheck(List<Coffee> coffeeList) {
 
-    private void printOrderToBuildClosingLine() {
-        System.out.println("===========================================================\n");
-    }
-
-    private void printOrdersAndPrices(Order order) {
-
-        order.getOrderCoffeeList().forEach(coffee -> {
-                    System.out.println("#" + order.getOrderCoffeeList().indexOf(coffee) + " - " + coffee.getCoffeeType().getName() + "\t\t\t\t\t\t" + coffee.getCoffeeType().getPrice() + "$");
+        coffeeList.forEach(coffee -> {
+                    System.out.println("#" + coffeeList.indexOf(coffee) + " - " + coffee.getCoffeeType().getName());
+                    coffee.getCoffeeType().getRecipe().forEach(ingredient -> {
+                        System.out.print("\t*" + ingredient.getIngredientName());
+                        System.out.println("\t\t" + ingredient.getIngredientSellingPrice() + "$");
+                    });
                     coffee.getExtraIngredientsList().forEach(ingredient -> {
                         System.out.print("\t+" + ingredient.getIngredientName());
                         System.out.println("\t\t" + ingredient.getIngredientSellingPrice() + "$");
                     });
                 }
         );
-        System.out.printf("%50s%5.2f$%n", "Total:", order.getTotalRevenue());
+    }
+
+    private void printHeaderOnCheck(String customerName) {
+
+        printClosingLine();
+        System.out.println("\t\t\t\t\t" + Utils.SHOP_NAME);
+        printClosingLine();
+        System.out.println(customerName.toUpperCase() + "'s Coffee Type");
+    }
+
+    private void printFooterOnCheck(Order order, Double profit) {
+        printClosingLine();
+        System.out.println(order.getWhereToDrink().getName().toUpperCase());
+        System.out.println("Today profit: " + profit + "$ \t\t\t" + order.getOrderDateTime().format(Utils.FORMATTER));
+        printClosingLine();
+    }
+
+    private void printTotalPriceOnCheck(Double profit) {
+        System.out.printf("%50s%5.2f$%n", "Total:", profit);
+    }
+
+    private void printIdOnCheck(Integer id) {
+        System.out.println("Order ID: " + id);
+    }
+
+    private void printClosingLine() {
+        System.out.println("===========================================================\n");
     }
 }
