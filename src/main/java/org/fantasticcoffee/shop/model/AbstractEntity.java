@@ -1,6 +1,6 @@
 package org.fantasticcoffee.shop.model;
 
-public class AbstractEntity {
+public abstract class AbstractEntity {
 
     protected Integer id;
 

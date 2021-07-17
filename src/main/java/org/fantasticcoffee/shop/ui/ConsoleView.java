@@ -73,6 +73,13 @@ public class ConsoleView implements Controller.IView {
         );
     }
 
+    public void printAskWhereToDrinkMessage() {
+        System.out.println("\n" + "Choose where you would like to drink:\n" +
+                "1 - Pick-Up\n" +
+                "2 - To-Go\n"
+        );
+    }
+
     public void printChosenIngredientsForCurrentCoffee(List<Ingredient> ingredientList) {
 
         printClosingLine();
@@ -89,19 +96,8 @@ public class ConsoleView implements Controller.IView {
         System.out.println("\nHow many shots would you like?\n");
     }
 
-    public void printAskWhereToDrinkMessage() {
-        System.out.println("\n" + "Choose where you would like to drink:\n" +
-                "1 - Pick-Up\n" +
-                "2 - To-Go\n"
-        );
-    }
-
     public void printAskForIdMessage() {
         System.out.println("\nID: ");
-    }
-
-    public void unknownError() {
-        System.out.println("Unknown Error");
     }
 
     public void printGoodByeMessage() {
@@ -118,6 +114,10 @@ public class ConsoleView implements Controller.IView {
 
     public void printInvalidIdMessage() {
         System.out.println("\nInvalid ID\n");
+    }
+
+    public void unknownError() {
+        System.out.println("Unknown Error");
     }
 
     public void printEmptyList() {
