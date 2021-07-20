@@ -96,7 +96,7 @@ public class AppController {
                 case "1" -> selectCoffee(coffeeList);
                 case "2" -> removeCoffeeFromCustomerList(coffeeList);
                 case "3" -> {
-                    order.setOrderCoffeeList(coffeeList);
+                    order.setCoffeeList(coffeeList);
                     return order;
                 }
                 default -> consoleView.printInvalidOptionMessage();

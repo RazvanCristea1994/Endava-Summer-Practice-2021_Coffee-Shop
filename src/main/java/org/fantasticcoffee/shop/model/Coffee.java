@@ -1,28 +1,23 @@
 package org.fantasticcoffee.shop.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Collection;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Coffee extends AbstractEntity {
 
     private String customerName;
+    private Collection<Ingredient> extraIngredientsList;
     protected CoffeeType coffeeType;
-    private Collection<Ingredient> extraIngredientList;
 
-    public Coffee(String customerName, CoffeeType coffeeType, Collection<Ingredient> extraIngredientList) {
+    public Coffee(String customerName, CoffeeType coffeeType, Collection<Ingredient> extraIngredientsList) {
         this.coffeeType = coffeeType;
         this.customerName = customerName;
-        this.extraIngredientList = extraIngredientList;
-    }
-
-    public CoffeeType getCoffeeType() {
-        return coffeeType;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public Collection<Ingredient> getExtraIngredientsList() {
-        return extraIngredientList;
+        this.extraIngredientsList = extraIngredientsList;
     }
 }

@@ -1,5 +1,8 @@
 package org.fantasticcoffee.shop.model;
 
+import lombok.Getter;
+
+@Getter
 public enum Ingredient {
 
     MILK("Milk", 3.0, 1.5),
@@ -24,17 +27,5 @@ public enum Ingredient {
         this.ingredientSellingPrice = ingredientSellingPrice;
         this.ingredientCost = ingredientCost;
         this.ingredientName = ingredientName;
-    }
-
-    public Double getIngredientSellingPrice() {
-        return ingredientSellingPrice;
-    }
-
-    public Double getIngredientCost() {
-        return ingredientCost;
-    }
-
-    public String getIngredientName() {
-        return ingredientName;
     }
 }

@@ -1,10 +1,13 @@
 package org.fantasticcoffee.shop.model;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
 
+@Getter
 public enum CoffeeType {
 
     ESPRESSO("Espresso") {
@@ -92,9 +95,5 @@ public enum CoffeeType {
 
     CoffeeType(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 }
