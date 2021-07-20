@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Order extends AbstractEntity {
+public class Order extends AbstractEntity { //ToDo: Lombok
 
     private LocalDateTime orderDateTime;
     private List<Coffee> orderCoffeeList = new ArrayList<>();

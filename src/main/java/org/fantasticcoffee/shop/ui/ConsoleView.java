@@ -5,11 +5,13 @@ import org.fantasticcoffee.shop.model.CoffeeType;
 import org.fantasticcoffee.shop.model.Ingredient;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.utils.Utils;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ConsoleView implements Controller.IView {
+@Component("consoleView")
+public class ConsoleView implements AppController.IView {
     //ToDo pretty format needed in this class - printf stuff
 
     public void printMainMenu() {
@@ -134,7 +136,7 @@ public class ConsoleView implements Controller.IView {
 
     public void printCheckMessage(Order order, Double priceOrder, Double profitToday) {
 
-        printHeaderOnCheck(order.getCoffeeList().get(0).getCustomerName());
+        printHeader(order.getCoffeeList().get(0).getCustomerName());
         printIdOnCheck(order.getId());
         printItemsOnCheck(order.getCoffeeList());
         printTotalPriceOnCheck(priceOrder);
@@ -143,14 +145,14 @@ public class ConsoleView implements Controller.IView {
 
     public void printCoffeeListMessage(List<Coffee> coffeeList) {
 
-        printHeaderOnCheck(coffeeList.get(0).getCustomerName());
+        printHeader(coffeeList.get(0).getCustomerName());
         printItemsOnCheck(coffeeList);
         printClosingLine();
     }
 
     public void printAllOrders(Order order) {
 
-        printHeaderOnCheck(order.getCoffeeList().get(0).getCustomerName());
+        printHeader(order.getCoffeeList().get(0).getCustomerName());
         printIdOnCheck(order.getId());
         printItemsOnCheck(order.getCoffeeList());
         printClosingLine();
@@ -172,7 +174,7 @@ public class ConsoleView implements Controller.IView {
         );
     }
 
-    private void printHeaderOnCheck(String customerName) {
+    private void printHeader(String customerName) {
 
         printClosingLine();
         System.out.println("\t\t\t\t\t" + Utils.SHOP_NAME);

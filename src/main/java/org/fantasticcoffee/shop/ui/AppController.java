@@ -4,33 +4,32 @@ import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.CoffeeType;
 import org.fantasticcoffee.shop.model.Ingredient;
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.repository.IRepository;
-import org.fantasticcoffee.shop.repository.InMemoryIRepository;
 import org.fantasticcoffee.shop.service.ICoffee;
 import org.fantasticcoffee.shop.service.IOrder;
-import org.fantasticcoffee.shop.service.impl.CoffeeService;
-import org.fantasticcoffee.shop.service.impl.OrderService;
 import org.fantasticcoffee.shop.utils.Input;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class Controller {
+@Controller("controller")
+public class AppController {
 
-    private final IOrder orderService;
-    private final IRepository<Order> repository;
-    private final ICoffee coffeeService;
+    @Autowired
+    private IOrder orderService;
+    @Autowired
+    private ICoffee coffeeService;
+    @Autowired
+    private IView consoleView;
+    @Autowired
+    private Input input;
+
     private String customerName;
-    private final IView consoleView;
-    private final Input input;
 
-    public Controller() {
-        this.repository = new InMemoryIRepository<>();
-        this.coffeeService = new CoffeeService();
-        this.orderService = new OrderService(repository, coffeeService);
-        this.consoleView = new ConsoleView();
-        this.input = new Input();
+    public AppController() {
     }
 
     public void runApp() {
@@ -46,13 +45,7 @@ public class Controller {
             switch (option.toUpperCase()) {
                 case "1" -> selectCoffee(coffeeList);
                 case "2" -> removeCoffeeFromCustomerList(coffeeList);
-                case "3" -> {
-                    if (coffeeList.isEmpty()) {
-                        consoleView.printOrderEmptyMessage();
-                        break;
-                    }
-                    coffeeList = placeOrder(coffeeList);
-                }
+                case "3" -> placeOrder(coffeeList);
                 case "4" -> printAllOrders();
                 case "5" -> updateOrder();
                 case "6" -> cancelOrder();
@@ -85,6 +78,7 @@ public class Controller {
             return;
         }
         order = this.orderService.update(updateMenu(order));
+
         this.consoleView.printCheckMessage(order, this.orderService.getTotalOrderPrice(order), this.orderService.getTotalProfitForToday());
     }
 
@@ -96,6 +90,7 @@ public class Controller {
                 this.consoleView.printCoffeeListMessage(order.getCoffeeList());
             }
             consoleView.printUpdateOrderMessage();
+
             String option = input.readline();
             switch (option.toUpperCase()) {
                 case "1" -> selectCoffee(coffeeList);
@@ -121,42 +116,36 @@ public class Controller {
 
             String option = input.readline();
             switch (option.toUpperCase()) {
-                case "1" -> {
-                    coffeeList.add(new Coffee(this.customerName, CoffeeType.ESPRESSO, chooseExtraIngredients()));
-                    this.consoleView.printCoffeeListMessage(coffeeList);
-                }
-                case "2" -> {
-                    coffeeList.add(new Coffee(this.customerName, CoffeeType.MACHIATTO, chooseExtraIngredients()));
-                    this.consoleView.printCoffeeListMessage(coffeeList);
-                }
-                case "3" -> {
-                    coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_LATTE, chooseExtraIngredients()));
-                    this.consoleView.printCoffeeListMessage(coffeeList);
-                }
-                case "4" -> {
-                    coffeeList.add(new Coffee(this.customerName, CoffeeType.CAPPUCCINO, chooseExtraIngredients()));
-                    this.consoleView.printCoffeeListMessage(coffeeList);
-                }
-                case "5" -> {
-                    coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_MIEL, chooseExtraIngredients()));
-                    this.consoleView.printCoffeeListMessage(coffeeList);
-                }
+                case "1" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.ESPRESSO, chooseExtraIngredients()));
+                case "2" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.MACHIATTO, chooseExtraIngredients()));
+                case "3" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_LATTE, chooseExtraIngredients()));
+                case "4" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAPPUCCINO, chooseExtraIngredients()));
+                case "5" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_MIEL, chooseExtraIngredients()));
                 case "6" -> {
                     List<Ingredient> ingredientList = new ArrayList<>();
                     ingredientList.addAll(chooseCoffeeShots());
                     ingredientList.addAll(chooseExtraIngredients());
+
                     coffeeList.add(new Coffee(this.customerName, CoffeeType.DEFAULT, ingredientList));
-                    this.consoleView.printCoffeeListMessage(coffeeList);
                 }
                 case "X" -> {
                     return coffeeList;
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
+
+            if (!coffeeList.isEmpty()) {
+                this.consoleView.printCoffeeListMessage(coffeeList);
+            }
         }
     }
 
     private List<Coffee> placeOrder(List<Coffee> coffeeList) {
+
+        if (coffeeList.isEmpty()) {
+            consoleView.printOrderEmptyMessage();
+            return coffeeList;
+        }
 
         Order.WhereToDrink whereToDrink = setWhereToDrink();
 
@@ -167,7 +156,9 @@ public class Controller {
         }
         this.consoleView.printCheckMessage(order, this.orderService.getTotalOrderPrice(order), this.orderService.getTotalProfitForToday());
         this.consoleView.printEnjoyCoffeeMessage();
+
         this.customerName = null;
+
         return new ArrayList<>();
     }
 
@@ -176,22 +167,18 @@ public class Controller {
         List<Ingredient> ingredientList = new ArrayList<>();
         consoleView.printCoffeeShotsOptionListMessage();
         while (true) {
-            int shotsNumber = 0;
+            int shotsNumber;
             String option = input.readline();
 
             switch (option.toUpperCase()) {
                 case "1" -> {
                     shotsNumber = chooseShotsNumber();
-                    for (int i = 0; i < shotsNumber; i++) {
-                        ingredientList.add(Ingredient.ESPRESSO_SHOT);
-                    }
+                    ingredientList.addAll(Collections.nCopies(shotsNumber, Ingredient.ESPRESSO_SHOT));
                     return ingredientList;
                 }
                 case "2" -> {
                     shotsNumber = chooseShotsNumber();
-                    for (int i = 0; i < shotsNumber; i++) {
-                        ingredientList.add(Ingredient.BLACK_COFFEE);
-                    }
+                    ingredientList.addAll(Collections.nCopies(shotsNumber, Ingredient.BLACK_COFFEE));
                     return ingredientList;
                 }
                 case "X" -> {
@@ -256,6 +243,7 @@ public class Controller {
             this.consoleView.printEmptyList();
             return coffeeList;
         }
+
         consoleView.printAskForIdMessage();
         int coffeeIndex = input.readInt();
         try {

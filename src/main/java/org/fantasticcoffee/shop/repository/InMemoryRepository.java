@@ -1,6 +1,7 @@
 package org.fantasticcoffee.shop.repository;
 
 import org.fantasticcoffee.shop.model.AbstractEntity;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,11 +9,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ArrayList;
 
-public class InMemoryIRepository<T extends AbstractEntity> implements IRepository<T> {
+@Repository("inMemoryRepository")
+public class InMemoryRepository<T extends AbstractEntity> implements IRepository<T> {
 
     private Map<Integer, T> database;
 
-    public InMemoryIRepository() {
+    public InMemoryRepository() {
         this.database = new HashMap<>();
     }
 

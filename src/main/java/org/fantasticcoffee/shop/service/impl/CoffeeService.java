@@ -4,7 +4,9 @@ import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.CoffeeType;
 import org.fantasticcoffee.shop.model.Ingredient;
 import org.fantasticcoffee.shop.service.ICoffee;
+import org.springframework.stereotype.Service;
 
+@Service("coffeeService")
 public class CoffeeService implements ICoffee {
 
     public Double getCoffeePrice(Coffee coffee) {
