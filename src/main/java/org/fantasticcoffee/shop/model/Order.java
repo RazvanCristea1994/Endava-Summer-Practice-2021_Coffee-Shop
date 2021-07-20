@@ -35,7 +35,7 @@ public class Order extends AbstractEntity {
     }
 
     public enum WhereToDrink {
-        PICK_UP("pick-up"), TO_GO("to-go");
+        PICK_UP("Pick-Up"), TO_GO("To-Go");
 
         private String name;
 

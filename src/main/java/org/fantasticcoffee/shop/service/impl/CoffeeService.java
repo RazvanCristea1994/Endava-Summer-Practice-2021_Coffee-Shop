@@ -12,7 +12,7 @@ public class CoffeeService implements ICoffee {
     public Double getCoffeePrice(Coffee coffee) {
 
         Double baseCoffeePrice = coffee.getCoffeeType().getRecipe().stream().mapToDouble(Ingredient::getIngredientSellingPrice).sum();
-        Double extraIngredientsPrice = coffee.getExtraIngredientsList().stream().mapToDouble(Ingredient::getIngredientSellingPrice).sum();
+        Double extraIngredientsPrice = coffee.getIngredientsList().stream().mapToDouble(Ingredient::getIngredientSellingPrice).sum();
 
         return baseCoffeePrice + extraIngredientsPrice;
     }
@@ -20,7 +20,7 @@ public class CoffeeService implements ICoffee {
     public Double getCoffeeCost(Coffee coffee) {
 
         Double baseCoffeeCost = coffee.getCoffeeType().getRecipe().stream().mapToDouble(Ingredient::getIngredientCost).sum();
-        Double extraIngredientsCost = coffee.getExtraIngredientsList().stream().mapToDouble(Ingredient::getIngredientCost).sum();
+        Double extraIngredientsCost = coffee.getIngredientsList().stream().mapToDouble(Ingredient::getIngredientCost).sum();
 
         return baseCoffeeCost + extraIngredientsCost;
     }

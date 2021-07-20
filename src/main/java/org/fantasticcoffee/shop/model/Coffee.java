@@ -12,12 +12,19 @@ import java.util.Collection;
 public class Coffee extends AbstractEntity {
 
     private String customerName;
-    private Collection<Ingredient> extraIngredientsList;
+    private Collection<Ingredient> ingredientsList;
     protected CoffeeType coffeeType;
 
-    public Coffee(String customerName, CoffeeType coffeeType, Collection<Ingredient> extraIngredientsList) {
+    public Coffee(String customerName, CoffeeType coffeeType, Collection<Ingredient> ingredientsList) {
         this.coffeeType = coffeeType;
         this.customerName = customerName;
-        this.extraIngredientsList = extraIngredientsList;
+        this.ingredientsList = ingredientsList;
+    }
+
+    @Override
+    public String toString() {
+        return coffeeType.getName() +
+                "\t" + ingredientsList +
+                '}';
     }
 }

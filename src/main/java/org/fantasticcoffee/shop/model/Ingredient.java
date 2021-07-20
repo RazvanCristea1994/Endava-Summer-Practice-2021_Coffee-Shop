@@ -32,4 +32,9 @@ public enum Ingredient {
         this.quantity = quantity;
         this.unitOfMeasurement = unitOfMeasurement;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%-30s %-4s %-10s %s$ %n", ingredientName, quantity, unitOfMeasurement, ingredientSellingPrice);
+    }
 }

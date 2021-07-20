@@ -13,12 +13,12 @@ public enum CoffeeType {
     ESPRESSO("Espresso") {
         @Override
         public Collection<Ingredient> getRecipe() {
-            Collection<Ingredient> ingredients = new ArrayList<>();
-            ingredients.addAll(asList(
+            Collection<Ingredient> extraIngredients = new ArrayList<>();
+            extraIngredients.addAll(asList(
                     Ingredient.ESPRESSO_SHOT,
                     Ingredient.ESPRESSO_SHOT));
 
-            return ingredients;
+            return extraIngredients;
         }
     },
 
@@ -26,13 +26,13 @@ public enum CoffeeType {
         @Override
         public Collection<Ingredient> getRecipe() {
 
-            Collection<Ingredient> ingredients = new ArrayList<>();
-            ingredients.addAll(asList(
+            Collection<Ingredient> extraIngredients = new ArrayList<>();
+            extraIngredients.addAll(asList(
                     Ingredient.ESPRESSO_SHOT,
                     Ingredient.ESPRESSO_SHOT,
                     Ingredient.MILK_FOAM));
 
-            return ingredients;
+            return extraIngredients;
         }
     },
 
@@ -82,7 +82,7 @@ public enum CoffeeType {
         }
     },
 
-    DEFAULT("My Creation") {
+    DEFAULT("Be Creative!") {
         @Override
         public Collection<Ingredient> getRecipe() {
             return new ArrayList<>();

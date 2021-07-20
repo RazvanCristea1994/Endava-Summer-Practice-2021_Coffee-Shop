@@ -45,59 +45,13 @@ public class AppController {
             switch (option.toUpperCase()) {
                 case "1" -> selectCoffee(coffeeList);
                 case "2" -> removeCoffeeFromCustomerList(coffeeList);
-                case "3" -> placeOrder(coffeeList);
+                case "3" -> coffeeList = placeOrder(coffeeList);
                 case "4" -> printAllOrders();
                 case "5" -> updateOrder();
                 case "6" -> cancelOrder();
                 case "X" -> {
                     consoleView.printGoodByeMessage();
                     return;
-                }
-                default -> consoleView.printInvalidOptionMessage();
-            }
-        }
-    }
-
-    private void cancelOrder() {
-
-        this.consoleView.printAskForIdMessage();
-        Integer orderId = this.input.readInt();
-
-        this.orderService.deleteOrder(orderId);
-        this.consoleView.printOrderCanceledMessage();
-    }
-
-    private void updateOrder() {
-
-        this.consoleView.printAskForIdMessage();
-        Integer orderId = this.input.readInt();
-
-        Order order = this.orderService.findOrder(orderId);
-        if (order == null) {
-            this.consoleView.printInvalidIdMessage();
-            return;
-        }
-        order = this.orderService.update(updateMenu(order));
-
-        this.consoleView.printCheckMessage(order, this.orderService.getTotalOrderPrice(order), this.orderService.getTotalProfitForToday());
-    }
-
-    private Order updateMenu(Order order) {
-
-        List<Coffee> coffeeList = order.getCoffeeList();
-        while (true) {
-            if (!order.getCoffeeList().isEmpty()) {
-                this.consoleView.printCoffeeListMessage(order.getCoffeeList());
-            }
-            consoleView.printUpdateOrderMessage();
-
-            String option = input.readline();
-            switch (option.toUpperCase()) {
-                case "1" -> selectCoffee(coffeeList);
-                case "2" -> removeCoffeeFromCustomerList(coffeeList);
-                case "3" -> {
-                    order.setCoffeeList(coffeeList);
-                    return order;
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
@@ -140,6 +94,33 @@ public class AppController {
         }
     }
 
+    private List<Coffee> removeCoffeeFromCustomerList(List<Coffee> coffeeList) {
+
+        if (!coffeeList.isEmpty()) {
+            this.consoleView.printCoffeeListMessage(coffeeList);
+        } else {
+            this.consoleView.printEmptyList();
+            return coffeeList;
+        }
+
+        consoleView.printAskForIdMessage();
+        int coffeeIndex = input.readInt();
+        try {
+            Coffee coffee = coffeeList.get(coffeeIndex);
+            coffeeList.remove(coffee);
+        } catch (IndexOutOfBoundsException e) {
+            this.consoleView.printInvalidIdMessage();
+        }
+
+        if (!coffeeList.isEmpty()) {
+            this.consoleView.printCoffeeListMessage(coffeeList);
+        } else {
+            this.consoleView.printEmptyList();
+        }
+
+        return coffeeList;
+    }
+
     private List<Coffee> placeOrder(List<Coffee> coffeeList) {
 
         if (coffeeList.isEmpty()) {
@@ -160,6 +141,58 @@ public class AppController {
         this.customerName = null;
 
         return new ArrayList<>();
+    }
+
+    private void printAllOrders() {
+
+        List<Order> orderList = this.orderService.findAll();
+        if (orderList.isEmpty()) {
+            this.consoleView.printEmptyList();
+        }
+        orderList.forEach(this.consoleView::printAllOrders);
+    }
+
+    private void updateOrder() {
+
+        this.consoleView.printAskForIdMessage();
+        Integer orderId = this.input.readInt();
+
+        Order order = this.orderService.findOrder(orderId);
+        if (order == null) {
+            this.consoleView.printInvalidIdMessage();
+            return;
+        }
+        order = this.orderService.update(updateMenu(order));
+
+        this.consoleView.printCheckMessage(order, this.orderService.getTotalOrderPrice(order), this.orderService.getTotalProfitForToday());
+    }
+
+    private void cancelOrder() {
+
+        this.consoleView.printAskForIdMessage();
+        Integer orderId = this.input.readInt();
+
+        this.orderService.deleteOrder(orderId);
+        this.consoleView.printOrderCanceledMessage();
+    }
+
+    private Order updateMenu(Order order) {
+
+        List<Coffee> coffeeList = order.getCoffeeList();
+        while (true) {
+            consoleView.printUpdateOrderMessage();
+
+            String option = input.readline();
+            switch (option.toUpperCase()) {
+                case "1" -> selectCoffee(coffeeList);
+                case "2" -> removeCoffeeFromCustomerList(coffeeList);
+                case "3" -> {
+                    order.setCoffeeList(coffeeList);
+                    return order;
+                }
+                default -> consoleView.printInvalidOptionMessage();
+            }
+        }
     }
 
     private List<Ingredient> chooseCoffeeShots() {
@@ -235,33 +268,6 @@ public class AppController {
         this.customerName = ourCustomerName;
     }
 
-    private List<Coffee> removeCoffeeFromCustomerList(List<Coffee> coffeeList) {
-
-        if (!coffeeList.isEmpty()) {
-            this.consoleView.printCoffeeListMessage(coffeeList);
-        } else {
-            this.consoleView.printEmptyList();
-            return coffeeList;
-        }
-
-        consoleView.printAskForIdMessage();
-        int coffeeIndex = input.readInt();
-        try {
-            Coffee coffee = coffeeList.get(coffeeIndex);
-            coffeeList.remove(coffee);
-        } catch (IndexOutOfBoundsException e) {
-            this.consoleView.printInvalidIdMessage();
-        }
-
-        if (!coffeeList.isEmpty()) {
-            this.consoleView.printCoffeeListMessage(coffeeList);
-        } else {
-            this.consoleView.printEmptyList();
-        }
-
-        return coffeeList;
-    }
-
     private Order.WhereToDrink setWhereToDrink() {
 
         consoleView.printAskWhereToDrinkMessage();
@@ -279,16 +285,6 @@ public class AppController {
             }
         }
     }
-
-    private void printAllOrders() {
-
-        List<Order> orderList = this.orderService.findAll();
-        if (orderList.isEmpty()) {
-            this.consoleView.printEmptyList();
-        }
-        orderList.forEach(this.consoleView::printAllOrders);
-    }
-
 
     public interface IView {
 
