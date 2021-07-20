@@ -37,11 +37,16 @@ public class ConsoleView implements AppController.IView {
                                              Double cappuccinoPrice,
                                              Double caffeeMielPrice) {
         System.out.println("\n" + Utils.SHOP_NAME + "\n" +
-                "1 - " + CoffeeType.ESPRESSO.getName() + "\t\t" + espressoPrice + "$\t" + CoffeeType.ESPRESSO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
-                "2 - " + CoffeeType.MACHIATTO.getName() + "\t\t" + machiattoPrice + "$\t" + CoffeeType.MACHIATTO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
-                "3 - " + CoffeeType.CAFFEE_LATTE.getName() + "\t" + caffeeLatePrice + "$\t" + CoffeeType.CAFFEE_LATTE.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
-                "4 - " + CoffeeType.CAPPUCCINO.getName() + "\t\t" + cappuccinoPrice + "$\t" + CoffeeType.CAPPUCCINO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
-                "5 - " + CoffeeType.CAFFEE_MIEL.getName() + "\t\t" + caffeeMielPrice + "$\t" + CoffeeType.CAFFEE_MIEL.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "1 - " + CoffeeType.ESPRESSO.getName() + "\t\t" + espressoPrice
+                + "$\t" + CoffeeType.ESPRESSO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "2 - " + CoffeeType.MACHIATTO.getName() + "\t\t" + machiattoPrice
+                + "$\t" + CoffeeType.MACHIATTO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "3 - " + CoffeeType.CAFFEE_LATTE.getName() + "\t" + caffeeLatePrice
+                + "$\t" + CoffeeType.CAFFEE_LATTE.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "4 - " + CoffeeType.CAPPUCCINO.getName() + "\t\t" + cappuccinoPrice
+                + "$\t" + CoffeeType.CAPPUCCINO.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
+                "5 - " + CoffeeType.CAFFEE_MIEL.getName() + "\t\t" + caffeeMielPrice
+                + "$\t" + CoffeeType.CAFFEE_MIEL.getRecipe().stream().map(Ingredient::getIngredientName).collect((Collectors.toList())) + "\n" +
                 "6 - Be creative. Build your own Fantastic Coffee\n" +
                 "---------------------\n" +
                 "X - Exit\n"
@@ -51,25 +56,51 @@ public class ConsoleView implements AppController.IView {
     public void printCoffeeShotsOptionListMessage() {
 
         System.out.println("\n" + Utils.SHOP_NAME + "\n" +
-                "1 - " + Ingredient.ESPRESSO_SHOT.getIngredientName() + "\t" + Ingredient.ESPRESSO_SHOT.getIngredientSellingPrice() + "$\n" +
-                "2 - " + Ingredient.BLACK_COFFEE.getIngredientName() + "\t" + Ingredient.BLACK_COFFEE.getIngredientSellingPrice() + "$\n"
+                "1 - " + Ingredient.ESPRESSO_SHOT.getIngredientName() + "\t"
+                + Ingredient.ESPRESSO_SHOT.getQuantity() + Ingredient.ESPRESSO_SHOT.getUnitOfMeasurement()
+                + "\t" + Ingredient.ESPRESSO_SHOT.getIngredientSellingPrice() + "$\n" +
+                "2 - " + Ingredient.BLACK_COFFEE.getIngredientName() + "\t"
+                + Ingredient.BLACK_COFFEE.getQuantity() + Ingredient.BLACK_COFFEE.getUnitOfMeasurement()
+                + "\t" + Ingredient.BLACK_COFFEE.getIngredientSellingPrice() + "$\n"
         );
     }
 
     public void printIngredientsOptionListMessage() {
         System.out.println(Utils.SHOP_NAME + "\n\n" +
                 "Choose our awesome extra ingredients:\n" +
-                "1  - " + Ingredient.MILK.getIngredientName() + "\t" + Ingredient.MILK.getIngredientSellingPrice() + "$\n" +
-                "2  - " + Ingredient.HONEY.getIngredientName() + "\t" + Ingredient.HONEY.getIngredientSellingPrice() + "$\n" +
-                "3  - " + Ingredient.SYRUP.getIngredientName() + "\t" + Ingredient.SYRUP.getIngredientSellingPrice() + "$\n" +
-                "4  - " + Ingredient.STEAMED_MILK.getIngredientName() + "\t" + Ingredient.STEAMED_MILK.getIngredientSellingPrice() + "\n" +
-                "5  - " + Ingredient.MILK_FOAM.getIngredientName() + "\t" + Ingredient.MILK_FOAM.getIngredientSellingPrice() + "$\n" +
-                "6  - " + Ingredient.SWEETENED_CONDENSED_MILK.getIngredientName() + "\t" + Ingredient.SWEETENED_CONDENSED_MILK.getIngredientSellingPrice() + "$\n" +
-                "7  - " + Ingredient.ICE_CREAM.getIngredientName() + "\t" + Ingredient.ICE_CREAM.getIngredientSellingPrice() + "$\n" +
-                "8  - " + Ingredient.WHIPPED_CREAM.getIngredientName() + "\t" + Ingredient.WHIPPED_CREAM.getIngredientSellingPrice() + "$\n" +
-                "9  - " + Ingredient.CINNAMON.getIngredientName() + "\t" + Ingredient.CINNAMON.getIngredientSellingPrice() + "$\n" +
-                "10 - " + Ingredient.HOT_WATER.getIngredientName() + "\t" + Ingredient.HOT_WATER.getIngredientSellingPrice() + "$\n" +
-                "11 - " + Ingredient.ICE_CUBES.getIngredientName() + "\t" + Ingredient.ICE_CUBES.getIngredientSellingPrice() + "$\n" +
+                "1  - " + Ingredient.MILK.getIngredientName() + "\t"
+                + Ingredient.MILK.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.MILK.getIngredientSellingPrice() + "$\n" +
+                "2  - " + Ingredient.HONEY.getIngredientName() + "\t"
+                + Ingredient.HONEY.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.HONEY.getIngredientSellingPrice() + "$\n" +
+                "3  - " + Ingredient.SYRUP.getIngredientName() + "\t"
+                + Ingredient.SYRUP.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.SYRUP.getIngredientSellingPrice() + "$\n" +
+                "4  - " + Ingredient.STEAMED_MILK.getIngredientName() + "\t"
+                + Ingredient.STEAMED_MILK.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.STEAMED_MILK.getIngredientSellingPrice() + "\n" +
+                "5  - " + Ingredient.MILK_FOAM.getIngredientName() + "\t"
+                + Ingredient.MILK_FOAM.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.MILK_FOAM.getIngredientSellingPrice() + "$\n" +
+                "6  - " + Ingredient.SWEETENED_CONDENSED_MILK.getIngredientName() + "\t"
+                + Ingredient.SWEETENED_CONDENSED_MILK.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.SWEETENED_CONDENSED_MILK.getIngredientSellingPrice() + "$\n" +
+                "7  - " + Ingredient.ICE_CREAM.getIngredientName() + "\t"
+                + Ingredient.ICE_CREAM.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.ICE_CREAM.getIngredientSellingPrice() + "$\n" +
+                "8  - " + Ingredient.WHIPPED_CREAM.getIngredientName() + "\t"
+                + Ingredient.WHIPPED_CREAM.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.WHIPPED_CREAM.getIngredientSellingPrice() + "$\n" +
+                "9  - " + Ingredient.CINNAMON.getIngredientName() + "\t"
+                + Ingredient.CINNAMON.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.CINNAMON.getIngredientSellingPrice() + "$\n" +
+                "10 - " + Ingredient.HOT_WATER.getIngredientName() + "\t"
+                + Ingredient.HOT_WATER.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.HOT_WATER.getIngredientSellingPrice() + "$\n" +
+                "11 - " + Ingredient.ICE_CUBES.getIngredientName() + "\t"
+                + Ingredient.ICE_CUBES.getQuantity() + Ingredient.MILK.getUnitOfMeasurement()
+                + "\t" + Ingredient.ICE_CUBES.getIngredientSellingPrice() + "$\n" +
                 "---------------------------------------\n" +
                 "X  - No, thanks"
         );
@@ -86,7 +117,9 @@ public class ConsoleView implements AppController.IView {
 
         printClosingLine();
         ingredientList.forEach(ingredient ->
-                System.out.print("\t+" + ingredient.getIngredientName() + "\t" + ingredient.getIngredientSellingPrice() + "$\n"));
+                System.out.print("\t+" + ingredient.getIngredientName()
+                        + "\t" + ingredient.getQuantity() + ingredient.getUnitOfMeasurement()
+                        + "\t" + ingredient.getIngredientSellingPrice() + "$\n"));
         printClosingLine();
     }
 
@@ -163,11 +196,14 @@ public class ConsoleView implements AppController.IView {
         coffeeList.forEach(coffee -> {
                     System.out.println("#" + coffeeList.indexOf(coffee) + " - " + coffee.getCoffeeType().getName());
                     coffee.getCoffeeType().getRecipe().forEach(ingredient -> {
-                        System.out.print("\t*" + ingredient.getIngredientName());
+                        System.out.print("\t*" + ingredient.getIngredientName()
+                                + "\t" + ingredient.getQuantity() + ingredient.getUnitOfMeasurement());
                         System.out.println("\t\t" + ingredient.getIngredientSellingPrice() + "$");
                     });
+
                     coffee.getExtraIngredientsList().forEach(ingredient -> {
-                        System.out.print("\t+" + ingredient.getIngredientName());
+                        System.out.print("\t+" + ingredient.getIngredientName()
+                                + "\t" + ingredient.getQuantity() + ingredient.getUnitOfMeasurement());
                         System.out.println("\t\t" + ingredient.getIngredientSellingPrice() + "$");
                     });
                 }
