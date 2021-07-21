@@ -1,9 +1,6 @@
 package org.fantasticcoffee.shop.ui;
 
-import org.fantasticcoffee.shop.model.Coffee;
-import org.fantasticcoffee.shop.model.CoffeeType;
-import org.fantasticcoffee.shop.model.Ingredient;
-import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.model.*;
 import org.fantasticcoffee.shop.service.ICoffee;
 import org.fantasticcoffee.shop.service.IOrder;
 import org.fantasticcoffee.shop.utils.Input;
@@ -12,6 +9,7 @@ import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,6 +47,7 @@ public class AppController {
                 case "4" -> printAllOrders();
                 case "5" -> updateOrder();
                 case "6" -> cancelOrder();
+                case "7" -> printCurrentOrder(coffeeList);
                 case "X" -> {
                     consoleView.printGoodByeMessage();
                     return;
@@ -61,11 +60,11 @@ public class AppController {
     private List<Coffee> selectCoffee(List<Coffee> coffeeList) {
 
         while (true) {
-            consoleView.printCoffeeOptionListMessage(this.coffeeService.getCoffeePrice(CoffeeType.ESPRESSO),
-                    this.coffeeService.getCoffeePrice(CoffeeType.MACHIATTO),
-                    this.coffeeService.getCoffeePrice(CoffeeType.CAFFEE_LATTE),
-                    this.coffeeService.getCoffeePrice(CoffeeType.CAPPUCCINO),
-                    this.coffeeService.getCoffeePrice(CoffeeType.CAFFEE_MIEL)
+            consoleView.printCoffeeOptionListMessage(new Double[]{this.coffeeService.getCoffeeTypePrice(CoffeeType.ESPRESSO),
+                    this.coffeeService.getCoffeeTypePrice(CoffeeType.MACHIATTO),
+                    this.coffeeService.getCoffeeTypePrice(CoffeeType.CAFFEE_LATTE),
+                    this.coffeeService.getCoffeeTypePrice(CoffeeType.CAPPUCCINO),
+                    this.coffeeService.getCoffeeTypePrice(CoffeeType.CAFFEE_MIEL)}
             );
 
             String option = input.readline();
@@ -76,11 +75,13 @@ public class AppController {
                 case "4" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAPPUCCINO, chooseExtraIngredients()));
                 case "5" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_MIEL, chooseExtraIngredients()));
                 case "6" -> {
-                    List<Ingredient> ingredientList = new ArrayList<>();
-                    ingredientList.addAll(chooseCoffeeShots());
-                    ingredientList.addAll(chooseExtraIngredients());
+                    List<BaseIngredient> baseIngredients = new ArrayList<>();
+                    baseIngredients.addAll(chooseCoffeeShots().getBaseIngredients());
 
-                    coffeeList.add(new Coffee(this.customerName, CoffeeType.DEFAULT, ingredientList));
+                    List<ExtraIngredient> extraIngredients = new ArrayList<>();
+                    extraIngredients.addAll(chooseExtraIngredients().getExtraIngredients());
+
+                    coffeeList.add(new Coffee(this.customerName, CoffeeType.DEFAULT, new CoffeeRecipe(baseIngredients, extraIngredients)));
                 }
                 case "X" -> {
                     return coffeeList;
@@ -176,6 +177,15 @@ public class AppController {
         this.consoleView.printOrderCanceledMessage();
     }
 
+    private void printCurrentOrder(List<Coffee> coffeeList) {
+
+        if (!coffeeList.isEmpty()) {
+            this.consoleView.printCoffeeListMessage(coffeeList);
+        } else {
+            this.consoleView.printEmptyList();
+        }
+    }
+
     private Order updateMenu(Order order) {
 
         List<Coffee> coffeeList = order.getCoffeeList();
@@ -195,9 +205,9 @@ public class AppController {
         }
     }
 
-    private List<Ingredient> chooseCoffeeShots() {
+    private CoffeeRecipe chooseCoffeeShots() {
 
-        List<Ingredient> ingredientList = new ArrayList<>();
+        List<BaseIngredient> baseIngredients = new ArrayList<>();
         consoleView.printCoffeeShotsOptionListMessage();
         while (true) {
             int shotsNumber;
@@ -206,16 +216,16 @@ public class AppController {
             switch (option.toUpperCase()) {
                 case "1" -> {
                     shotsNumber = chooseShotsNumber();
-                    ingredientList.addAll(Collections.nCopies(shotsNumber, Ingredient.ESPRESSO_SHOT));
-                    return ingredientList;
+                    baseIngredients.addAll(Collections.nCopies(shotsNumber, BaseIngredient.ESPRESSO_SHOT));
+                    return CoffeeRecipe.withBaseIngredients(baseIngredients);
                 }
                 case "2" -> {
                     shotsNumber = chooseShotsNumber();
-                    ingredientList.addAll(Collections.nCopies(shotsNumber, Ingredient.BLACK_COFFEE));
-                    return ingredientList;
+                    baseIngredients.addAll(Collections.nCopies(shotsNumber, BaseIngredient.BLACK_COFFEE));
+                    return CoffeeRecipe.withBaseIngredients(baseIngredients);
                 }
                 case "X" -> {
-                    return new ArrayList<>();
+                    return new CoffeeRecipe();
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
@@ -230,32 +240,32 @@ public class AppController {
         return shotsNumber;
     }
 
-    private List<Ingredient> chooseExtraIngredients() {
+    private CoffeeRecipe chooseExtraIngredients() {
 
         consoleView.printIngredientsOptionListMessage();
-        List<Ingredient> ingredientList = new ArrayList<>();
+        List<ExtraIngredient> extraIngredientList = new ArrayList<>();
 
         while (true) {
             String option = input.readline();
 
             switch (option.toUpperCase()) {
-                case "1" -> ingredientList.add(Ingredient.MILK);
-                case "2" -> ingredientList.add(Ingredient.HONEY);
-                case "3" -> ingredientList.add(Ingredient.SYRUP);
-                case "4" -> ingredientList.add(Ingredient.STEAMED_MILK);
-                case "5" -> ingredientList.add(Ingredient.MILK_FOAM);
-                case "6" -> ingredientList.add(Ingredient.SWEETENED_CONDENSED_MILK);
-                case "7" -> ingredientList.add(Ingredient.ICE_CREAM);
-                case "8" -> ingredientList.add(Ingredient.WHIPPED_CREAM);
-                case "9" -> ingredientList.add(Ingredient.CINNAMON);
-                case "10" -> ingredientList.add(Ingredient.HOT_WATER);
-                case "11" -> ingredientList.add(Ingredient.ICE_CUBES);
+                case "1" -> extraIngredientList.add(ExtraIngredient.MILK);
+                case "2" -> extraIngredientList.add(ExtraIngredient.HONEY);
+                case "3" -> extraIngredientList.add(ExtraIngredient.SYRUP);
+                case "4" -> extraIngredientList.add(ExtraIngredient.STEAMED_MILK);
+                case "5" -> extraIngredientList.add(ExtraIngredient.MILK_FOAM);
+                case "6" -> extraIngredientList.add(ExtraIngredient.SWEETENED_CONDENSED_MILK);
+                case "7" -> extraIngredientList.add(ExtraIngredient.ICE_CREAM);
+                case "8" -> extraIngredientList.add(ExtraIngredient.WHIPPED_CREAM);
+                case "9" -> extraIngredientList.add(ExtraIngredient.CINNAMON);
+                case "10" -> extraIngredientList.add(ExtraIngredient.HOT_WATER);
+                case "11" -> extraIngredientList.add(ExtraIngredient.ICE_CUBES);
                 case "X" -> {
-                    return ingredientList;
+                    return CoffeeRecipe.withExtraIngredients(extraIngredientList);
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
-            consoleView.printChosenIngredientsForCurrentCoffee(ingredientList);
+            consoleView.printChosenIngredientsForCurrentCoffee(extraIngredientList);
             consoleView.printIngredientsOptionListMessage();
         }
     }
@@ -290,11 +300,7 @@ public class AppController {
 
         void printMainMenu();
 
-        void printCoffeeOptionListMessage(Double espressoPrice,
-                                          Double machiattoPrice,
-                                          Double caffeeLatePrice,
-                                          Double cappuccinoPrice,
-                                          Double caffeeMielPrice);
+        void printCoffeeOptionListMessage(Double coffeeTypePrices[]);
 
         void printCoffeeShotsOptionListMessage();
 
@@ -302,7 +308,7 @@ public class AppController {
 
         void printIngredientsOptionListMessage();
 
-        void printChosenIngredientsForCurrentCoffee(List<Ingredient> ingredientList);
+        void printChosenIngredientsForCurrentCoffee(List<ExtraIngredient> extraIngredientList);
 
         void printAskNameMessage();
 

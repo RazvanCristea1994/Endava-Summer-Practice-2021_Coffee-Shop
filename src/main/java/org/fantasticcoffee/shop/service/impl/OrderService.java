@@ -2,7 +2,6 @@ package org.fantasticcoffee.shop.service.impl;
 
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.repository.IRepository;
-import org.fantasticcoffee.shop.repository.InMemoryRepository;
 import org.fantasticcoffee.shop.service.ICoffee;
 import org.fantasticcoffee.shop.service.IOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +26,6 @@ public class OrderService implements IOrder {
     private static Integer id = -1;
 
     public OrderService() {
-    }
-
-    public void setOrderRepository(InMemoryRepository repository) {
-        this.repository = repository;
     }
 
     public Order placeOrder(Order order) {

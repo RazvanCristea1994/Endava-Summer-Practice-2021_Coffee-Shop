@@ -9,5 +9,5 @@ public interface ICoffee {
 
     Double getCoffeeCost(Coffee coffee);
 
-    Double getCoffeePrice(CoffeeType coffeeType);
+    Double getCoffeeTypePrice(CoffeeType coffeeType);
 }
