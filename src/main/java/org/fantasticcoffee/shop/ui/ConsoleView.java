@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component("consoleView")
 public class ConsoleView implements AppController.IView {
