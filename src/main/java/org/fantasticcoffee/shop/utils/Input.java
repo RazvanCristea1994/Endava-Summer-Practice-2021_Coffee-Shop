@@ -1,7 +1,10 @@
 package org.fantasticcoffee.shop.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Scanner;
 
+@Component("input")
 public class Input {
 
     private Scanner scanner = new Scanner(System.in).useDelimiter("\n");

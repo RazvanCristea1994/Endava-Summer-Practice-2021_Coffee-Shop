@@ -4,7 +4,7 @@ import org.fantasticcoffee.shop.model.Order;
 
 import java.util.List;
 
-public interface IOrder {
+public interface OrderService {
 
     Order placeOrder(Order IOrder);
 

@@ -1,33 +1,40 @@
 package org.fantasticcoffee.shop.ui;
 
-import org.fantasticcoffee.shop.model.*;
-import org.fantasticcoffee.shop.service.ICoffee;
-import org.fantasticcoffee.shop.service.IOrder;
+import org.fantasticcoffee.shop.model.WhereToDrink;
+import org.fantasticcoffee.shop.model.Coffee;
+import org.fantasticcoffee.shop.model.CoffeeRecipe;
+import org.fantasticcoffee.shop.model.CoffeeType;
+import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredientDefinition;
+import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredientDefinition;
+import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
+import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
+import org.fantasticcoffee.shop.service.CoffeeService;
+import org.fantasticcoffee.shop.service.OrderService;
 import org.fantasticcoffee.shop.utils.Input;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller("controller")
 public class AppController {
 
     @Autowired
-    private IOrder orderService;
+    private OrderService orderService;
     @Autowired
-    private ICoffee coffeeService;
+    private CoffeeService coffeeService;
     @Autowired
     private IView consoleView;
     @Autowired
     private Input input;
 
     private String customerName;
-
-    public AppController() {
-    }
 
     public void runApp() {
 
@@ -63,7 +70,8 @@ public class AppController {
                     this.coffeeService.getCoffeeTypePrice(CoffeeType.MACHIATTO),
                     this.coffeeService.getCoffeeTypePrice(CoffeeType.CAFFEE_LATTE),
                     this.coffeeService.getCoffeeTypePrice(CoffeeType.CAPPUCCINO),
-                    this.coffeeService.getCoffeeTypePrice(CoffeeType.CAFFEE_MIEL)}
+                    this.coffeeService.getCoffeeTypePrice(CoffeeType.CAFFEE_MIEL),
+                    this.coffeeService.getCoffeeTypePrice(CoffeeType.DEFAULT)}
             );
 
             String option = input.readline();
@@ -74,13 +82,14 @@ public class AppController {
                 case "4" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAPPUCCINO, chooseExtraIngredients()));
                 case "5" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_MIEL, chooseExtraIngredients()));
                 case "6" -> {
-                    List<BaseIngredient> baseIngredients = new ArrayList<>();
-                    baseIngredients.addAll(chooseCoffeeShots().getBaseIngredients());
+                    List<BaseIngredientOnRecipe> baseIngredientOnRecipes = new ArrayList<>(chooseCoffeeShots().getBaseIngredients());
+                    List<ExtraIngredientOnRecipe> extraIngredientOnRecipes = new ArrayList<>(chooseExtraIngredients().getExtraIngredients());
 
-                    List<ExtraIngredient> extraIngredients = new ArrayList<>();
-                    extraIngredients.addAll(chooseExtraIngredients().getExtraIngredients());
+                    CoffeeType coffeeType = CoffeeType.DEFAULT;
+                    coffeeType.getRecipe().setBaseIngredients(baseIngredientOnRecipes);
+                    coffeeType.getRecipe().setExtraIngredients(extraIngredientOnRecipes);
 
-                    coffeeList.add(new Coffee(this.customerName, CoffeeType.DEFAULT, new CoffeeRecipe(baseIngredients, extraIngredients)));
+                    coffeeList.add(new Coffee(this.customerName, coffeeType, new CoffeeRecipe()));
                 }
                 case "X" -> {
                     return coffeeList;
@@ -128,7 +137,7 @@ public class AppController {
             return coffeeList;
         }
 
-        Order.WhereToDrink whereToDrink = setWhereToDrink();
+        WhereToDrink whereToDrink = setWhereToDrink();
 
         Order order = this.orderService.placeOrder(new Order(LocalDateTime.now(), coffeeList, whereToDrink));
         if (order == null) {
@@ -204,9 +213,16 @@ public class AppController {
         }
     }
 
+    private Integer chooseIngredientQuantity() {
+
+        this.consoleView.askForQuantity();
+        Integer quantity = this.input.readInt();
+
+        return quantity;
+    }
+
     private CoffeeRecipe chooseCoffeeShots() {
 
-        List<BaseIngredient> baseIngredients = new ArrayList<>();
         consoleView.printCoffeeShotsOptionListMessage();
         while (true) {
             int shotsNumber;
@@ -215,13 +231,13 @@ public class AppController {
             switch (option.toUpperCase()) {
                 case "1" -> {
                     shotsNumber = chooseShotsNumber();
-                    baseIngredients.addAll(Collections.nCopies(shotsNumber, BaseIngredient.ESPRESSO_SHOT));
-                    return CoffeeRecipe.withBaseIngredients(baseIngredients);
+                    return new CoffeeRecipe.Builder(
+                            Arrays.asList(new BaseIngredientOnRecipe(BaseIngredientDefinition.ESPRESSO_SHOT, shotsNumber))).build();
                 }
                 case "2" -> {
                     shotsNumber = chooseShotsNumber();
-                    baseIngredients.addAll(Collections.nCopies(shotsNumber, BaseIngredient.BLACK_COFFEE));
-                    return CoffeeRecipe.withBaseIngredients(baseIngredients);
+                    return new CoffeeRecipe.Builder(
+                            Arrays.asList(new BaseIngredientOnRecipe(BaseIngredientDefinition.BLACK_COFFEE, shotsNumber))).build();
                 }
                 case "X" -> {
                     return new CoffeeRecipe();
@@ -242,29 +258,32 @@ public class AppController {
     private CoffeeRecipe chooseExtraIngredients() {
 
         consoleView.printIngredientsOptionListMessage();
-        List<ExtraIngredient> extraIngredientList = new ArrayList<>();
+        Map<ExtraIngredientDefinition, Integer> extraIngredientDefinitionMap = new HashMap<>();
 
         while (true) {
             String option = input.readline();
 
             switch (option.toUpperCase()) {
-                case "1" -> extraIngredientList.add(ExtraIngredient.MILK);
-                case "2" -> extraIngredientList.add(ExtraIngredient.HONEY);
-                case "3" -> extraIngredientList.add(ExtraIngredient.SYRUP);
-                case "4" -> extraIngredientList.add(ExtraIngredient.STEAMED_MILK);
-                case "5" -> extraIngredientList.add(ExtraIngredient.MILK_FOAM);
-                case "6" -> extraIngredientList.add(ExtraIngredient.SWEETENED_CONDENSED_MILK);
-                case "7" -> extraIngredientList.add(ExtraIngredient.ICE_CREAM);
-                case "8" -> extraIngredientList.add(ExtraIngredient.WHIPPED_CREAM);
-                case "9" -> extraIngredientList.add(ExtraIngredient.CINNAMON);
-                case "10" -> extraIngredientList.add(ExtraIngredient.HOT_WATER);
-                case "11" -> extraIngredientList.add(ExtraIngredient.ICE_CUBES);
+                case "1" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.MILK, chooseIngredientQuantity());
+                case "2" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.HONEY, chooseIngredientQuantity());
+                case "3" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.SYRUP, chooseIngredientQuantity());
+                case "4" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.STEAMED_MILK, chooseIngredientQuantity());
+                case "5" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.MILK_FOAM, chooseIngredientQuantity());
+                case "6" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.SWEETENED_CONDENSED_MILK, chooseIngredientQuantity());
+                case "7" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.ICE_CREAM, chooseIngredientQuantity());
+                case "8" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.WHIPPED_CREAM, chooseIngredientQuantity());
+                case "9" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.CINNAMON, chooseIngredientQuantity());
+                case "10" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.HOT_WATER, chooseIngredientQuantity());
+                case "11" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.ICE_CUBES, chooseIngredientQuantity());
                 case "X" -> {
-                    return CoffeeRecipe.withExtraIngredients(extraIngredientList);
+                    CoffeeRecipe coffeeRecipe = new CoffeeRecipe();
+                    extraIngredientDefinitionMap.entrySet().forEach(i ->
+                            coffeeRecipe.addExtraIngredient(new ExtraIngredientOnRecipe(i.getKey(), i.getValue())));
+                    return coffeeRecipe;
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
-            consoleView.printChosenIngredientsForCurrentCoffee(extraIngredientList);
+            consoleView.printChosenIngredientsForCurrentCoffee(extraIngredientDefinitionMap);
             consoleView.printIngredientsOptionListMessage();
         }
     }
@@ -277,7 +296,7 @@ public class AppController {
         this.customerName = ourCustomerName;
     }
 
-    private Order.WhereToDrink setWhereToDrink() {
+    private WhereToDrink setWhereToDrink() {
 
         consoleView.printAskWhereToDrinkMessage();
         while (true) {
@@ -285,10 +304,10 @@ public class AppController {
 
             switch (option.toUpperCase()) {
                 case "1" -> {
-                    return Order.WhereToDrink.PICK_UP;
+                    return WhereToDrink.PICK_UP;
                 }
                 case "2" -> {
-                    return Order.WhereToDrink.TO_GO;
+                    return WhereToDrink.TO_GO;
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
@@ -299,15 +318,17 @@ public class AppController {
 
         void printMainMenu();
 
-        void printCoffeeOptionListMessage(Double coffeeTypePrices[]);
+        void printCoffeeOptionListMessage(Double[] coffeeTypePrices);
 
         void printCoffeeShotsOptionListMessage();
 
         void printAskShotsNumber();
 
+        void askForQuantity();
+
         void printIngredientsOptionListMessage();
 
-        void printChosenIngredientsForCurrentCoffee(List<ExtraIngredient> extraIngredientList);
+        void printChosenIngredientsForCurrentCoffee(Map<ExtraIngredientDefinition, Integer> extraIngredientDefinitionMap);
 
         void printAskNameMessage();
 

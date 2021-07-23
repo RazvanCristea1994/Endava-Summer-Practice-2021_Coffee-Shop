@@ -11,10 +11,11 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Order extends AbstractEntity {
+public class Order {
 
+    private Integer id;
     private LocalDateTime orderDateTime;
-    private List<Coffee> coffeeList = new ArrayList<>();
+    private List<Coffee> coffeeList;
     private WhereToDrink whereToDrink;
 
     public Order(LocalDateTime orderDateTime, List<Coffee> coffeeList, WhereToDrink whereToDrink) {
@@ -23,28 +24,18 @@ public class Order extends AbstractEntity {
         this.whereToDrink = whereToDrink;
     }
 
-    public static Order copyOrderObject(Order order) { //ToDo: read about clone() method
-
-        Order copyOrder = new Order();
-        copyOrder.setId(order.getId());
-        order.getCoffeeList().forEach(copyOrder.coffeeList::add);
-        copyOrder.setOrderDateTime(order.getOrderDateTime());
-        copyOrder.setWhereToDrink(order.getWhereToDrink());
-
-        return copyOrder;
+    public Order(Integer id, LocalDateTime orderDateTime, List<Coffee> coffeeList, WhereToDrink whereToDrink) {
+        this.id = id;
+        this.orderDateTime = orderDateTime;
+        this.coffeeList = coffeeList;
+        this.whereToDrink = whereToDrink;
     }
 
-    public enum WhereToDrink {
-        PICK_UP("Pick-Up"), TO_GO("To-Go");
+    public Order duplicate() {
 
-        private String name;
-
-        WhereToDrink(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
+        return new Order(this.getId(),
+                this.getOrderDateTime(),
+                new ArrayList<>(this.getCoffeeList()),
+                this.getWhereToDrink());
     }
 }

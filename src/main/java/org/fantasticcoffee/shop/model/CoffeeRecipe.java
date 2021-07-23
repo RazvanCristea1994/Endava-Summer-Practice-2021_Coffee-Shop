@@ -3,52 +3,95 @@ package org.fantasticcoffee.shop.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
+import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class CoffeeRecipe {
 
-    private List<BaseIngredient> baseIngredients;
-    private List<ExtraIngredient> extraIngredients;
+    private List<BaseIngredientOnRecipe> baseIngredients = new ArrayList<>();
+    private List<ExtraIngredientOnRecipe> extraIngredients = new ArrayList<>();
 
-    public CoffeeRecipe(List<BaseIngredient> baseIngredients, List<ExtraIngredient> extraIngredients) {
-        this.baseIngredients = baseIngredients;
-        this.extraIngredients = extraIngredients;
-    }
-
-    public static CoffeeRecipe withBaseIngredients(List<BaseIngredient> baseIngredients) {
+   /* public static CoffeeRecipe withBaseIngredients(List<BaseIngredientOnRecipe> baseIngredients) {
 
         CoffeeRecipe coffeeRecipe = new CoffeeRecipe();
-        coffeeRecipe.baseIngredients = baseIngredients;
+        coffeeRecipe.setBaseIngredients(baseIngredients);
+
         return coffeeRecipe;
     }
 
-    public static CoffeeRecipe withExtraIngredients(List<ExtraIngredient> extraIngredients) {
+    public static CoffeeRecipe withExtraIngredients(List<ExtraIngredientOnRecipe> extraIngredients) {
 
         CoffeeRecipe coffeeRecipe = new CoffeeRecipe();
-        coffeeRecipe.extraIngredients = extraIngredients;
+        coffeeRecipe.setExtraIngredients(extraIngredients);
+
         return coffeeRecipe;
+    }
+
+    public static CoffeeRecipe withBaseAndExtraIngredients(List<BaseIngredientOnRecipe> baseIngredients, List<ExtraIngredientOnRecipe> extraIngredients) {
+
+        CoffeeRecipe coffeeRecipe = new CoffeeRecipe();
+        coffeeRecipe.setBaseIngredients(baseIngredients);
+        coffeeRecipe.setExtraIngredients(extraIngredients);
+
+        return coffeeRecipe;
+    }*/
+
+    public CoffeeRecipe(Builder builder) {
+        this.baseIngredients = builder.baseIngredientsConfig;
+        this.extraIngredients = builder.extraIngredientConfig;
+    }
+
+    public void addExtraIngredient(ExtraIngredientOnRecipe ingredient) {
+        this.extraIngredients.add(ingredient);
+    }
+
+    public static class Builder {
+
+        private List<BaseIngredientOnRecipe> baseIngredientsConfig;
+        private List<ExtraIngredientOnRecipe> extraIngredientConfig;
+
+        public Builder(List<BaseIngredientOnRecipe> baseIngredients, List<ExtraIngredientOnRecipe> extraIngredients) {
+            this.baseIngredientsConfig = baseIngredients;
+            this.extraIngredientConfig = extraIngredients;
+        }
+
+        public Builder(List<BaseIngredientOnRecipe> baseIngredients) {
+            this.baseIngredientsConfig = baseIngredients;
+        }
+
+        public CoffeeRecipe build() {
+            return new CoffeeRecipe(this);
+        }
     }
 
     @Override
     public String toString() {
-        if (baseIngredients != null && extraIngredients != null) {
-            return String.format("%s %s",baseIngredients.stream().map(BaseIngredient::getIngredientName)
-                    .collect((Collectors.toList())), extraIngredients.stream()
-                    .map(ExtraIngredient::getIngredientName)
-                    .collect((Collectors.toList())));
-        } else if (extraIngredients != null) {
-            return String.format("%s",extraIngredients.stream()
-                    .map(ExtraIngredient::getIngredientName)
-                    .collect((Collectors.toList())));
-        } else if (baseIngredients != null) {
-            return String.format("%s",baseIngredients.stream().map(BaseIngredient::getIngredientName)
-                    .collect((Collectors.toList())));
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (!baseIngredients.isEmpty() && !extraIngredients.isEmpty()) {
+            getBaseIngredients(stringBuilder);
+            getExtraIngredients(stringBuilder);
+        } else if (!extraIngredients.isEmpty()) {
+            getExtraIngredients(stringBuilder);
+        } else if (!baseIngredients.isEmpty()) {
+            getBaseIngredients(stringBuilder);
         }
-        return null;
+        return String.valueOf(stringBuilder);
+    }
+
+    private void getBaseIngredients(StringBuilder stringBuilder) {
+        baseIngredients.forEach(i ->
+                stringBuilder.append(String.format("%s %s %s %-3s", i.getQuantity(), "x [", i.getBaseIngredient().getIngredientName(), "]")));
+    }
+
+    private void getExtraIngredients(StringBuilder stringBuilder) {
+        extraIngredients.forEach(e ->
+                stringBuilder.append(String.format("%s %1s %s %-3s", e.getQuantity(), "x [", e.getExtraIngredient().getIngredientName(), "]")));
     }
 }

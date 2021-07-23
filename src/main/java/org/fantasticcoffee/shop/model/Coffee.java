@@ -7,8 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Coffee extends AbstractEntity {
+public class Coffee {
 
+    private Integer id;
     private String customerName;
     private CoffeeRecipe additionalIngredientsForCustomCoffee;
     protected CoffeeType coffeeType;
@@ -17,12 +18,5 @@ public class Coffee extends AbstractEntity {
         this.coffeeType = coffeeType;
         this.customerName = customerName;
         this.additionalIngredientsForCustomCoffee = additionalIngredientsForCustomCoffee;
-    }
-
-    @Override
-    public String toString() {
-        return coffeeType.getName() +
-                "\t" + additionalIngredientsForCustomCoffee +
-                '}';
     }
 }

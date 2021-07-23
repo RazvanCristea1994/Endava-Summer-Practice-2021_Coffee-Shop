@@ -1,9 +1,9 @@
-package org.fantasticcoffee.shop.model;
+package org.fantasticcoffee.shop.model.ingredientdefinition;
 
 import lombok.Getter;
 
 @Getter
-public enum ExtraIngredient {
+public enum ExtraIngredientDefinition {
 
     MILK("Milk", 3.0, 1.5, 10, "ml"),
     HONEY("Honey", 3.0, 1.5, 10, "g"),
@@ -23,7 +23,7 @@ public enum ExtraIngredient {
     private final int quantity;
     private final String unitOfMeasurement;
 
-    ExtraIngredient(String ingredientName, Double ingredientSellingPrice, Double ingredientCost, int quantity, String unitOfMeasurement) {
+    ExtraIngredientDefinition(String ingredientName, Double ingredientSellingPrice, Double ingredientCost, int quantity, String unitOfMeasurement) {
         this.ingredientSellingPrice = ingredientSellingPrice;
         this.ingredientCost = ingredientCost;
         this.ingredientName = ingredientName;

@@ -3,7 +3,7 @@ package org.fantasticcoffee.shop.service;
 import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.CoffeeType;
 
-public interface ICoffee {
+public interface CoffeeService {
 
     Double getCoffeePrice(Coffee coffee);
 

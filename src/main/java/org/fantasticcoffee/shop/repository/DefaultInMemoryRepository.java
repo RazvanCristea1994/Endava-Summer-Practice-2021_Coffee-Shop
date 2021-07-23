@@ -1,22 +1,20 @@
 package org.fantasticcoffee.shop.repository;
 
-import org.fantasticcoffee.shop.model.AbstractEntity;
-import org.springframework.stereotype.Repository;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ArrayList;
 
-@Repository("inMemoryRepository")
-public class InMemoryRepository<T extends AbstractEntity> implements IRepository<T> {
+public abstract class DefaultInMemoryRepository<T> implements Repository<T> {
 
     private Map<Integer, T> database;
 
-    public InMemoryRepository() {
+    public DefaultInMemoryRepository() {
         this.database = new HashMap<>();
     }
+
+    public abstract Integer getIdForEntity(T entity);
 
     @Override
     public Optional<T> save(T entity) {
@@ -24,7 +22,8 @@ public class InMemoryRepository<T extends AbstractEntity> implements IRepository
         if (entity == null) {
             throw new IllegalArgumentException("Entity cannot be null");
         }
-        return Optional.ofNullable(database.putIfAbsent(entity.getId(), entity));
+        Integer id = getIdForEntity(entity);
+        return Optional.ofNullable(database.putIfAbsent(id, entity));
     }
 
     @Override
@@ -53,7 +52,8 @@ public class InMemoryRepository<T extends AbstractEntity> implements IRepository
         if (entity == null) {
             throw new IllegalArgumentException("Entity cannot be null");
         }
-        return Optional.ofNullable(database.computeIfPresent(entity.getId(), (k, v) -> entity));
+        Integer id = getIdForEntity(entity);
+        return Optional.ofNullable(database.computeIfPresent(id, (k, v) -> entity));
     }
 
     @Override

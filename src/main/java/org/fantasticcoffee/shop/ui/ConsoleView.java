@@ -1,10 +1,17 @@
 package org.fantasticcoffee.shop.ui;
 
-import org.fantasticcoffee.shop.model.*;
+import org.fantasticcoffee.shop.model.Coffee;
+import org.fantasticcoffee.shop.model.CoffeeType;
+import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.model.WhereToDrink;
+import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredientDefinition;
+import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredientDefinition;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Component("consoleView")
 public class ConsoleView implements AppController.IView {
@@ -12,45 +19,45 @@ public class ConsoleView implements AppController.IView {
     private static final String SHOP_NAME = "Fantastic Coffee Shop";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-YYYY");
     private static final String CLOSING_LINE = "=".repeat(65);
-    private static final String MAIN_MENU[] = {
+    private List<String> mainMenu = Arrays.asList(
             "Select a coffee",
             "Remove a coffee",
             "Place Order",
             "Print all orders",
             "Update order",
             "Cancel order",
-            "My list"};
-    private static final String UPDATE_ORDER_MENU[] = {
+            "My list");
+    private static final List<String> updateOrderMenu = Arrays.asList(
             "Select a coffee",
             "Remove a coffee",
-            "Place Order"};
+            "Place Order");
 
     public void printMainMenu() {
 
-        for (int i = 0; i < MAIN_MENU.length; i++) {
-            System.out.printf("%-3s %-1s %s %n", i + 1, "-", MAIN_MENU[i]);
+        for (int i = 0; i < mainMenu.size(); i++) {
+            System.out.printf("%-3s %-1s %s %n", i + 1, "-", mainMenu.get(i));
         }
         System.out.printf("%-3s %-1s %s %n", "X", "-", "Exit");
     }
 
     public void printUpdateOrderMessage() {
 
-        for (int i = 0; i < UPDATE_ORDER_MENU.length; i++) {
-            System.out.printf("%-3s %-1s %s %n", i + 1, "-", MAIN_MENU[i]);
+        for (int i = 0; i < updateOrderMenu.size(); i++) {
+            System.out.printf("%-3s %-1s %s %n", i + 1, "-", mainMenu.get(i));
         }
     }
 
-    public void printCoffeeOptionListMessage(Double coffeeTypePrices[]) {
+    public void printCoffeeOptionListMessage(Double[] coffeeTypePrices) {
 
         System.out.println("\n" + SHOP_NAME);
 
-        CoffeeType coffeeType[] = CoffeeType.values();
+        CoffeeType[] coffeeType = CoffeeType.values();
         for (int i = 0; i < coffeeType.length; i++) {
-            if (coffeeType[i].getRecipe().getBaseIngredients() == null && coffeeType[i].getRecipe().getExtraIngredients() == null) {
+            if (coffeeType[i].getRecipe().getBaseIngredients().isEmpty() && coffeeType[i].getRecipe().getExtraIngredients().isEmpty()) {
                 System.out.printf("%-3s %-1s %-30s %-12s %s %n",
                         i + 1, "-", coffeeType[i].getName(), "", "Choose any amazing ingredients");
             } else {
-                System.out.printf("%-3s %-1s %-30s %s%-8s %s %n",
+                System.out.printf("%-3s %-1s %-30s %s%-8s %-1s %n",
                         i + 1, "-", coffeeType[i].getName(), coffeeTypePrices[i], "$",
                         coffeeType[i].getRecipe());
             }
@@ -62,9 +69,9 @@ public class ConsoleView implements AppController.IView {
     public void printCoffeeShotsOptionListMessage() {
 
         System.out.println("\n" + SHOP_NAME + "\n");
-        BaseIngredient baseIngredients[] = BaseIngredient.values();
-        for (int i = 0; i < baseIngredients.length; i++) {
-            System.out.printf("%-3s %-1s %s", i + 1, "-", baseIngredients[i]);
+        BaseIngredientDefinition[] baseIngredientDefinitions = BaseIngredientDefinition.values();
+        for (int i = 0; i < baseIngredientDefinitions.length; i++) {
+            System.out.printf("%-3s %-1s %s", i + 1, "-", baseIngredientDefinitions[i]);
         }
     }
 
@@ -73,9 +80,9 @@ public class ConsoleView implements AppController.IView {
         System.out.println("\n" + SHOP_NAME + "\n");
         System.out.println("Choose our awesome extra ingredients:");
 
-        ExtraIngredient extraIngredients[] = ExtraIngredient.values();
-        for (int i = 0; i < extraIngredients.length; i++) {
-            System.out.printf("%-3s %-1s %s", i + 1, "-", extraIngredients[i]);
+        ExtraIngredientDefinition[] extraIngredientDefinitions = ExtraIngredientDefinition.values();
+        for (int i = 0; i < extraIngredientDefinitions.length; i++) {
+            System.out.printf("%-3s %-1s %s", i + 1, "-", extraIngredientDefinitions[i]);
         }
 
         System.out.println("X   - No, thanks");
@@ -85,16 +92,16 @@ public class ConsoleView implements AppController.IView {
 
         System.out.println("\n" + "Choose where you would like to drink:\n");
 
-        Order.WhereToDrink whereToDrink[] = Order.WhereToDrink.values();
+        WhereToDrink[] whereToDrink = WhereToDrink.values();
         for (int i = 0; i < whereToDrink.length; i++) {
             System.out.printf("%-3s %-1s %s %n", i + 1, "-", whereToDrink[i].getName());
         }
     }
 
-    public void printChosenIngredientsForCurrentCoffee(List<ExtraIngredient> extraIngredientList) {
+    public void printChosenIngredientsForCurrentCoffee(Map<ExtraIngredientDefinition, Integer> extraIngredientDefinitionMap) {
 
         System.out.println(CLOSING_LINE);
-        extraIngredientList.forEach(ingredient -> System.out.printf("%10s %s", "+", ingredient));
+        extraIngredientDefinitionMap.forEach((ingredient, quantity) -> System.out.printf("%10s %-1s %s %s", "+", quantity, "x", ingredient));
         System.out.println(CLOSING_LINE);
     }
 
@@ -104,6 +111,10 @@ public class ConsoleView implements AppController.IView {
 
     public void printAskShotsNumber() {
         System.out.println("\nHow many shots would you like?\n");
+    }
+
+    public void askForQuantity() {
+        System.out.println("\nQuantity: ");
     }
 
     public void printAskForIdMessage() {
@@ -171,17 +182,17 @@ public class ConsoleView implements AppController.IView {
         coffeeList.forEach(coffee -> {
             System.out.printf("%s %-3s %-1s %s %n", "#", coffeeList.indexOf(coffee), "-", coffee.getCoffeeType().getName());
             if (coffee.getCoffeeType().getRecipe().getBaseIngredients() != null) {
-                coffee.getCoffeeType().getRecipe().getBaseIngredients().forEach(baseCoffeeTypeIngredient -> System.out.printf("%10s %s", "<>", baseCoffeeTypeIngredient));
+                coffee.getCoffeeType().getRecipe().getBaseIngredients().forEach(baseCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", baseCoffeeTypeIngredient.getQuantity(), "x", baseCoffeeTypeIngredient.getBaseIngredient()));
             }
             if (coffee.getCoffeeType().getRecipe().getExtraIngredients() != null) {
-                coffee.getCoffeeType().getRecipe().getExtraIngredients().forEach(extraCoffeeTypeIngredient -> System.out.printf("%10s %s", "<>", extraCoffeeTypeIngredient));
+                coffee.getCoffeeType().getRecipe().getExtraIngredients().forEach(extraCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", extraCoffeeTypeIngredient.getQuantity(), "x", extraCoffeeTypeIngredient.getExtraIngredient()));
             }
 
             if (coffee.getAdditionalIngredientsForCustomCoffee().getBaseIngredients() != null) {
-                coffee.getAdditionalIngredientsForCustomCoffee().getBaseIngredients().forEach(additionalBaseIngredient -> System.out.printf("%10s %s", "+", additionalBaseIngredient));
+                coffee.getAdditionalIngredientsForCustomCoffee().getBaseIngredients().forEach(additionalBaseIngredient -> System.out.printf("%10s %-1s %-1s %s", "+", additionalBaseIngredient.getQuantity(), "x", additionalBaseIngredient.getBaseIngredient()));
             }
             if (coffee.getAdditionalIngredientsForCustomCoffee().getExtraIngredients() != null) {
-                coffee.getAdditionalIngredientsForCustomCoffee().getExtraIngredients().forEach(additionalExtraIngredient -> System.out.printf("%10s %s", "+", additionalExtraIngredient));
+                coffee.getAdditionalIngredientsForCustomCoffee().getExtraIngredients().forEach(additionalExtraIngredient -> System.out.printf("%10s %-1s %-1s %s", "+", additionalExtraIngredient.getQuantity(), "x", additionalExtraIngredient.getExtraIngredient()));
             }
         });
     }

@@ -1,9 +1,9 @@
 package org.fantasticcoffee.shop.service.impl;
 
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.repository.IRepository;
-import org.fantasticcoffee.shop.service.ICoffee;
-import org.fantasticcoffee.shop.service.IOrder;
+import org.fantasticcoffee.shop.repository.Repository;
+import org.fantasticcoffee.shop.service.CoffeeService;
+import org.fantasticcoffee.shop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,29 +16,31 @@ import java.util.List;
 import java.util.Optional;
 
 @Service("orderService")
-public class OrderService implements IOrder {
+public class DefaultOrderService implements OrderService {
 
     @Autowired
-    private IRepository<Order> repository;
+    private Repository<Order> repository;
     @Autowired
-    private ICoffee coffeeService;
+    private CoffeeService coffeeService;
 
     private static Integer id = -1;
 
-    public OrderService() {
+    public DefaultOrderService() {
     }
 
     public Order placeOrder(Order order) {
 
-        order.setId(++OrderService.id);
+        order.setId(++DefaultOrderService.id);
         order.setOrderDateTime(LocalDateTime.now());
 
         Optional<Order> result = this.repository.save(order);
+
+        Order oo = order.duplicate();
         if (!result.isEmpty()) {
-            OrderService.id--;
+            DefaultOrderService.id--;
             return null;
         } else {
-            return Order.copyOrderObject(order);
+            return order.duplicate();
         }
     }
 
@@ -54,18 +56,16 @@ public class OrderService implements IOrder {
     public Order findOrder(Integer id) {
 
         Optional<Order> result = this.repository.find(id);
-        if (result.isPresent()) {
-            return Order.copyOrderObject(result.get());
-        }
-        return null;
+        return result.map(Order::duplicate).orElse(null);
     }
 
     public Order update(Order order) {
 
         order.setOrderDateTime(LocalDateTime.now());
         Optional<Order> result = this.repository.update(order);
+
         if (result.isPresent()) {
-            return Order.copyOrderObject(order);
+            return order.duplicate();
         }
         return null;
     }
@@ -115,8 +115,8 @@ public class OrderService implements IOrder {
 
         Optional<Order> result = repository.delete(id);
         if (result.isPresent()) {
-            OrderService.id--;
-            return Order.copyOrderObject(result.get());
+            DefaultOrderService.id--;
+            return result.get().duplicate();
         }
         return null;
     }

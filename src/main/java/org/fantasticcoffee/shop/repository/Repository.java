@@ -1,10 +1,8 @@
 package org.fantasticcoffee.shop.repository;
 
-import org.fantasticcoffee.shop.model.AbstractEntity;
-
 import java.util.Optional;
 
-public interface IRepository<T extends AbstractEntity> {
+public interface Repository<T> {
 
     Optional<T> save(T entity);
 
