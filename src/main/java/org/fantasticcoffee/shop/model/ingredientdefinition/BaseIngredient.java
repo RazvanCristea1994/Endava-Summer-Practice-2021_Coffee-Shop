@@ -3,7 +3,7 @@ package org.fantasticcoffee.shop.model.ingredientdefinition;
 import lombok.Getter;
 
 @Getter
-public enum BaseIngredientDefinition {
+public enum BaseIngredient {
 
     ESPRESSO_SHOT("Espresso shot", 7.0, 3.5, 20, "ml"),
     BLACK_COFFEE("Black coffee", 8.0, 4.0, 20, "ml");
@@ -14,7 +14,7 @@ public enum BaseIngredientDefinition {
     private final int quantityPerShot;
     private final String unitOfMeasurement;
 
-    BaseIngredientDefinition(String ingredientName, Double ingredientSellingPrice, Double ingredientCost, int quantityPerShot, String unitOfMeasurement) {
+    BaseIngredient(String ingredientName, Double ingredientSellingPrice, Double ingredientCost, int quantityPerShot, String unitOfMeasurement) {
         this.ingredientSellingPrice = ingredientSellingPrice;
         this.ingredientCost = ingredientCost;
         this.ingredientName = ingredientName;

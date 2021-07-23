@@ -4,8 +4,8 @@ import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.CoffeeType;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.WhereToDrink;
-import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredientDefinition;
-import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredientDefinition;
+import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredient;
+import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredient;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component("consoleView")
-public class ConsoleView implements AppController.IView {
+public class ConsoleView implements AppController.View {
 
     private static final String SHOP_NAME = "Fantastic Coffee Shop";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-YYYY");
@@ -69,9 +69,9 @@ public class ConsoleView implements AppController.IView {
     public void printCoffeeShotsOptionListMessage() {
 
         System.out.println("\n" + SHOP_NAME + "\n");
-        BaseIngredientDefinition[] baseIngredientDefinitions = BaseIngredientDefinition.values();
-        for (int i = 0; i < baseIngredientDefinitions.length; i++) {
-            System.out.printf("%-3s %-1s %s", i + 1, "-", baseIngredientDefinitions[i]);
+        BaseIngredient[] baseIngredients = BaseIngredient.values();
+        for (int i = 0; i < baseIngredients.length; i++) {
+            System.out.printf("%-3s %-1s %s", i + 1, "-", baseIngredients[i]);
         }
     }
 
@@ -80,9 +80,9 @@ public class ConsoleView implements AppController.IView {
         System.out.println("\n" + SHOP_NAME + "\n");
         System.out.println("Choose our awesome extra ingredients:");
 
-        ExtraIngredientDefinition[] extraIngredientDefinitions = ExtraIngredientDefinition.values();
-        for (int i = 0; i < extraIngredientDefinitions.length; i++) {
-            System.out.printf("%-3s %-1s %s", i + 1, "-", extraIngredientDefinitions[i]);
+        ExtraIngredient[] extraIngredients = ExtraIngredient.values();
+        for (int i = 0; i < extraIngredients.length; i++) {
+            System.out.printf("%-3s %-1s %s", i + 1, "-", extraIngredients[i]);
         }
 
         System.out.println("X   - No, thanks");
@@ -98,7 +98,7 @@ public class ConsoleView implements AppController.IView {
         }
     }
 
-    public void printChosenIngredientsForCurrentCoffee(Map<ExtraIngredientDefinition, Integer> extraIngredientDefinitionMap) {
+    public void printChosenIngredientsForCurrentCoffee(Map<ExtraIngredient, Integer> extraIngredientDefinitionMap) {
 
         System.out.println(CLOSING_LINE);
         extraIngredientDefinitionMap.forEach((ingredient, quantity) -> System.out.printf("%10s %-1s %s %s", "+", quantity, "x", ingredient));

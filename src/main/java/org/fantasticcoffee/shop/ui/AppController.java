@@ -5,8 +5,8 @@ import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.CoffeeRecipe;
 import org.fantasticcoffee.shop.model.CoffeeType;
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredientDefinition;
-import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredientDefinition;
+import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredient;
+import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredient;
 import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
 import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
 import org.fantasticcoffee.shop.service.CoffeeService;
@@ -30,7 +30,7 @@ public class AppController {
     @Autowired
     private CoffeeService coffeeService;
     @Autowired
-    private IView consoleView;
+    private View consoleView;
     @Autowired
     private Input input;
 
@@ -232,12 +232,12 @@ public class AppController {
                 case "1" -> {
                     shotsNumber = chooseShotsNumber();
                     return new CoffeeRecipe.Builder(
-                            Arrays.asList(new BaseIngredientOnRecipe(BaseIngredientDefinition.ESPRESSO_SHOT, shotsNumber))).build();
+                            Arrays.asList(new BaseIngredientOnRecipe(BaseIngredient.ESPRESSO_SHOT, shotsNumber))).build();
                 }
                 case "2" -> {
                     shotsNumber = chooseShotsNumber();
                     return new CoffeeRecipe.Builder(
-                            Arrays.asList(new BaseIngredientOnRecipe(BaseIngredientDefinition.BLACK_COFFEE, shotsNumber))).build();
+                            Arrays.asList(new BaseIngredientOnRecipe(BaseIngredient.BLACK_COFFEE, shotsNumber))).build();
                 }
                 case "X" -> {
                     return new CoffeeRecipe();
@@ -258,23 +258,23 @@ public class AppController {
     private CoffeeRecipe chooseExtraIngredients() {
 
         consoleView.printIngredientsOptionListMessage();
-        Map<ExtraIngredientDefinition, Integer> extraIngredientDefinitionMap = new HashMap<>();
+        Map<ExtraIngredient, Integer> extraIngredientDefinitionMap = new HashMap<>();
 
         while (true) {
             String option = input.readline();
 
             switch (option.toUpperCase()) {
-                case "1" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.MILK, chooseIngredientQuantity());
-                case "2" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.HONEY, chooseIngredientQuantity());
-                case "3" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.SYRUP, chooseIngredientQuantity());
-                case "4" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.STEAMED_MILK, chooseIngredientQuantity());
-                case "5" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.MILK_FOAM, chooseIngredientQuantity());
-                case "6" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.SWEETENED_CONDENSED_MILK, chooseIngredientQuantity());
-                case "7" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.ICE_CREAM, chooseIngredientQuantity());
-                case "8" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.WHIPPED_CREAM, chooseIngredientQuantity());
-                case "9" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.CINNAMON, chooseIngredientQuantity());
-                case "10" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.HOT_WATER, chooseIngredientQuantity());
-                case "11" -> extraIngredientDefinitionMap.put(ExtraIngredientDefinition.ICE_CUBES, chooseIngredientQuantity());
+                case "1" -> extraIngredientDefinitionMap.put(ExtraIngredient.MILK, chooseIngredientQuantity());
+                case "2" -> extraIngredientDefinitionMap.put(ExtraIngredient.HONEY, chooseIngredientQuantity());
+                case "3" -> extraIngredientDefinitionMap.put(ExtraIngredient.SYRUP, chooseIngredientQuantity());
+                case "4" -> extraIngredientDefinitionMap.put(ExtraIngredient.STEAMED_MILK, chooseIngredientQuantity());
+                case "5" -> extraIngredientDefinitionMap.put(ExtraIngredient.MILK_FOAM, chooseIngredientQuantity());
+                case "6" -> extraIngredientDefinitionMap.put(ExtraIngredient.SWEETENED_CONDENSED_MILK, chooseIngredientQuantity());
+                case "7" -> extraIngredientDefinitionMap.put(ExtraIngredient.ICE_CREAM, chooseIngredientQuantity());
+                case "8" -> extraIngredientDefinitionMap.put(ExtraIngredient.WHIPPED_CREAM, chooseIngredientQuantity());
+                case "9" -> extraIngredientDefinitionMap.put(ExtraIngredient.CINNAMON, chooseIngredientQuantity());
+                case "10" -> extraIngredientDefinitionMap.put(ExtraIngredient.HOT_WATER, chooseIngredientQuantity());
+                case "11" -> extraIngredientDefinitionMap.put(ExtraIngredient.ICE_CUBES, chooseIngredientQuantity());
                 case "X" -> {
                     CoffeeRecipe coffeeRecipe = new CoffeeRecipe();
                     extraIngredientDefinitionMap.entrySet().forEach(i ->
@@ -314,7 +314,7 @@ public class AppController {
         }
     }
 
-    public interface IView {
+    public interface View {
 
         void printMainMenu();
 
@@ -328,7 +328,7 @@ public class AppController {
 
         void printIngredientsOptionListMessage();
 
-        void printChosenIngredientsForCurrentCoffee(Map<ExtraIngredientDefinition, Integer> extraIngredientDefinitionMap);
+        void printChosenIngredientsForCurrentCoffee(Map<ExtraIngredient, Integer> extraIngredientDefinitionMap);
 
         void printAskNameMessage();
 

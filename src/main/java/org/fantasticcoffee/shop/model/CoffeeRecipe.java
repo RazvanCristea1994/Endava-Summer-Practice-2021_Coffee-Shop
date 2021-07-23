@@ -17,31 +17,6 @@ public class CoffeeRecipe {
     private List<BaseIngredientOnRecipe> baseIngredients = new ArrayList<>();
     private List<ExtraIngredientOnRecipe> extraIngredients = new ArrayList<>();
 
-   /* public static CoffeeRecipe withBaseIngredients(List<BaseIngredientOnRecipe> baseIngredients) {
-
-        CoffeeRecipe coffeeRecipe = new CoffeeRecipe();
-        coffeeRecipe.setBaseIngredients(baseIngredients);
-
-        return coffeeRecipe;
-    }
-
-    public static CoffeeRecipe withExtraIngredients(List<ExtraIngredientOnRecipe> extraIngredients) {
-
-        CoffeeRecipe coffeeRecipe = new CoffeeRecipe();
-        coffeeRecipe.setExtraIngredients(extraIngredients);
-
-        return coffeeRecipe;
-    }
-
-    public static CoffeeRecipe withBaseAndExtraIngredients(List<BaseIngredientOnRecipe> baseIngredients, List<ExtraIngredientOnRecipe> extraIngredients) {
-
-        CoffeeRecipe coffeeRecipe = new CoffeeRecipe();
-        coffeeRecipe.setBaseIngredients(baseIngredients);
-        coffeeRecipe.setExtraIngredients(extraIngredients);
-
-        return coffeeRecipe;
-    }*/
-
     public CoffeeRecipe(Builder builder) {
         this.baseIngredients = builder.baseIngredientsConfig;
         this.extraIngredients = builder.extraIngredientConfig;
