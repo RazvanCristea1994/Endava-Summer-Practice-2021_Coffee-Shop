@@ -1,16 +1,23 @@
 package org.fantasticcoffee.shop.ui;
 
 import org.fantasticcoffee.shop.model.WhereToDrink;
-import org.fantasticcoffee.shop.model.Coffee;
-import org.fantasticcoffee.shop.model.CoffeeRecipe;
-import org.fantasticcoffee.shop.model.CoffeeType;
+import org.fantasticcoffee.shop.model.coffee.BaseCoffee;
+import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
+import org.fantasticcoffee.shop.model.Recipe;
+import org.fantasticcoffee.shop.model.StandardCoffee;
 import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
 import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredient;
 import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredient;
 import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
 import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
+import org.fantasticcoffee.shop.model.stock.BaseIngredientInStock;
+import org.fantasticcoffee.shop.model.stock.ExtraIngredientInStock;
+import org.fantasticcoffee.shop.service.BaseIngredientService;
 import org.fantasticcoffee.shop.service.CoffeeService;
+import org.fantasticcoffee.shop.service.ExtraIngredientService;
 import org.fantasticcoffee.shop.service.OrderService;
+import org.fantasticcoffee.shop.service.impl.factory.CoffeeFactory;
 import org.fantasticcoffee.shop.utils.Input;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +37,10 @@ public class AppController {
     @Autowired
     private CoffeeService coffeeService;
     @Autowired
+    private BaseIngredientService baseIngredientService;
+    @Autowired
+    private ExtraIngredientService extraIngredientService;
+    @Autowired
     private View consoleView;
     @Autowired
     private Input input;
@@ -38,7 +49,10 @@ public class AppController {
 
     public void runApp() {
 
-        List<Coffee> coffeeList = new ArrayList<>();
+        this.baseIngredientService.seedStock();
+        this.extraIngredientService.seedStock();
+
+        Order.Builder order = new Order.Builder();
         while (true) {
             if (this.customerName == null) {
                 getCustomerName();
@@ -47,13 +61,16 @@ public class AppController {
             consoleView.printMainMenu();
             String option = input.readline();
             switch (option.toUpperCase()) {
-                case "1" -> selectCoffee(coffeeList);
-                case "2" -> removeCoffeeFromCustomerList(coffeeList);
-                case "3" -> coffeeList = placeOrder(coffeeList);
+                case "1" -> selectCoffee(order);
+                case "2" -> removeCoffeeFromCustomerList(order);
+                case "3" -> order = placeOrder(order);
                 case "4" -> printAllOrders();
                 case "5" -> updateOrder();
                 case "6" -> cancelOrder();
-                case "7" -> printCurrentOrder(coffeeList);
+                case "7" -> printCurrentOrder(order);
+                case "8" -> this.consoleView.printIngredientsRepository(
+                        this.baseIngredientService.getAllBaseIngredientsInStock(),
+                        this.extraIngredientService.getAllExtraIngredientsInStock());
                 case "X" -> {
                     consoleView.printGoodByeMessage();
                     return;
@@ -63,93 +80,124 @@ public class AppController {
         }
     }
 
-    private List<Coffee> selectCoffee(List<Coffee> coffeeList) {
+    private Order.Builder selectCoffee(Order.Builder order) {
 
         while (true) {
-            consoleView.printCoffeeOptionListMessage(new Double[]{this.coffeeService.getCoffeeTypePrice(CoffeeType.ESPRESSO),
-                    this.coffeeService.getCoffeeTypePrice(CoffeeType.MACHIATTO),
-                    this.coffeeService.getCoffeeTypePrice(CoffeeType.CAFFEE_LATTE),
-                    this.coffeeService.getCoffeeTypePrice(CoffeeType.CAPPUCCINO),
-                    this.coffeeService.getCoffeeTypePrice(CoffeeType.CAFFEE_MIEL),
-                    this.coffeeService.getCoffeeTypePrice(CoffeeType.DEFAULT)}
+            consoleView.printCoffeeOptionListMessage(new Double[]{this.coffeeService.getStandardCoffeePrice(StandardCoffee.ESPRESSO),
+                    this.coffeeService.getStandardCoffeePrice(StandardCoffee.MACHIATTO),
+                    this.coffeeService.getStandardCoffeePrice(StandardCoffee.CAFFEE_LATTE),
+                    this.coffeeService.getStandardCoffeePrice(StandardCoffee.CAPPUCCINO),
+                    this.coffeeService.getStandardCoffeePrice(StandardCoffee.CAFFEE_MIEL)}
             );
 
             String option = input.readline();
             switch (option.toUpperCase()) {
-                case "1" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.ESPRESSO, chooseExtraIngredients()));
-                case "2" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.MACHIATTO, chooseExtraIngredients()));
-                case "3" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_LATTE, chooseExtraIngredients()));
-                case "4" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAPPUCCINO, chooseExtraIngredients()));
-                case "5" -> coffeeList.add(new Coffee(this.customerName, CoffeeType.CAFFEE_MIEL, chooseExtraIngredients()));
-                case "6" -> {
-                    List<BaseIngredientOnRecipe> baseIngredientOnRecipes = new ArrayList<>(chooseCoffeeShots().getBaseIngredients());
-                    List<ExtraIngredientOnRecipe> extraIngredientOnRecipes = new ArrayList<>(chooseExtraIngredients().getExtraIngredients());
-
-                    CoffeeType coffeeType = CoffeeType.DEFAULT;
-                    coffeeType.getRecipe().setBaseIngredients(baseIngredientOnRecipes);
-                    coffeeType.getRecipe().setExtraIngredients(extraIngredientOnRecipes);
-
-                    coffeeList.add(new Coffee(this.customerName, coffeeType, new CoffeeRecipe()));
-                }
+                case "1" -> order.addCustomizableStandardCoffee(
+                        CoffeeFactory.createStandardCoffee(StandardCoffee.ESPRESSO)
+                                .create(this.customerName, chooseExtraIngredients().getExtraIngredients()));
+                case "2" -> order.addCustomizableStandardCoffee(
+                        CoffeeFactory.createStandardCoffee(StandardCoffee.MACHIATTO)
+                                .create(this.customerName, chooseExtraIngredients().getExtraIngredients()));
+                case "3" -> order.addCustomizableStandardCoffee(
+                        CoffeeFactory.createStandardCoffee(StandardCoffee.CAFFEE_LATTE)
+                                .create(this.customerName, chooseExtraIngredients().getExtraIngredients()));
+                case "4" -> order.addCustomizableStandardCoffee(
+                        CoffeeFactory.createStandardCoffee(StandardCoffee.CAPPUCCINO)
+                                .create(this.customerName, chooseExtraIngredients().getExtraIngredients()));
+                case "5" -> order.addCustomizableStandardCoffee(
+                        CoffeeFactory.createStandardCoffee(StandardCoffee.CAFFEE_MIEL)
+                                .create(this.customerName, chooseExtraIngredients().getExtraIngredients()));
+                case "6" -> order.addCustomCoffee(new CustomCoffee(this.customerName, createCustomCoffee()));
                 case "X" -> {
-                    return coffeeList;
+                    return order;
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
 
-            if (!coffeeList.isEmpty()) {
-                this.consoleView.printCoffeeListMessage(coffeeList);
+            if (order.getCustomCoffeeList().isEmpty() && order.getCustomizableStandardCoffee().isEmpty()) {
+                this.consoleView.printEmptyList();
             }
+            this.consoleView.printCoffeeListMessage(order);
         }
     }
 
-    private List<Coffee> removeCoffeeFromCustomerList(List<Coffee> coffeeList) {
+    private Recipe createCustomCoffee() {
 
-        if (!coffeeList.isEmpty()) {
-            this.consoleView.printCoffeeListMessage(coffeeList);
-        } else {
+        List<BaseIngredientOnRecipe> baseIngredientOnRecipe = new ArrayList<>(chooseCoffeeShots().getBaseIngredients());
+        List<ExtraIngredientOnRecipe> extraIngredientOnRecipe = new ArrayList<>(chooseExtraIngredients().getExtraIngredients());
+
+        Recipe recipe = new Recipe();
+        Recipe.Builder builder = new Recipe.Builder();
+        builder.setBaseIngredientsConfig(baseIngredientOnRecipe);
+        builder.setExtraIngredientConfig(extraIngredientOnRecipe);
+        return recipe;
+    }
+
+    private Order.Builder removeCoffeeFromCustomerList(Order.Builder order) {
+
+        if (order.getCustomCoffeeList().isEmpty() && order.getCustomizableStandardCoffee().isEmpty()) {
             this.consoleView.printEmptyList();
-            return coffeeList;
+            return order;
         }
+        this.consoleView.printCoffeeListMessage(order);
 
+        findAndRemoveCoffee(order);
+
+        if (order.getCustomCoffeeList().isEmpty() && order.getCustomizableStandardCoffee().isEmpty()) {
+            this.consoleView.printEmptyList();
+        }
+        this.consoleView.printCoffeeListMessage(order);
+
+        return order;
+    }
+
+    private void findAndRemoveCoffee(Order.Builder order) {
+
+        int countErrors = 0;
         consoleView.printAskForIdMessage();
         int coffeeIndex = input.readInt();
         try {
-            Coffee coffee = coffeeList.get(coffeeIndex);
-            coffeeList.remove(coffee);
+            CustomCoffee customCoffee = order.getCustomCoffeeList().get(coffeeIndex);
+            order.getCustomCoffeeList().remove(customCoffee);
         } catch (IndexOutOfBoundsException e) {
+            countErrors++;
+        }
+
+        try {
+            CustomizableStandardCoffee customizableStandardCoffee = order.getCustomizableStandardCoffee().get(coffeeIndex);
+            order.getCustomizableStandardCoffee().remove(customizableStandardCoffee);
+        } catch (IndexOutOfBoundsException e) {
+            countErrors++;
+        }
+
+        if (countErrors == 2) {
             this.consoleView.printInvalidIdMessage();
         }
-
-        if (!coffeeList.isEmpty()) {
-            this.consoleView.printCoffeeListMessage(coffeeList);
-        } else {
-            this.consoleView.printEmptyList();
-        }
-
-        return coffeeList;
     }
 
-    private List<Coffee> placeOrder(List<Coffee> coffeeList) {
+    private Order.Builder placeOrder(Order.Builder order) {
 
-        if (coffeeList.isEmpty()) {
+        if (!order.getCustomCoffeeList().isEmpty() && !order.getCustomizableStandardCoffee().isEmpty()) {
             consoleView.printOrderEmptyMessage();
-            return coffeeList;
+            return order;
         }
 
         WhereToDrink whereToDrink = setWhereToDrink();
 
-        Order order = this.orderService.placeOrder(new Order(LocalDateTime.now(), coffeeList, whereToDrink));
-        if (order == null) {
+        order.setOrderDateTime(LocalDateTime.now());
+        order.setWhereToDrink(whereToDrink);
+        Order placedOrder = this.orderService.placeOrder(order.build());
+
+        if (placedOrder == null) {
             this.consoleView.unknownError();
-            return coffeeList;
+            return order;
         }
-        this.consoleView.printCheckMessage(order, this.orderService.getTotalOrderPrice(order), this.orderService.getTotalProfitForToday());
+        this.consoleView.printCheckMessage(placedOrder, this.orderService.getTotalOrderPrice(placedOrder), this.orderService.getTotalProfitForToday());
         this.consoleView.printEnjoyCoffeeMessage();
 
         this.customerName = null;
 
-        return new ArrayList<>();
+        return new Order.Builder();
     }
 
     private void printAllOrders() {
@@ -166,14 +214,15 @@ public class AppController {
         this.consoleView.printAskForIdMessage();
         Integer orderId = this.input.readInt();
 
-        Order order = this.orderService.findOrder(orderId);
-        if (order == null) {
+        Order existingOrder = this.orderService.findOrder(orderId);
+        if (existingOrder == null) {
             this.consoleView.printInvalidIdMessage();
             return;
         }
-        order = this.orderService.update(updateMenu(order));
 
-        this.consoleView.printCheckMessage(order, this.orderService.getTotalOrderPrice(order), this.orderService.getTotalProfitForToday());
+        existingOrder = this.orderService.update(updateMenu(existingOrder));
+
+        this.consoleView.printCheckMessage(existingOrder, this.orderService.getTotalOrderPrice(existingOrder), this.orderService.getTotalProfitForToday());
     }
 
     private void cancelOrder() {
@@ -185,28 +234,31 @@ public class AppController {
         this.consoleView.printOrderCanceledMessage();
     }
 
-    private void printCurrentOrder(List<Coffee> coffeeList) {
+    private void printCurrentOrder(Order.Builder order) {
 
-        if (!coffeeList.isEmpty()) {
-            this.consoleView.printCoffeeListMessage(coffeeList);
-        } else {
+        if (order.getCustomCoffeeList().isEmpty() && order.getCustomizableStandardCoffee().isEmpty()) {
             this.consoleView.printEmptyList();
+        } else {
+            this.consoleView.printCoffeeListMessage(order);
         }
     }
 
-    private Order updateMenu(Order order) {
+    private Order updateMenu(Order existingOrder) {
 
-        List<Coffee> coffeeList = order.getCoffeeList();
+        Order.Builder updatedOrder = new Order.Builder();
+        updatedOrder.setCustomCoffeeList(existingOrder.getCustomCoffeeList());
+        updatedOrder.setCustomizableStandardCoffee(existingOrder.getCustomizableStandardCoffee());
+
         while (true) {
             consoleView.printUpdateOrderMessage();
 
             String option = input.readline();
             switch (option.toUpperCase()) {
-                case "1" -> selectCoffee(coffeeList);
-                case "2" -> removeCoffeeFromCustomerList(coffeeList);
+                case "1" -> selectCoffee(updatedOrder);
+                case "2" -> removeCoffeeFromCustomerList(updatedOrder);
                 case "3" -> {
-                    order.setCoffeeList(coffeeList);
-                    return order;
+                    updatedOrder.setWhereToDrink(setWhereToDrink());
+                    return updatedOrder.build();
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
@@ -221,7 +273,7 @@ public class AppController {
         return quantity;
     }
 
-    private CoffeeRecipe chooseCoffeeShots() {
+    private Recipe chooseCoffeeShots() {
 
         consoleView.printCoffeeShotsOptionListMessage();
         while (true) {
@@ -231,16 +283,16 @@ public class AppController {
             switch (option.toUpperCase()) {
                 case "1" -> {
                     shotsNumber = chooseShotsNumber();
-                    return new CoffeeRecipe.Builder(
+                    return new Recipe.Builder(
                             Arrays.asList(new BaseIngredientOnRecipe(BaseIngredient.ESPRESSO_SHOT, shotsNumber))).build();
                 }
                 case "2" -> {
                     shotsNumber = chooseShotsNumber();
-                    return new CoffeeRecipe.Builder(
+                    return new Recipe.Builder(
                             Arrays.asList(new BaseIngredientOnRecipe(BaseIngredient.BLACK_COFFEE, shotsNumber))).build();
                 }
                 case "X" -> {
-                    return new CoffeeRecipe();
+                    return new Recipe();
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
@@ -255,7 +307,7 @@ public class AppController {
         return shotsNumber;
     }
 
-    private CoffeeRecipe chooseExtraIngredients() {
+    private Recipe chooseExtraIngredients() {
 
         consoleView.printIngredientsOptionListMessage();
         Map<ExtraIngredient, Integer> extraIngredientDefinitionMap = new HashMap<>();
@@ -276,10 +328,10 @@ public class AppController {
                 case "10" -> extraIngredientDefinitionMap.put(ExtraIngredient.HOT_WATER, chooseIngredientQuantity());
                 case "11" -> extraIngredientDefinitionMap.put(ExtraIngredient.ICE_CUBES, chooseIngredientQuantity());
                 case "X" -> {
-                    CoffeeRecipe coffeeRecipe = new CoffeeRecipe();
+                    Recipe recipe = new Recipe();
                     extraIngredientDefinitionMap.entrySet().forEach(i ->
-                            coffeeRecipe.addExtraIngredient(new ExtraIngredientOnRecipe(i.getKey(), i.getValue())));
-                    return coffeeRecipe;
+                            recipe.addExtraIngredient(new ExtraIngredientOnRecipe(i.getKey(), i.getValue())));
+                    return recipe;
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
@@ -326,6 +378,9 @@ public class AppController {
 
         void askForQuantity();
 
+        void printIngredientsRepository(List<BaseIngredientInStock> baseIngredientsInStocks,
+                                        List<ExtraIngredientInStock> extraIngredientInStocks);
+
         void printIngredientsOptionListMessage();
 
         void printChosenIngredientsForCurrentCoffee(Map<ExtraIngredient, Integer> extraIngredientDefinitionMap);
@@ -354,7 +409,7 @@ public class AppController {
 
         void printCheckMessage(Order placedOrder, Double priceOrder, Double profitToday);
 
-        void printCoffeeListMessage(List<Coffee> coffeeList);
+        void printCoffeeListMessage(Order.Builder order);
 
         void printAllOrders(Order order);
 

@@ -10,14 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
-public class CoffeeRecipe {
+public class Recipe {
 
     private List<BaseIngredientOnRecipe> baseIngredients = new ArrayList<>();
     private List<ExtraIngredientOnRecipe> extraIngredients = new ArrayList<>();
 
-    public CoffeeRecipe(Builder builder) {
+    public Recipe(Builder builder) {
         this.baseIngredients = builder.baseIngredientsConfig;
         this.extraIngredients = builder.extraIngredientConfig;
     }
@@ -26,6 +25,9 @@ public class CoffeeRecipe {
         this.extraIngredients.add(ingredient);
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class Builder {
 
         private List<BaseIngredientOnRecipe> baseIngredientsConfig;
@@ -36,12 +38,12 @@ public class CoffeeRecipe {
             this.extraIngredientConfig = extraIngredients;
         }
 
-        public Builder(List<BaseIngredientOnRecipe> baseIngredients) {
-            this.baseIngredientsConfig = baseIngredients;
+        public Builder(List<BaseIngredientOnRecipe> baseIngredientsConfig) {
+            this.baseIngredientsConfig = baseIngredientsConfig;
         }
 
-        public CoffeeRecipe build() {
-            return new CoffeeRecipe(this);
+        public Recipe build() {
+            return new Recipe(this);
         }
     }
 

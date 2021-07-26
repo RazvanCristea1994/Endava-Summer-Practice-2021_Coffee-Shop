@@ -1,13 +1,22 @@
 package org.fantasticcoffee.shop.service;
 
-import org.fantasticcoffee.shop.model.Coffee;
-import org.fantasticcoffee.shop.model.CoffeeType;
+import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
+import org.fantasticcoffee.shop.model.StandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
 
 public interface CoffeeService {
 
-    Double getCoffeePrice(Coffee coffee);
+    Double getCoffeePrice(CustomCoffee customCoffee);
 
-    Double getCoffeeCost(Coffee coffee);
 
-    Double getCoffeeTypePrice(CoffeeType coffeeType);
+    Double getCoffeePrice(CustomizableStandardCoffee customCoffee);
+
+
+    Double getCoffeeCost(CustomCoffee customCoffee);
+
+
+    Double getCoffeeCost(CustomizableStandardCoffee customCoffee);
+
+
+    Double getStandardCoffeePrice(StandardCoffee standardCoffee);
 }

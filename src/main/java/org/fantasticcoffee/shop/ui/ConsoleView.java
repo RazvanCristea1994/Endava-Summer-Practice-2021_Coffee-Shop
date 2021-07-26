@@ -1,11 +1,12 @@
 package org.fantasticcoffee.shop.ui;
 
-import org.fantasticcoffee.shop.model.Coffee;
-import org.fantasticcoffee.shop.model.CoffeeType;
+import org.fantasticcoffee.shop.model.StandardCoffee;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.WhereToDrink;
 import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredient;
 import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredient;
+import org.fantasticcoffee.shop.model.stock.BaseIngredientInStock;
+import org.fantasticcoffee.shop.model.stock.ExtraIngredientInStock;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
@@ -51,18 +52,14 @@ public class ConsoleView implements AppController.View {
 
         System.out.println("\n" + SHOP_NAME);
 
-        CoffeeType[] coffeeType = CoffeeType.values();
-        for (int i = 0; i < coffeeType.length; i++) {
-            if (coffeeType[i].getRecipe().getBaseIngredients().isEmpty() && coffeeType[i].getRecipe().getExtraIngredients().isEmpty()) {
-                System.out.printf("%-3s %-1s %-30s %-12s %s %n",
-                        i + 1, "-", coffeeType[i].getName(), "", "Choose any amazing ingredients");
-            } else {
-                System.out.printf("%-3s %-1s %-30s %s%-8s %-1s %n",
-                        i + 1, "-", coffeeType[i].getName(), coffeeTypePrices[i], "$",
-                        coffeeType[i].getRecipe());
-            }
+        StandardCoffee[] standardCoffee = StandardCoffee.values();
+        for (int i = 0; i < standardCoffee.length; i++) {
+            System.out.printf("%-3s %-1s %-30s %-12s %s %n",
+                    i + 1, "-", standardCoffee[i].getName(), "", "Choose any amazing ingredients");
         }
 
+        System.out.printf("%-3s %-1s %-30s %n",
+                6, "-", "Create your own Coffee");
         System.out.printf("%-3s %-1s %s %n", "X", "-", "Exit");
     }
 
@@ -73,6 +70,25 @@ public class ConsoleView implements AppController.View {
         for (int i = 0; i < baseIngredients.length; i++) {
             System.out.printf("%-3s %-1s %s", i + 1, "-", baseIngredients[i]);
         }
+    }
+
+
+    public void printIngredientsRepository(List<BaseIngredientInStock> baseIngredientsInStocks,
+                                           List<ExtraIngredientInStock> extraIngredientInStocks) {
+
+        baseIngredientsInStocks.forEach(baseIngredientInStock -> {
+            System.out.printf("%-3s %-3s %s %n", baseIngredientInStock.getBaseIngredient().getIngredientName(), "-", baseIngredientInStock.getQuantity());
+            if (baseIngredientInStock.getQuantity() <= 3) {
+                System.out.println("Warning! Your supplies are running out fast.");
+            }
+        });
+
+        extraIngredientInStocks.forEach(extraIngredientInStock -> {
+            System.out.printf("%-3s %-3s %s", extraIngredientInStock.getExtraIngredient().getIngredientName(), " - ", extraIngredientInStock.getQuantity());
+            if (extraIngredientInStock.getQuantity() <= 3) {
+                System.out.println("Warning! Your supplies are running out fast.");
+            }
+        });
     }
 
     public void printIngredientsOptionListMessage() {
@@ -157,42 +173,111 @@ public class ConsoleView implements AppController.View {
 
         printHeaderWithWhereToDrink(order);
         printIdOnCheck(order.getId());
-        printItemsOnCheck(order.getCoffeeList());
+
+        printCustomizableStandardCoffeeOnCheck(order);
+        printCustomCoffeeOnCheck(order);
+
         printTotalPriceOnCheck(priceOrder);
         printFooterOnCheck(order, profitToday);
     }
 
-    public void printCoffeeListMessage(List<Coffee> coffeeList) {
+    public void printCoffeeListMessage(Order.Builder order) {
 
-        printHeaderWithoutWhereToDrink(coffeeList.get(0).getCustomerName());
-        printItemsOnCheck(coffeeList);
+        if (!order.getCustomCoffeeList().isEmpty()) {
+            printHeaderWithoutWhereToDrink(order.getCustomCoffeeList().get(0).getCustomerName());
+        }
+
+        if (!order.getCustomizableStandardCoffee().isEmpty()) {
+            printHeaderWithoutWhereToDrink(order.getCustomizableStandardCoffee().get(0).getCustomerName());
+        }
+
+        printCustomizableStandardCoffeeOnCheck(order);
+        printCustomCoffeeOnCheck(order);
+
         System.out.println(CLOSING_LINE);
     }
 
     public void printAllOrders(Order order) {
 
-        printHeaderWithoutWhereToDrink(order.getCoffeeList().get(0).getCustomerName());
+        if (!order.getCustomCoffeeList().isEmpty()) {
+            printHeaderWithoutWhereToDrink(order.getCustomCoffeeList().get(0).getCustomerName());
+        }
+
+        if (!order.getCustomizableStandardCoffee().isEmpty()) {
+            printHeaderWithoutWhereToDrink(order.getCustomizableStandardCoffee().get(0).getCustomerName());
+        }
         printIdOnCheck(order.getId());
-        printItemsOnCheck(order.getCoffeeList());
+
+        printCustomizableStandardCoffeeOnCheck(order);
+        printCustomCoffeeOnCheck(order);
+
         System.out.println(CLOSING_LINE);
     }
 
-    private void printItemsOnCheck(List<Coffee> coffeeList) {
+    private void printCustomizableStandardCoffeeOnCheck(Order order) {
 
-        coffeeList.forEach(coffee -> {
-            System.out.printf("%s %-3s %-1s %s %n", "#", coffeeList.indexOf(coffee), "-", coffee.getCoffeeType().getName());
-            if (coffee.getCoffeeType().getRecipe().getBaseIngredients() != null) {
-                coffee.getCoffeeType().getRecipe().getBaseIngredients().forEach(baseCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", baseCoffeeTypeIngredient.getQuantity(), "x", baseCoffeeTypeIngredient.getBaseIngredient()));
-            }
-            if (coffee.getCoffeeType().getRecipe().getExtraIngredients() != null) {
-                coffee.getCoffeeType().getRecipe().getExtraIngredients().forEach(extraCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", extraCoffeeTypeIngredient.getQuantity(), "x", extraCoffeeTypeIngredient.getExtraIngredient()));
+        order.getCustomizableStandardCoffee().forEach(coffee -> {
+            System.out.printf("%s %-3s %-1s %s %n", "#", order.getCustomizableStandardCoffee().indexOf(coffee), "-", coffee.getStandardCoffee().getName());
+
+            if (coffee.getStandardCoffee().getRecipe().getBaseIngredients() != null) {
+                coffee.getStandardCoffee().getRecipe().getBaseIngredients().forEach(baseCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", baseCoffeeTypeIngredient.getQuantity(), "x", baseCoffeeTypeIngredient.getBaseIngredient()));
             }
 
-            if (coffee.getAdditionalIngredientsForCustomCoffee().getBaseIngredients() != null) {
-                coffee.getAdditionalIngredientsForCustomCoffee().getBaseIngredients().forEach(additionalBaseIngredient -> System.out.printf("%10s %-1s %-1s %s", "+", additionalBaseIngredient.getQuantity(), "x", additionalBaseIngredient.getBaseIngredient()));
+            if (coffee.getStandardCoffee().getRecipe().getExtraIngredients() != null) {
+                coffee.getStandardCoffee().getRecipe().getExtraIngredients().forEach(extraCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", extraCoffeeTypeIngredient.getQuantity(), "x", extraCoffeeTypeIngredient.getExtraIngredient()));
             }
-            if (coffee.getAdditionalIngredientsForCustomCoffee().getExtraIngredients() != null) {
-                coffee.getAdditionalIngredientsForCustomCoffee().getExtraIngredients().forEach(additionalExtraIngredient -> System.out.printf("%10s %-1s %-1s %s", "+", additionalExtraIngredient.getQuantity(), "x", additionalExtraIngredient.getExtraIngredient()));
+
+            if (coffee.getExtraIngredients() != null) {
+                coffee.getExtraIngredients().forEach(additionalExtraIngredient -> System.out.printf("%10s %-1s %-1s %s", "+", additionalExtraIngredient.getQuantity(), "x", additionalExtraIngredient.getExtraIngredient()));
+            }
+        });
+    }
+
+    private void printCustomizableStandardCoffeeOnCheck(Order.Builder order) {
+
+        order.getCustomizableStandardCoffee().forEach(coffee -> {
+            System.out.printf("%s %-3s %-1s %s %n", "#", order.getCustomizableStandardCoffee().indexOf(coffee), "-", coffee.getStandardCoffee().getName());
+
+            if (coffee.getStandardCoffee().getRecipe().getBaseIngredients() != null) {
+                coffee.getStandardCoffee().getRecipe().getBaseIngredients().forEach(baseCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", baseCoffeeTypeIngredient.getQuantity(), "x", baseCoffeeTypeIngredient.getBaseIngredient()));
+            }
+
+            if (coffee.getStandardCoffee().getRecipe().getExtraIngredients() != null) {
+                coffee.getStandardCoffee().getRecipe().getExtraIngredients().forEach(extraCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", extraCoffeeTypeIngredient.getQuantity(), "x", extraCoffeeTypeIngredient.getExtraIngredient()));
+            }
+
+            if (coffee.getExtraIngredients() != null) {
+                coffee.getExtraIngredients().forEach(additionalExtraIngredient -> System.out.printf("%10s %-1s %-1s %s", "+", additionalExtraIngredient.getQuantity(), "x", additionalExtraIngredient.getExtraIngredient()));
+            }
+        });
+    }
+
+    private void printCustomCoffeeOnCheck(Order order) {
+
+        order.getCustomCoffeeList().forEach(coffee -> {
+            System.out.printf("%s %-3s %-1s %s %n", "#", order.getCustomCoffeeList().indexOf(coffee), "-", "Your creation");
+
+            if (coffee.getCustomerMadeRecipe().getBaseIngredients() != null) {
+                coffee.getCustomerMadeRecipe().getBaseIngredients().forEach(baseCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", baseCoffeeTypeIngredient.getQuantity(), "x", baseCoffeeTypeIngredient.getBaseIngredient()));
+            }
+
+            if (coffee.getCustomerMadeRecipe().getExtraIngredients() != null) {
+                coffee.getCustomerMadeRecipe().getExtraIngredients().forEach(extraCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", extraCoffeeTypeIngredient.getQuantity(), "x", extraCoffeeTypeIngredient.getExtraIngredient()));
+            }
+        });
+    }
+
+    private void printCustomCoffeeOnCheck(Order.Builder order) {
+
+        order.getCustomCoffeeList().forEach(coffee -> {
+            System.out.printf("%s %-3s %-1s %s %n", "#", order.getCustomCoffeeList().indexOf(coffee), "-", "Your creation");
+
+            if (coffee.getCustomerMadeRecipe().getBaseIngredients() != null) {
+                coffee.getCustomerMadeRecipe().getBaseIngredients().forEach(baseCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", baseCoffeeTypeIngredient.getQuantity(), "x", baseCoffeeTypeIngredient.getBaseIngredient()));
+            }
+
+            if (coffee.getCustomerMadeRecipe().getExtraIngredients() != null) {
+                coffee.getCustomerMadeRecipe().getExtraIngredients().forEach(extraCoffeeTypeIngredient -> System.out.printf("%10s %-1s %-1s %s", "<>", extraCoffeeTypeIngredient.getQuantity(), "x", extraCoffeeTypeIngredient.getExtraIngredient()));
             }
         });
     }
@@ -211,7 +296,13 @@ public class ConsoleView implements AppController.View {
         System.out.println(order.getWhereToDrink().getName().toUpperCase());
         System.out.printf("%42s %n%n", SHOP_NAME);
         System.out.println(CLOSING_LINE);
-        System.out.println(order.getCoffeeList().get(0).getCustomerName().toUpperCase() + "'s Coffee Type");
+
+        if (!order.getCustomCoffeeList().isEmpty()) {
+            System.out.println(order.getCustomCoffeeList().get(0).getCustomerName().toUpperCase() + "'s Coffee Type");
+        }
+        if (!order.getCustomizableStandardCoffee().isEmpty()) {
+            System.out.println(order.getCustomizableStandardCoffee().get(0).getCustomerName().toUpperCase() + "'s Coffee Type");
+        }
     }
 
     private void printFooterOnCheck(Order order, Double profit) {

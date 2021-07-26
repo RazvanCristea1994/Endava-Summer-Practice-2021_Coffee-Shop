@@ -1,101 +1,138 @@
 package org.fantasticcoffee.shop.service.impl;
 
-import org.fantasticcoffee.shop.model.Coffee;
-import org.fantasticcoffee.shop.model.CoffeeType;
+import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
+import org.fantasticcoffee.shop.model.StandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
 import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
 import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
+import org.fantasticcoffee.shop.repository.DefaultBaseIngredientRepository;
+import org.fantasticcoffee.shop.repository.DefaultExtraIngredientRepository;
 import org.fantasticcoffee.shop.service.CoffeeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("coffeeService")
 public class DefaultCoffeeService implements CoffeeService {
 
-    public Double getCoffeePrice(Coffee coffee) {
+    @Autowired
+    DefaultBaseIngredientRepository baseIngredientRepository;
 
-        double baseIngredientsInCoffeeTypePrice = 0.0;
-        if (!coffee.getCoffeeType().getRecipe().getBaseIngredients().isEmpty()) {
-            for (BaseIngredientOnRecipe baseIngredientOnRecipe : coffee.getCoffeeType().getRecipe().getBaseIngredients()) {
-                baseIngredientsInCoffeeTypePrice +=
-                        baseIngredientOnRecipe.getQuantity() * baseIngredientOnRecipe.getBaseIngredient().getIngredientSellingPrice();
-            }
-        }
+    @Autowired
+    DefaultExtraIngredientRepository extraIngredientRepository;
 
-        double extraIngredientsInCoffeeTypePrice = 0.0;
-        if (!coffee.getCoffeeType().getRecipe().getExtraIngredients().isEmpty()) {
-            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getCoffeeType().getRecipe().getExtraIngredients()) {
-                extraIngredientsInCoffeeTypePrice +=
-                        extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getExtraIngredient().getIngredientSellingPrice();
-            }
-        }
+    public Double getCoffeePrice(CustomCoffee coffee) {
 
         double additionalBaseIngredientsPrice = 0.0;
-        if (!coffee.getAdditionalIngredientsForCustomCoffee().getBaseIngredients().isEmpty()) {
-            for (BaseIngredientOnRecipe baseIngredientOnRecipe : coffee.getAdditionalIngredientsForCustomCoffee().getBaseIngredients()) {
+        if (!coffee.getCustomerMadeRecipe().getBaseIngredients().isEmpty()) {
+            for (BaseIngredientOnRecipe baseIngredientOnRecipe : coffee.getCustomerMadeRecipe().getBaseIngredients()) {
                 additionalBaseIngredientsPrice +=
                         baseIngredientOnRecipe.getQuantity() * baseIngredientOnRecipe.getBaseIngredient().getIngredientSellingPrice();
             }
         }
 
         double additionalExtraIngredientsPrice = 0.0;
-        if (!coffee.getAdditionalIngredientsForCustomCoffee().getExtraIngredients().isEmpty()) {
-            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getAdditionalIngredientsForCustomCoffee().getExtraIngredients()) {
+        if (!coffee.getCustomerMadeRecipe().getExtraIngredients().isEmpty()) {
+            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getCustomerMadeRecipe().getExtraIngredients()) {
                 additionalExtraIngredientsPrice +=
                         extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getExtraIngredient().getIngredientSellingPrice();
             }
         }
 
-        return baseIngredientsInCoffeeTypePrice + extraIngredientsInCoffeeTypePrice + additionalBaseIngredientsPrice + additionalExtraIngredientsPrice;
+        return additionalBaseIngredientsPrice + additionalExtraIngredientsPrice;
     }
 
-    public Double getCoffeeCost(Coffee coffee) {
+    public Double getCoffeePrice(CustomizableStandardCoffee coffee) {
 
-        double baseIngredientsInCoffeeTypeCost = 0.0;
-        if (!coffee.getCoffeeType().getRecipe().getBaseIngredients().isEmpty()) {
-            for (BaseIngredientOnRecipe baseIngredientOnRecipe : coffee.getCoffeeType().getRecipe().getBaseIngredients()) {
-                baseIngredientsInCoffeeTypeCost +=
-                        baseIngredientOnRecipe.getQuantity() * baseIngredientOnRecipe.getBaseIngredient().getIngredientCost();
+        double baseIngredientsInStandardCoffeePrice = 0.0;
+        if (!coffee.getStandardCoffee().getRecipe().getBaseIngredients().isEmpty()) {
+            for (BaseIngredientOnRecipe baseIngredientOnRecipe : coffee.getStandardCoffee().getRecipe().getBaseIngredients()) {
+                baseIngredientsInStandardCoffeePrice +=
+                        baseIngredientOnRecipe.getQuantity() * baseIngredientOnRecipe.getBaseIngredient().getIngredientSellingPrice();
             }
         }
-        double extraIngredientsInCoffeeTypeCost = 0.0;
-        if (!coffee.getCoffeeType().getRecipe().getExtraIngredients().isEmpty()) {
-            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getCoffeeType().getRecipe().getExtraIngredients()) {
-                extraIngredientsInCoffeeTypeCost +=
-                        extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getExtraIngredient().getIngredientCost();
+
+        double extraIngredientsInStandardCoffeePrice = 0.0;
+        if (!coffee.getStandardCoffee().getRecipe().getExtraIngredients().isEmpty()) {
+            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getStandardCoffee().getRecipe().getExtraIngredients()) {
+                extraIngredientsInStandardCoffeePrice +=
+                        extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getExtraIngredient().getIngredientSellingPrice();
             }
         }
+
+        double additionalExtraIngredientsPrice = 0.0;
+        if (!coffee.getExtraIngredients().isEmpty()) {
+            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getExtraIngredients()) {
+                additionalExtraIngredientsPrice +=
+                        extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getExtraIngredient().getIngredientSellingPrice();
+            }
+        }
+
+        return baseIngredientsInStandardCoffeePrice + extraIngredientsInStandardCoffeePrice + additionalExtraIngredientsPrice;
+    }
+
+    public Double getCoffeeCost(CustomCoffee coffee) {
 
         double additionalBaseIngredientsCost = 0.0;
-        if (!coffee.getAdditionalIngredientsForCustomCoffee().getBaseIngredients().isEmpty()) {
-            for (BaseIngredientOnRecipe baseIngredientOnRecipe : coffee.getAdditionalIngredientsForCustomCoffee().getBaseIngredients()) {
+        if (!coffee.getCustomerMadeRecipe().getBaseIngredients().isEmpty()) {
+            for (BaseIngredientOnRecipe baseIngredientOnRecipe : coffee.getCustomerMadeRecipe().getBaseIngredients()) {
                 additionalBaseIngredientsCost +=
                         baseIngredientOnRecipe.getQuantity() * baseIngredientOnRecipe.getBaseIngredient().getIngredientCost();
             }
         }
 
         double additionalExtraIngredientsCost = 0.0;
-        if (!coffee.getAdditionalIngredientsForCustomCoffee().getExtraIngredients().isEmpty()) {
-            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getAdditionalIngredientsForCustomCoffee().getExtraIngredients()) {
+        if (!coffee.getCustomerMadeRecipe().getExtraIngredients().isEmpty()) {
+            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getCustomerMadeRecipe().getExtraIngredients()) {
                 additionalExtraIngredientsCost +=
                         extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getExtraIngredient().getIngredientCost();
             }
         }
 
-        return baseIngredientsInCoffeeTypeCost + extraIngredientsInCoffeeTypeCost + additionalBaseIngredientsCost + additionalExtraIngredientsCost;
+        return additionalBaseIngredientsCost + additionalExtraIngredientsCost;
     }
 
-    public Double getCoffeeTypePrice(CoffeeType coffeeType) {
+    public Double getCoffeeCost(CustomizableStandardCoffee coffee) {
 
-        Double baseIngredientsInCoffeeTypePrice = 0.0;
-        if (!coffeeType.getRecipe().getBaseIngredients().isEmpty()) {
-            for (BaseIngredientOnRecipe baseIngredientOnRecipe : coffeeType.getRecipe().getBaseIngredients()) {
+        double baseIngredientsInStandardCoffeeCost = 0.0;
+        if (!coffee.getStandardCoffee().getRecipe().getBaseIngredients().isEmpty()) {
+            for (BaseIngredientOnRecipe baseIngredientOnRecipe : coffee.getStandardCoffee().getRecipe().getBaseIngredients()) {
+                baseIngredientsInStandardCoffeeCost +=
+                        baseIngredientOnRecipe.getQuantity() * baseIngredientOnRecipe.getBaseIngredient().getIngredientCost();
+            }
+        }
+
+        double extraIngredientsInStandardCoffeeCost = 0.0;
+        if (!coffee.getStandardCoffee().getRecipe().getExtraIngredients().isEmpty()) {
+            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getStandardCoffee().getRecipe().getExtraIngredients()) {
+                extraIngredientsInStandardCoffeeCost +=
+                        extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getExtraIngredient().getIngredientCost();
+            }
+        }
+
+        double additionalExtraIngredientsCost = 0.0;
+        if (!coffee.getExtraIngredients().isEmpty()) {
+            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffee.getStandardCoffee().getRecipe().getExtraIngredients()) {
+                additionalExtraIngredientsCost +=
+                        extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getExtraIngredient().getIngredientCost();
+            }
+        }
+
+        return baseIngredientsInStandardCoffeeCost + extraIngredientsInStandardCoffeeCost + additionalExtraIngredientsCost;
+    }
+
+    public Double getStandardCoffeePrice(StandardCoffee standardCoffee) {
+
+        double baseIngredientsInCoffeeTypePrice = 0.0;
+        if (!standardCoffee.getRecipe().getBaseIngredients().isEmpty()) {
+            for (BaseIngredientOnRecipe baseIngredientOnRecipe : standardCoffee.getRecipe().getBaseIngredients()) {
                 baseIngredientsInCoffeeTypePrice +=
                         baseIngredientOnRecipe.getQuantity() * baseIngredientOnRecipe.getBaseIngredient().getIngredientSellingPrice();
             }
         }
 
         double extraIngredientsInCoffeeTypeCost = 0.0;
-        if (!coffeeType.getRecipe().getExtraIngredients().isEmpty()) {
-            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : coffeeType.getRecipe().getExtraIngredients()) {
+        if (!standardCoffee.getRecipe().getExtraIngredients().isEmpty()) {
+            for (ExtraIngredientOnRecipe extraIngredientOnRecipe : standardCoffee.getRecipe().getExtraIngredients()) {
                 extraIngredientsInCoffeeTypeCost +=
                         extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getExtraIngredient().getIngredientSellingPrice();
             }
