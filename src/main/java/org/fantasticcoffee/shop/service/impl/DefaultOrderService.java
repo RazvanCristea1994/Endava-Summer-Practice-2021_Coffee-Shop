@@ -166,6 +166,8 @@ public class DefaultOrderService implements OrderService {
                     this.baseIngredientConverter.recipeIngredientsToStockIngredients(coffee.getStandardCoffee().getRecipe().getBaseIngredients()));
             this.extraIngredientService.decrementExtraIngredient(
                     this.extraIngredientConverter.recipeIngredientsToStockIngredients(coffee.getStandardCoffee().getRecipe().getExtraIngredients()));
+            this.extraIngredientService.decrementExtraIngredient(
+                    this.extraIngredientConverter.recipeIngredientsToStockIngredients(coffee.getExtraIngredients()));
         });
 
         order.getCustomCoffeeList().forEach(coffee -> {
