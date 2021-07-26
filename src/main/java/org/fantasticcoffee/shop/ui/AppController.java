@@ -1,7 +1,6 @@
 package org.fantasticcoffee.shop.ui;
 
 import org.fantasticcoffee.shop.model.WhereToDrink;
-import org.fantasticcoffee.shop.model.coffee.BaseCoffee;
 import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
 import org.fantasticcoffee.shop.model.Recipe;
 import org.fantasticcoffee.shop.model.StandardCoffee;
@@ -28,6 +27,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller("controller")
 public class AppController {
@@ -123,14 +124,13 @@ public class AppController {
 
     private Recipe createCustomCoffee() {
 
-        List<BaseIngredientOnRecipe> baseIngredientOnRecipe = new ArrayList<>(chooseCoffeeShots().getBaseIngredients());
-        List<ExtraIngredientOnRecipe> extraIngredientOnRecipe = new ArrayList<>(chooseExtraIngredients().getExtraIngredients());
+        List<BaseIngredientOnRecipe> baseIngredientOnRecipe = chooseCoffeeShots().getBaseIngredients();
+        List<ExtraIngredientOnRecipe> extraIngredientOnRecipe = chooseExtraIngredients().getExtraIngredients();
 
-        Recipe recipe = new Recipe();
         Recipe.Builder builder = new Recipe.Builder();
         builder.setBaseIngredientsConfig(baseIngredientOnRecipe);
         builder.setExtraIngredientConfig(extraIngredientOnRecipe);
-        return recipe;
+        return builder.build();
     }
 
     private Order.Builder removeCoffeeFromCustomerList(Order.Builder order) {
@@ -141,7 +141,7 @@ public class AppController {
         }
         this.consoleView.printCoffeeListMessage(order);
 
-        findAndRemoveCoffee(order);
+        chooseWhatKindToRemove(order);
 
         if (order.getCustomCoffeeList().isEmpty() && order.getCustomizableStandardCoffee().isEmpty()) {
             this.consoleView.printEmptyList();
@@ -151,33 +151,55 @@ public class AppController {
         return order;
     }
 
-    private void findAndRemoveCoffee(Order.Builder order) {
+    private Order.Builder chooseWhatKindToRemove(Order.Builder order) {
 
-        int countErrors = 0;
+        while (true) {
+            this.consoleView.chooseWhatKindToRemove();
+
+            String option = input.readline();
+            switch (option.toUpperCase()) {
+                case "1" -> findAndRemoveCustomCoffee(order);
+                case "2" -> findAndRemoveStandardCoffee(order);
+                case "X" -> {
+                    return order;
+                }
+                default -> consoleView.printInvalidOptionMessage();
+            }
+
+            if (order.getCustomCoffeeList().isEmpty() && order.getCustomizableStandardCoffee().isEmpty()) {
+                this.consoleView.printEmptyList();
+            }
+            this.consoleView.printCoffeeListMessage(order);
+        }
+    }
+
+    private void findAndRemoveStandardCoffee(Order.Builder order) {
+
+        consoleView.printAskForIdMessage();
+        int coffeeIndex = input.readInt();
+        try {
+            CustomizableStandardCoffee customizableStandardCoffee = order.getCustomizableStandardCoffee().get(coffeeIndex);
+            order.getCustomizableStandardCoffee().remove(customizableStandardCoffee);
+        } catch (IndexOutOfBoundsException e) {
+            this.consoleView.printInvalidIdMessage();
+        }
+    }
+
+    private void findAndRemoveCustomCoffee(Order.Builder order) {
+
         consoleView.printAskForIdMessage();
         int coffeeIndex = input.readInt();
         try {
             CustomCoffee customCoffee = order.getCustomCoffeeList().get(coffeeIndex);
             order.getCustomCoffeeList().remove(customCoffee);
         } catch (IndexOutOfBoundsException e) {
-            countErrors++;
-        }
-
-        try {
-            CustomizableStandardCoffee customizableStandardCoffee = order.getCustomizableStandardCoffee().get(coffeeIndex);
-            order.getCustomizableStandardCoffee().remove(customizableStandardCoffee);
-        } catch (IndexOutOfBoundsException e) {
-            countErrors++;
-        }
-
-        if (countErrors == 2) {
             this.consoleView.printInvalidIdMessage();
         }
     }
 
     private Order.Builder placeOrder(Order.Builder order) {
 
-        if (!order.getCustomCoffeeList().isEmpty() && !order.getCustomizableStandardCoffee().isEmpty()) {
+        if (order.getCustomCoffeeList().isEmpty() && order.getCustomizableStandardCoffee().isEmpty()) {
             consoleView.printOrderEmptyMessage();
             return order;
         }
@@ -369,6 +391,8 @@ public class AppController {
     public interface View {
 
         void printMainMenu();
+
+        void chooseWhatKindToRemove();
 
         void printCoffeeOptionListMessage(Double[] coffeeTypePrices);
 

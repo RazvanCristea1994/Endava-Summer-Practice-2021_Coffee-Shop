@@ -27,7 +27,8 @@ public class ConsoleView implements AppController.View {
             "Print all orders",
             "Update order",
             "Cancel order",
-            "My list");
+            "My list",
+            "Print ingredients stock");
     private static final List<String> updateOrderMenu = Arrays.asList(
             "Select a coffee",
             "Remove a coffee",
@@ -79,14 +80,14 @@ public class ConsoleView implements AppController.View {
         baseIngredientsInStocks.forEach(baseIngredientInStock -> {
             System.out.printf("%-3s %-3s %s %n", baseIngredientInStock.getBaseIngredient().getIngredientName(), "-", baseIngredientInStock.getQuantity());
             if (baseIngredientInStock.getQuantity() <= 3) {
-                System.out.println("Warning! Your supplies are running out fast.");
+                System.out.println("Warning! Your supplies are running out fast.\n");
             }
         });
 
         extraIngredientInStocks.forEach(extraIngredientInStock -> {
-            System.out.printf("%-3s %-3s %s", extraIngredientInStock.getExtraIngredient().getIngredientName(), " - ", extraIngredientInStock.getQuantity());
+            System.out.printf("%-3s %-3s %s %n", extraIngredientInStock.getExtraIngredient().getIngredientName(), " - ", extraIngredientInStock.getQuantity());
             if (extraIngredientInStock.getQuantity() <= 3) {
-                System.out.println("Warning! Your supplies are running out fast.");
+                System.out.println("Warning! Your supplies are running out fast.\n");
             }
         });
     }
@@ -119,6 +120,12 @@ public class ConsoleView implements AppController.View {
         System.out.println(CLOSING_LINE);
         extraIngredientDefinitionMap.forEach((ingredient, quantity) -> System.out.printf("%10s %-1s %s %s", "+", quantity, "x", ingredient));
         System.out.println(CLOSING_LINE);
+    }
+
+    public void chooseWhatKindToRemove() {
+        System.out.println("1 -  Remove a Custom Coffee\n" +
+                "2 - Remove a Standard Coffee\n" +
+                "X - Go Back");
     }
 
     public void printAskNameMessage() {
@@ -185,14 +192,13 @@ public class ConsoleView implements AppController.View {
 
         if (!order.getCustomCoffeeList().isEmpty()) {
             printHeaderWithoutWhereToDrink(order.getCustomCoffeeList().get(0).getCustomerName());
+            printCustomCoffeeOnCheck(order);
         }
 
         if (!order.getCustomizableStandardCoffee().isEmpty()) {
             printHeaderWithoutWhereToDrink(order.getCustomizableStandardCoffee().get(0).getCustomerName());
+            printCustomizableStandardCoffeeOnCheck(order);
         }
-
-        printCustomizableStandardCoffeeOnCheck(order);
-        printCustomCoffeeOnCheck(order);
 
         System.out.println(CLOSING_LINE);
     }

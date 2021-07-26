@@ -43,7 +43,6 @@ public class DefaultExtraIngredientService implements ExtraIngredientService {
         extraIngredientToChange.forEach(extraIngredientInStock -> {
             ExtraIngredientInStock ingredient = this.extraIngredientRepository.find(extraIngredientInStock.getExtraIngredient());
             ingredient.setQuantity(ingredient.getQuantity() - extraIngredientInStock.getQuantity());
-            this.extraIngredientRepository.update(ingredient.getId(), ingredient);
         });
     }
 

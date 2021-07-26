@@ -33,7 +33,6 @@ public class DefaultBaseIngredientService implements BaseIngredientService {
         baseIngredientToChange.forEach(baseIngredientInStock -> {
             BaseIngredientInStock ingredient = this.baseIngredientRepository.find(baseIngredientInStock.getBaseIngredient());
             ingredient.setQuantity(ingredient.getQuantity() - baseIngredientInStock.getQuantity());
-            this.baseIngredientRepository.update(ingredient.getId(), ingredient);
         });
     }
 

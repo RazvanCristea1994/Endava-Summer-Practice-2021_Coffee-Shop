@@ -20,7 +20,7 @@ public class DefaultBaseIngredientRepository {
     public boolean save(BaseIngredientInStock ingredient) {
 
         if (ingredient == null) {
-            throw new IllegalArgumentException("ExtraIngredient cannot be null");
+            throw new IllegalArgumentException("BaseIngredient cannot be null");
         }
         return database.add(ingredient);
     }
