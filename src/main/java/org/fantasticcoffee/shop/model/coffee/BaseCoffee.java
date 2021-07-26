@@ -1,3 +1,4 @@
+/*
 package org.fantasticcoffee.shop.model.coffee;
 
 import lombok.Getter;
@@ -9,3 +10,4 @@ public abstract class BaseCoffee {
 
     private String customerName;
 }
+*/

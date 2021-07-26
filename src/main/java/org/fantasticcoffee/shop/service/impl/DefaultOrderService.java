@@ -23,9 +23,7 @@ public class DefaultOrderService implements OrderService {
     @Autowired
     private CoffeeService coffeeService;
     @Autowired
-    private DefaultBaseIngredientService baseIngredientService;
-    @Autowired
-    private DefaultExtraIngredientService extraIngredientService;
+    private DefaultIngredientService ingredientService;
 
     private static Integer id = 0;
 
@@ -156,14 +154,14 @@ public class DefaultOrderService implements OrderService {
     private void decrementIngredientsInRepo(Order order) {
 
         order.getCustomizableStandardCoffee().forEach(coffee -> {
-            this.baseIngredientService.decrementBaseIngredient(coffee.getStandardCoffee().getRecipe().getBaseIngredients());
-            this.extraIngredientService.decrementExtraIngredient(coffee.getStandardCoffee().getRecipe().getExtraIngredients());
-            this.extraIngredientService.decrementExtraIngredient(coffee.getExtraIngredients());
+            this.ingredientService.decrementBaseIngredient(coffee.getStandardCoffee().getRecipe().getBaseIngredients());
+            this.ingredientService.decrementExtraIngredient(coffee.getStandardCoffee().getRecipe().getExtraIngredients());
+            this.ingredientService.decrementExtraIngredient(coffee.getExtraIngredients());
         });
 
         order.getCustomCoffeeList().forEach(coffee -> {
-            this.baseIngredientService.decrementBaseIngredient(coffee.getCustomerMadeRecipe().getBaseIngredients());
-            this.extraIngredientService.decrementExtraIngredient(coffee.getCustomerMadeRecipe().getExtraIngredients());
+            this.ingredientService.decrementBaseIngredient(coffee.getCustomerMadeRecipe().getBaseIngredients());
+            this.ingredientService.decrementExtraIngredient(coffee.getCustomerMadeRecipe().getExtraIngredients());
         });
     }
 }

@@ -14,11 +14,11 @@ public class CoffeeFactory {
         }
 
         return switch (standardCoffee) {
-            case ESPRESSO -> new DefaultEspresso();
-            case MACHIATTO -> new DefaultMachiatto();
-            case CAFFEE_LATTE -> new DefaultCaffeeLatte();
-            case CAPPUCCINO -> new DefaultCappuccino();
-            case CAFFEE_MIEL -> new DefaultCaffeeMiel();
+            case ESPRESSO -> new Espresso();
+            case MACHIATTO -> new Machiatto();
+            case CAFFEE_LATTE -> new CoffeeLatte();
+            case CAPPUCCINO -> new Cappuccino();
+            case CAFFEE_MIEL -> new CoffeeMiel();
         };
     }
 }

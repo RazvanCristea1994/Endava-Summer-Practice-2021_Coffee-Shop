@@ -9,8 +9,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CustomizableStandardCoffee extends BaseCoffee {
+public class CustomizableStandardCoffee {
 
+    private String customerName;
     private StandardCoffee standardCoffee;
     private List<ExtraIngredientOnRecipe> extraIngredients;
 

@@ -6,10 +6,10 @@ import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe
 
 import java.util.List;
 
-public class DefaultMachiatto implements StandardCoffeeFactory {
+public class Espresso implements StandardCoffeeFactory {
 
     @Override
     public CustomizableStandardCoffee create(String customerName, List<ExtraIngredientOnRecipe> extraIngredients) {
-        return new CustomizableStandardCoffee(customerName, StandardCoffee.MACHIATTO, extraIngredients);
+        return new CustomizableStandardCoffee(customerName, StandardCoffee.ESPRESSO, extraIngredients);
     }
 }

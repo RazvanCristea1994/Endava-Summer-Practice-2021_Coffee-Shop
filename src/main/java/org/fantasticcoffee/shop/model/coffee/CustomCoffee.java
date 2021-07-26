@@ -8,8 +8,9 @@ import org.fantasticcoffee.shop.model.Recipe;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CustomCoffee extends BaseCoffee {
+public class CustomCoffee {
 
+    private String customerName;
     private Recipe customerMadeRecipe;
 
     public CustomCoffee(String customerName, Recipe customerMadeRecipe) {

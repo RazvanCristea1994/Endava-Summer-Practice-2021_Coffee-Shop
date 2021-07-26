@@ -67,12 +67,12 @@ public class ConsoleView implements AppController.View {
     public void printCoffeeShotsOptionListMessage() {
 
         System.out.println("\n" + SHOP_NAME + "\n");
+
         BaseIngredient[] baseIngredients = BaseIngredient.values();
         for (int i = 0; i < baseIngredients.length; i++) {
             System.out.printf("%-3s %-1s %s", i + 1, "-", baseIngredients[i]);
         }
     }
-
 
     public void printIngredientsRepository(List<BaseIngredientInStock> baseIngredientsInStocks,
                                            List<ExtraIngredientInStock> extraIngredientInStocks) {

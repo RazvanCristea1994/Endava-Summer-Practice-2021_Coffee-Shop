@@ -12,10 +12,7 @@ import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
 import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
 import org.fantasticcoffee.shop.model.stock.BaseIngredientInStock;
 import org.fantasticcoffee.shop.model.stock.ExtraIngredientInStock;
-import org.fantasticcoffee.shop.service.BaseIngredientService;
-import org.fantasticcoffee.shop.service.CoffeeService;
-import org.fantasticcoffee.shop.service.ExtraIngredientService;
-import org.fantasticcoffee.shop.service.OrderService;
+import org.fantasticcoffee.shop.service.*;
 import org.fantasticcoffee.shop.service.impl.factory.CoffeeFactory;
 import org.fantasticcoffee.shop.utils.Input;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +32,7 @@ public class AppController {
     @Autowired
     private CoffeeService coffeeService;
     @Autowired
-    private BaseIngredientService baseIngredientService;
-    @Autowired
-    private ExtraIngredientService extraIngredientService;
+    private IngredientService ingredientService;
     @Autowired
     private View consoleView;
     @Autowired
@@ -47,8 +42,7 @@ public class AppController {
 
     public void runApp() {
 
-        this.baseIngredientService.seedStock();
-        this.extraIngredientService.seedStock();
+        this.ingredientService.seedStock();
 
         Order.Builder order = new Order.Builder();
         while (true) {
@@ -67,8 +61,8 @@ public class AppController {
                 case "6" -> cancelOrder();
                 case "7" -> printCurrentOrder(order);
                 case "8" -> this.consoleView.printIngredientsRepository(
-                        this.baseIngredientService.getAllBaseIngredientsInStock(),
-                        this.extraIngredientService.getAllExtraIngredientsInStock());
+                        this.ingredientService.getAllBaseIngredientsInStock(),
+                        this.ingredientService.getAllExtraIngredientsInStock());
                 case "X" -> {
                     consoleView.printGoodByeMessage();
                     return;
