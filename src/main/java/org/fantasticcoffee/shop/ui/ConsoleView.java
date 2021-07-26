@@ -123,9 +123,9 @@ public class ConsoleView implements AppController.View {
     }
 
     public void chooseWhatKindToRemove() {
-        System.out.println("1 -  Remove a Custom Coffee\n" +
+        System.out.println("1 - Remove a Custom Coffee\n" +
                 "2 - Remove a Standard Coffee\n" +
-                "X - Go Back");
+                "X - Go Back\n");
     }
 
     public void printAskNameMessage() {

@@ -1,6 +1,7 @@
 package org.fantasticcoffee.shop.service.impl;
 
 import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredient;
+import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
 import org.fantasticcoffee.shop.model.stock.ExtraIngredientInStock;
 import org.fantasticcoffee.shop.repository.DefaultExtraIngredientRepository;
 import org.fantasticcoffee.shop.service.ExtraIngredientService;
@@ -38,11 +39,12 @@ public class DefaultExtraIngredientService implements ExtraIngredientService {
         return this.extraIngredientRepository.findAll();
     }
 
-    public void decrementExtraIngredient(List<ExtraIngredientInStock> extraIngredientToChange) {
+    @Override
+    public void decrementExtraIngredient(List<ExtraIngredientOnRecipe> extraIngredientToChange) {
 
-        extraIngredientToChange.forEach(extraIngredientInStock -> {
-            ExtraIngredientInStock ingredient = this.extraIngredientRepository.find(extraIngredientInStock.getExtraIngredient());
-            ingredient.setQuantity(ingredient.getQuantity() - extraIngredientInStock.getQuantity());
+        extraIngredientToChange.forEach(extraIngredientOnRecipe -> {
+            ExtraIngredientInStock ingredient = this.extraIngredientRepository.find(extraIngredientOnRecipe.getExtraIngredient());
+            ingredient.setQuantity(ingredient.getQuantity() - extraIngredientOnRecipe.getQuantity());
         });
     }
 

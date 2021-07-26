@@ -1,7 +1,5 @@
 package org.fantasticcoffee.shop.service.impl;
 
-import org.fantasticcoffee.shop.converter.BaseIngredientOnRecipeConverter;
-import org.fantasticcoffee.shop.converter.ExtraIngredientOnRecipeConverter;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.repository.Repository;
 import org.fantasticcoffee.shop.service.CoffeeService;
@@ -28,10 +26,6 @@ public class DefaultOrderService implements OrderService {
     private DefaultBaseIngredientService baseIngredientService;
     @Autowired
     private DefaultExtraIngredientService extraIngredientService;
-    @Autowired
-    private BaseIngredientOnRecipeConverter baseIngredientConverter;
-    @Autowired
-    private ExtraIngredientOnRecipeConverter extraIngredientConverter;
 
     private static Integer id = 0;
 
@@ -162,19 +156,14 @@ public class DefaultOrderService implements OrderService {
     private void decrementIngredientsInRepo(Order order) {
 
         order.getCustomizableStandardCoffee().forEach(coffee -> {
-            this.baseIngredientService.decrementBaseIngredient(
-                    this.baseIngredientConverter.recipeIngredientsToStockIngredients(coffee.getStandardCoffee().getRecipe().getBaseIngredients()));
-            this.extraIngredientService.decrementExtraIngredient(
-                    this.extraIngredientConverter.recipeIngredientsToStockIngredients(coffee.getStandardCoffee().getRecipe().getExtraIngredients()));
-            this.extraIngredientService.decrementExtraIngredient(
-                    this.extraIngredientConverter.recipeIngredientsToStockIngredients(coffee.getExtraIngredients()));
+            this.baseIngredientService.decrementBaseIngredient(coffee.getStandardCoffee().getRecipe().getBaseIngredients());
+            this.extraIngredientService.decrementExtraIngredient(coffee.getStandardCoffee().getRecipe().getExtraIngredients());
+            this.extraIngredientService.decrementExtraIngredient(coffee.getExtraIngredients());
         });
 
         order.getCustomCoffeeList().forEach(coffee -> {
-            this.baseIngredientService.decrementBaseIngredient(
-                    this.baseIngredientConverter.recipeIngredientsToStockIngredients(coffee.getCustomerMadeRecipe().getBaseIngredients()));
-            this.extraIngredientService.decrementExtraIngredient(
-                    this.extraIngredientConverter.recipeIngredientsToStockIngredients(coffee.getCustomerMadeRecipe().getExtraIngredients()));
+            this.baseIngredientService.decrementBaseIngredient(coffee.getCustomerMadeRecipe().getBaseIngredients());
+            this.extraIngredientService.decrementExtraIngredient(coffee.getCustomerMadeRecipe().getExtraIngredients());
         });
     }
 }

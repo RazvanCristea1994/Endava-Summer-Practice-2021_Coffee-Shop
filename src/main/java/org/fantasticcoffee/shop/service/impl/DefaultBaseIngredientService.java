@@ -1,6 +1,7 @@
 package org.fantasticcoffee.shop.service.impl;
 
 import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredient;
+import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
 import org.fantasticcoffee.shop.model.stock.BaseIngredientInStock;
 import org.fantasticcoffee.shop.repository.DefaultBaseIngredientRepository;
 import org.fantasticcoffee.shop.service.BaseIngredientService;
@@ -28,11 +29,12 @@ public class DefaultBaseIngredientService implements BaseIngredientService {
         return this.baseIngredientRepository.findAll();
     }
 
-    public void decrementBaseIngredient(List<BaseIngredientInStock> baseIngredientToChange) {
+    @Override
+    public void decrementBaseIngredient(List<BaseIngredientOnRecipe> baseIngredientToChange) {
 
-        baseIngredientToChange.forEach(baseIngredientInStock -> {
-            BaseIngredientInStock ingredient = this.baseIngredientRepository.find(baseIngredientInStock.getBaseIngredient());
-            ingredient.setQuantity(ingredient.getQuantity() - baseIngredientInStock.getQuantity());
+        baseIngredientToChange.forEach(baseIngredientOnRecipe -> {
+            BaseIngredientInStock ingredient = this.baseIngredientRepository.find(baseIngredientOnRecipe.getBaseIngredient());
+            ingredient.setQuantity(ingredient.getQuantity() - baseIngredientOnRecipe.getQuantity());
         });
     }
 

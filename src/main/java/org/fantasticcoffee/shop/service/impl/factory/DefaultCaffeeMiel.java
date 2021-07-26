@@ -9,7 +9,7 @@ import java.util.List;
 public class DefaultCaffeeMiel implements StandardCoffeeFactory {
 
     @Override
-    public CustomizableStandardCoffee create(String name,  List<ExtraIngredientOnRecipe> extraIngredients) {
-        return new CustomizableStandardCoffee(name, StandardCoffee.CAFFEE_MIEL, extraIngredients);
+    public CustomizableStandardCoffee create(String customerName, List<ExtraIngredientOnRecipe> extraIngredients) {
+        return new CustomizableStandardCoffee(customerName, StandardCoffee.CAFFEE_MIEL, extraIngredients);
     }
 }

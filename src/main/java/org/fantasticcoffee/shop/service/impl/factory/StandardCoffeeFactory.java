@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface StandardCoffeeFactory {
 
-    CustomizableStandardCoffee create(String name, List<ExtraIngredientOnRecipe> extraIngredients);
+    CustomizableStandardCoffee create(String customerName, List<ExtraIngredientOnRecipe> extraIngredients);
 }
