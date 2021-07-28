@@ -9,12 +9,9 @@ import java.util.List;
 
 public interface IngredientService {
 
-    void seedStock();
-
     void decrementExtraIngredient(List<ExtraIngredientOnRecipe> extraIngredientToChange);
 
     void decrementBaseIngredient(List<BaseIngredientOnRecipe> baseIngredientToChange);
-
 
     public List<ExtraIngredientInStock> getAllExtraIngredientsInStock();
 

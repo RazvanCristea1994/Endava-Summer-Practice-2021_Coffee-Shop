@@ -1,4 +1,4 @@
-package org.fantasticcoffee.shop.model.coffee;
+package org.fantasticcoffee.shop.data.customizablestandardcoffee;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,15 +11,9 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CustomizableStandardCoffee {
+public class CustomizableStandardCoffeeResponse {
 
     private String customerName;
     private StandardCoffee standardCoffee;
     private List<ExtraIngredientOnRecipe> extraIngredients;
-
-    public CustomizableStandardCoffee(String customerName, StandardCoffee standardCoffee, List<ExtraIngredientOnRecipe> extraIngredients) {
-        this.setCustomerName(customerName);
-        this.standardCoffee = standardCoffee;
-        this.extraIngredients = extraIngredients;
-    }
 }

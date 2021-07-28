@@ -20,13 +20,15 @@ public class Order {
     private List<CustomCoffee> customCoffeeList;
     private List<CustomizableStandardCoffee> customizableStandardCoffee;
     private WhereToDrink whereToDrink;
+    private Card card;
 
-    public Order(Builder builder) {
+    private Order(Builder builder) {
         this.id = builder.id;
         this.orderDateTime = builder.orderDateTime;
         this.customCoffeeList = builder.customCoffeeList;
         this.customizableStandardCoffee = builder.customizableStandardCoffee;
         this.whereToDrink = builder.whereToDrink;
+        this.card = builder.card;
     }
 
     @Getter
@@ -39,6 +41,7 @@ public class Order {
         private List<CustomCoffee> customCoffeeList = new ArrayList<>();
         private List<CustomizableStandardCoffee> customizableStandardCoffee = new ArrayList<>();
         private WhereToDrink whereToDrink;
+        private Card card;
 
         public void addCustomCoffee(CustomCoffee coffee) {
             this.customCoffeeList.add(coffee);
@@ -61,6 +64,7 @@ public class Order {
         builder.setCustomCoffeeList(this.customCoffeeList);
         builder.setCustomizableStandardCoffee(this.customizableStandardCoffee);
         builder.setWhereToDrink(this.whereToDrink);
+        builder.setCard(this.card);
         return builder.build();
     }
 }

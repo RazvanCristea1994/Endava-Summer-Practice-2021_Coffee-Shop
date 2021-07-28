@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller("controller")
-public class AppController {
+public class ConsoleController {
 
     @Autowired
     private OrderService orderService;
@@ -41,8 +41,6 @@ public class AppController {
     private String customerName;
 
     public void runApp() {
-
-        this.ingredientService.seedStock();
 
         Order.Builder order = new Order.Builder();
         while (true) {

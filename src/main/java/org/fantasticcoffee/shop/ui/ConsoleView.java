@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component("consoleView")
-public class ConsoleView implements AppController.View {
+public class ConsoleView implements ConsoleController.View {
 
     private static final String SHOP_NAME = "Fantastic Coffee Shop";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-YYYY");

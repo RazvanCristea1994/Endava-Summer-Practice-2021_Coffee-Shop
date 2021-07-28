@@ -12,6 +12,7 @@ import org.fantasticcoffee.shop.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service("ingredientService")
@@ -26,7 +27,7 @@ public class DefaultIngredientService implements IngredientService {
     @Autowired
     DefaultBaseIngredientRepository baseIngredientRepository;
 
-    @Override
+    @PostConstruct
     public void seedStock() {
 
         this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.MILK, 20).build());
