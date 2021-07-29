@@ -14,7 +14,6 @@ public class CustomizableStandardCoffeeResponseConverter implements Converter<Cu
         return new CustomizableStandardCoffeeResponse(
                 customizableStandardCoffee.getCustomerName(),
                 customizableStandardCoffee.getStandardCoffee(),
-                customizableStandardCoffee.getExtraIngredients()
-        );
+                customizableStandardCoffee.getExtraIngredients());
     }
 }

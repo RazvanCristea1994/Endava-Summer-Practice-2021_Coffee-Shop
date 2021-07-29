@@ -1,9 +1,7 @@
 package org.fantasticcoffee.shop.controller;
 
-import org.fantasticcoffee.shop.model.StandardCoffee;
 import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredient;
 import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredient;
-import org.fantasticcoffee.shop.service.CoffeeService;
 import org.fantasticcoffee.shop.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
