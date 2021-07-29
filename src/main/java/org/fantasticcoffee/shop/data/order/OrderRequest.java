@@ -1,8 +1,6 @@
 package org.fantasticcoffee.shop.data.order;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
 import org.fantasticcoffee.shop.data.customizablestandardcoffee.CustomizableStandardCoffeeRequest;
 import org.fantasticcoffee.shop.model.Card;
@@ -11,12 +9,20 @@ import org.fantasticcoffee.shop.model.WhereToDrink;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
 public class OrderRequest {
 
-    private List<CustomCoffeeRequest> customCoffeeList;
-    private List<CustomizableStandardCoffeeRequest> customizableStandardCoffee;
-    private WhereToDrink whereToDrink;
-    private Card card;
+    private final List<CustomCoffeeRequest> customCoffeeList;
+    private final List<CustomizableStandardCoffeeRequest> customizableStandardCoffee;
+    private final WhereToDrink whereToDrink;
+    private final Card card;
+
+    public OrderRequest(List<CustomCoffeeRequest> customCoffeeList,
+                        List<CustomizableStandardCoffeeRequest> customizableStandardCoffee,
+                        WhereToDrink whereToDrink,
+                        Card card) {
+        this.customCoffeeList = customCoffeeList;
+        this.customizableStandardCoffee = customizableStandardCoffee;
+        this.whereToDrink = whereToDrink;
+        this.card = card;
+    }
 }

@@ -1,15 +1,16 @@
 package org.fantasticcoffee.shop.data.customcoffee;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.fantasticcoffee.shop.model.Recipe;
 
 @Getter
-@Setter
-@NoArgsConstructor
 public class CustomCoffeeRequest {
 
-    private String customerName;
-    private Recipe customerMadeRecipe;
+    private final String customerName;
+    private final Recipe customerMadeRecipe;
+
+    public CustomCoffeeRequest(String customerName, Recipe customerMadeRecipe) {
+        this.customerName = customerName;
+        this.customerMadeRecipe = customerMadeRecipe;
+    }
 }

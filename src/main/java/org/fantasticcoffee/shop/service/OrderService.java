@@ -12,7 +12,7 @@ public interface OrderService {
 
     Order findOrder(Integer id);
 
-    Order update(Order order);
+    Order update(Integer id, Order order);
 
     Double getTotalProfit();
 
@@ -20,5 +20,5 @@ public interface OrderService {
 
     Double getTotalProfitForToday();
 
-    Order deleteOrder(Integer id);
+    void deleteOrder(Integer id);
 }

@@ -231,7 +231,7 @@ public class ConsoleController {
             return;
         }
 
-        existingOrder = this.orderService.update(updateMenu(existingOrder));
+        existingOrder = this.orderService.update(orderId, updateMenu(existingOrder));
 
         this.consoleView.printCheckMessage(existingOrder, this.orderService.getTotalOrderPrice(existingOrder), this.orderService.getTotalProfitForToday());
     }

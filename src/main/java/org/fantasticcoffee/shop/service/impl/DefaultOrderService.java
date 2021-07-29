@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoField;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service("orderService")
 public class DefaultOrderService implements OrderService {
@@ -54,18 +51,25 @@ public class DefaultOrderService implements OrderService {
     public Order findOrder(Integer id) {
 
         Optional<Order> result = this.orderRepository.find(id);
-        return result.map(Order::duplicate).orElse(null);
+        return result.map(Order::duplicate).orElseThrow();
     }
 
-    public Order update(Order order) {
+    public Order update(Integer id, Order order) {
+
+        if (order == null) {
+            throw new IllegalArgumentException("Illegal attempt! Please specify one of the orders you want to update");
+        }
+
+        Optional<Order> oldOrder = this.orderRepository.find(id);
+        if (oldOrder.isEmpty()) {
+            throw new NoSuchElementException("The order to change was not found");
+        }
 
         order.setOrderDateTime(LocalDateTime.now());
+        order.setId(id);
         Optional<Order> result = this.orderRepository.update(order);
 
-        if (result.isPresent()) {
-            return null;
-        }
-        return order.duplicate();
+        return result.map(Order::duplicate).orElse(null);
     }
 
     public Double getTotalProfit() {
@@ -141,14 +145,15 @@ public class DefaultOrderService implements OrderService {
         return revenueCustomCoffeeToday + revenueCustomizableStandardCoffeeToday - costCustomCoffeeToday - costCustomizableStandardCoffeeToday;
     }
 
-    public Order deleteOrder(Integer id) {
+    public void deleteOrder(Integer id) {
 
-        Optional<Order> result = orderRepository.delete(id);
-        if (result.isPresent()) {
-            DefaultOrderService.id--;
-            return result.get().duplicate();
-        }
-        return null;
+        this.orderRepository.find(id).ifPresentOrElse(foundOrder -> {
+                    orderRepository.delete(id);
+                    DefaultOrderService.id--;
+                },
+                () -> {
+                    throw new NoSuchElementException("The specified element does not exist");
+                });
     }
 
     private void decrementIngredientsInRepo(Order order) {
