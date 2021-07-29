@@ -10,6 +10,7 @@ import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -24,13 +25,17 @@ public class OrderConverter implements Converter<Order, OrderRequest> {
     @Override
     public Order convert(OrderRequest orderRequest) {
 
-        List<CustomCoffee> customCoffeeList = this.customCoffeeRequestConverter.convertAll(orderRequest.getCustomCoffeeList());
-        List<CustomizableStandardCoffee> customizableStandardCoffeeList = this.customizableStandardCoffeeRequestConverter.convertAll(orderRequest.getCustomizableStandardCoffee());
-
         Order.Builder order = new Order.Builder();
 
-        order.setCustomCoffeeList(customCoffeeList);
-        order.setCustomizableStandardCoffee(customizableStandardCoffeeList);
+        if (orderRequest.getCustomCoffeeList() != null || !orderRequest.getCustomCoffeeList().isEmpty()) {
+            order.setCustomCoffeeList(this.customCoffeeRequestConverter.convertAll(orderRequest.getCustomCoffeeList()));
+        }
+
+        if (orderRequest.getCustomizableStandardCoffee() != null || !orderRequest.getCustomizableStandardCoffee().isEmpty()) {
+            order.setCustomizableStandardCoffee(
+                    this.customizableStandardCoffeeRequestConverter.convertAll(orderRequest.getCustomizableStandardCoffee()));
+        }
+
         order.setWhereToDrink(orderRequest.getWhereToDrink());
         order.setCard(orderRequest.getCard());
 

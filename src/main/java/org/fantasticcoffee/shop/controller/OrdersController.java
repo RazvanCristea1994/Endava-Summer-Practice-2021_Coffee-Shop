@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/orders")
-public class OrderController {
+public class OrdersController {
 
     @Autowired
     private OrderFacade orderFacade;
