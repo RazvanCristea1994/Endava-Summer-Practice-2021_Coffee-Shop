@@ -18,17 +18,15 @@ public class OrdersController {
     @Autowired
     private OrderFacade orderFacade;
 
-    @Autowired
-    private CardValidator cardValidator;
-
     @PostMapping("/pay")
     @ResponseBody
     public ResponseEntity<Object> placeOrder(@RequestBody OrderRequest orderRequest) {
 
-        if (!this.cardValidator.isCardNumberValid(orderRequest.getCard())) {
-            return ResponseEntity.badRequest().body("Invalid credit card number.");
+        try {
+            return ResponseEntity.ok(this.orderFacade.placeOrder(orderRequest));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok(this.orderFacade.placeOrder(orderRequest));
     }
 
     @GetMapping("/all")

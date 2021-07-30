@@ -4,7 +4,9 @@ import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.repository.Repository;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.fantasticcoffee.shop.service.OrderService;
+import org.fantasticcoffee.shop.validator.CardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,10 +23,16 @@ public class DefaultOrderService implements OrderService {
     private CoffeeService coffeeService;
     @Autowired
     private DefaultIngredientService ingredientService;
+    @Autowired
+    private CardValidator cardValidator;
 
     private static Integer id = 0;
 
     public Order placeOrder(Order order) {
+
+        if (!this.cardValidator.isCardNumberValid(order.getCard())) {
+            throw new IllegalArgumentException("Invalid credit card number.");
+        }
 
         order.setId(++DefaultOrderService.id);
         order.setOrderDateTime(LocalDateTime.now());
