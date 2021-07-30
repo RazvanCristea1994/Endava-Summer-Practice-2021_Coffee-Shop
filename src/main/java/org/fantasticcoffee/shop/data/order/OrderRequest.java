@@ -1,9 +1,9 @@
 package org.fantasticcoffee.shop.data.order;
 
 import lombok.Getter;
+import org.fantasticcoffee.shop.data.CardRequest;
 import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
 import org.fantasticcoffee.shop.data.customizablestandardcoffee.CustomizableStandardCoffeeRequest;
-import org.fantasticcoffee.shop.model.Card;
 import org.fantasticcoffee.shop.model.WhereToDrink;
 
 import javax.validation.Valid;
@@ -25,12 +25,13 @@ public class OrderRequest {
 
     @Valid
     @NotNull(message = "Credit card details are requested")
-    private final Card card;
+    private final CardRequest card;
 
     public OrderRequest(List<CustomCoffeeRequest> customCoffeeList,
                         List<CustomizableStandardCoffeeRequest> customizableStandardCoffee,
                         WhereToDrink whereToDrink,
-                        Card card) {
+                        CardRequest card) {
+
         this.customCoffeeList = customCoffeeList;
         this.customizableStandardCoffee = customizableStandardCoffee;
         this.whereToDrink = whereToDrink;

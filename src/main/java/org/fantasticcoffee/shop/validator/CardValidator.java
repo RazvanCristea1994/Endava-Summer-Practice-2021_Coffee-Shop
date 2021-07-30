@@ -1,20 +1,11 @@
 package org.fantasticcoffee.shop.validator;
 
-import org.fantasticcoffee.shop.model.Card;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.Pattern;
 
 @Component
 public class CardValidator {
 
-    public void validateCard(Card card) {
-
-        cardNumberValidation(card.getCardNumber());
-        civValidation(card.getCiv());
-    }
-
-    private void cardNumberValidation(String cardNumber) {
+    public void cardNumberValidation(String cardNumber) {
 
         int numberDigits = cardNumber.length();
         int numberSum = 0;
@@ -32,15 +23,8 @@ public class CardValidator {
             isSecond = !isSecond;
         }
 
-        if (numberSum % 10 != 0 || !cardNumber.matches("[\\d]{16}")) {
-            throw new IllegalArgumentException("22");
-        }
-    }
-
-    private void civValidation(String civ) {
-
-        if (!civ.matches("[\\d]{3}")) {
-            throw new IllegalArgumentException("97");
+        if (numberSum % 10 != 0) {
+            throw new IllegalArgumentException("Card number invalid");
         }
     }
 }

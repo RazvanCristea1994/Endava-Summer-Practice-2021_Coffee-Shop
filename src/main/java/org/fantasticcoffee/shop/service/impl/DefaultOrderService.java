@@ -29,7 +29,7 @@ public class DefaultOrderService implements OrderService {
 
     public Order placeOrder(Order order) {
 
-        this.cardValidator.validateCard(order.getCard());
+        this.cardValidator.cardNumberValidation(order.getCard().getCardNumber());
 
         order.setId(++DefaultOrderService.id);
         order.setOrderDateTime(LocalDateTime.now());

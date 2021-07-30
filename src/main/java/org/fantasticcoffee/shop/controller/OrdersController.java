@@ -28,16 +28,18 @@ public class OrdersController {
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
+
             StringBuilder stringBuilder = new StringBuilder();
             List<FieldError> errorList = bindingResult.getFieldErrors();
             errorList.forEach(errorField ->
                     stringBuilder.append(errorField.getDefaultMessage()));
+
             throw new ResponseStatusException(400, stringBuilder.toString(), new IllegalArgumentException());
         } else {
             try {
                 return ResponseEntity.ok(this.orderFacade.placeOrder(orderRequest));
             } catch (IllegalArgumentException e) {
-                throw new ResponseStatusException(Integer.parseInt(e.getMessage()), "Invalid card number.", new IllegalArgumentException());
+                throw new ResponseStatusException(400, e.getMessage(), new IllegalArgumentException());
             }
         }
     }

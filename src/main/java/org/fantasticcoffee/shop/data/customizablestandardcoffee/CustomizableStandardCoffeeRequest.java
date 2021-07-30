@@ -14,7 +14,7 @@ public class CustomizableStandardCoffeeRequest {
 
     @NotNull(message = "Customer's name requested")
     @NotBlank(message = "Customer name requested")
-    @Pattern(regexp = "^[a-z '-]+$")
+    @Pattern(regexp = "^[a-z '-]+$", message = "Wrong name format")
     private final String customerName;
 
     @NotNull(message = "Standard Coffee requested")

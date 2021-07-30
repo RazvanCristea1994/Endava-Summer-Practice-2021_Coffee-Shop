@@ -1,9 +1,11 @@
 package org.fantasticcoffee.shop.facade.converter.order;
 
+import org.fantasticcoffee.shop.data.CardRequest;
 import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
 import org.fantasticcoffee.shop.data.customizablestandardcoffee.CustomizableStandardCoffeeRequest;
 import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.facade.converter.Converter;
+import org.fantasticcoffee.shop.model.Card;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
 import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
@@ -18,6 +20,9 @@ public class OrderConverter implements Converter<Order, OrderRequest> {
 
     @Autowired
     private Converter<CustomizableStandardCoffee, CustomizableStandardCoffeeRequest> customizableStandardCoffeeRequestConverter;
+
+    @Autowired
+    private Converter<Card, CardRequest> cardConverter;
 
     @Override
     public Order convert(OrderRequest orderRequest) {
@@ -34,7 +39,7 @@ public class OrderConverter implements Converter<Order, OrderRequest> {
         }
 
         order.setWhereToDrink(orderRequest.getWhereToDrink());
-        order.setCard(orderRequest.getCard());
+        order.setCard(this.cardConverter.convert(orderRequest.getCard()));
 
         return order.build();
     }

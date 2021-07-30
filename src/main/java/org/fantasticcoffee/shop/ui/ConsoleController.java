@@ -303,7 +303,7 @@ public class ConsoleController {
                             Arrays.asList(new BaseIngredientOnRecipe(BaseIngredient.BLACK_COFFEE, shotsNumber))).build();
                 }
                 case "X" -> {
-                    return new Recipe();
+                    return new Recipe.Builder().build();
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
@@ -339,10 +339,10 @@ public class ConsoleController {
                 case "10" -> extraIngredientDefinitionMap.put(ExtraIngredient.HOT_WATER, chooseIngredientQuantity());
                 case "11" -> extraIngredientDefinitionMap.put(ExtraIngredient.ICE_CUBES, chooseIngredientQuantity());
                 case "X" -> {
-                    Recipe recipe = new Recipe();
+                    Recipe.Builder recipe = new Recipe.Builder();
                     extraIngredientDefinitionMap.entrySet().forEach(i ->
                             recipe.addExtraIngredient(new ExtraIngredientOnRecipe(i.getKey(), i.getValue())));
-                    return recipe;
+                    return recipe.build();
                 }
                 default -> consoleView.printInvalidOptionMessage();
             }
