@@ -4,6 +4,7 @@ import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.data.order.OrderResponse;
 import org.fantasticcoffee.shop.facade.order.OrderFacade;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -34,12 +35,12 @@ public class OrdersController {
             errorList.forEach(errorField ->
                     stringBuilder.append(errorField.getDefaultMessage()));
 
-            throw new ResponseStatusException(400, stringBuilder.toString(), new IllegalArgumentException());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, stringBuilder.toString(), new IllegalArgumentException());
         } else {
             try {
                 return ResponseEntity.ok(this.orderFacade.placeOrder(orderRequest));
             } catch (IllegalArgumentException e) {
-                throw new ResponseStatusException(400, e.getMessage(), new IllegalArgumentException());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
             }
         }
     }
