@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Card {
 
-    @Pattern(regexp = "[\\d]{16}")
     String cardNumber;
     @NotNull(message = "Card holder name requested")
     @Pattern(regexp = "^[a-z '-]+$")
