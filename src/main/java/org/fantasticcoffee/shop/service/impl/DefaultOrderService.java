@@ -6,7 +6,6 @@ import org.fantasticcoffee.shop.service.CoffeeService;
 import org.fantasticcoffee.shop.service.OrderService;
 import org.fantasticcoffee.shop.validator.CardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

@@ -3,7 +3,6 @@ package org.fantasticcoffee.shop.controller;
 import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.data.order.OrderResponse;
 import org.fantasticcoffee.shop.facade.order.OrderFacade;
-import org.fantasticcoffee.shop.validator.CardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
