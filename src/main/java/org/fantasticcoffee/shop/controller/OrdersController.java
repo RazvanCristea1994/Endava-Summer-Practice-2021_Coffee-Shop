@@ -5,8 +5,12 @@ import org.fantasticcoffee.shop.data.order.OrderResponse;
 import org.fantasticcoffee.shop.facade.order.OrderFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -19,12 +23,22 @@ public class OrdersController {
 
     @PostMapping("/pay")
     @ResponseBody
-    public ResponseEntity<Object> placeOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> placeOrder(
+            @Valid @RequestBody OrderRequest orderRequest,
+            BindingResult bindingResult) {
 
-        try {
-            return ResponseEntity.ok(this.orderFacade.placeOrder(orderRequest));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        if (bindingResult.hasErrors()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            List<FieldError> errorList = bindingResult.getFieldErrors();
+            errorList.forEach(errorField ->
+                    stringBuilder.append(errorField.getDefaultMessage()));
+            throw new ResponseStatusException(400, stringBuilder.toString(), new IllegalArgumentException());
+        } else {
+            try {
+                return ResponseEntity.ok(this.orderFacade.placeOrder(orderRequest));
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(Integer.parseInt(e.getMessage()), "Invalid card number.", new IllegalArgumentException());
+            }
         }
     }
 

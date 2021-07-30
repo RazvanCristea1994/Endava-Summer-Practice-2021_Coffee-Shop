@@ -29,9 +29,7 @@ public class DefaultOrderService implements OrderService {
 
     public Order placeOrder(Order order) {
 
-        if (!this.cardValidator.isCardNumberValid(order.getCard())) {
-            throw new IllegalArgumentException("Invalid credit card number.");
-        }
+        this.cardValidator.validateCard(order.getCard());
 
         order.setId(++DefaultOrderService.id);
         order.setOrderDateTime(LocalDateTime.now());

@@ -6,29 +6,39 @@ import org.springframework.stereotype.Component;
 @Component
 public class CardValidator {
 
-    public boolean isCardNumberValid (Card card) {
+    public void validateCard(Card card) {
 
-        Long digitNumber = card.getCardNumber();
-        long digit = 0;
-        int i = 0;
-        int sum = 0;
+        cardNumberValidation(card.getCardNumber());
+        civValidation(card.getCiv());
+    }
 
-        while (digitNumber > 0) {
-            digit = digitNumber % 10;
-            digitNumber /= 10;
+    private void cardNumberValidation(String cardNumber) {
 
-            if (i % 2 != 0) {
-                digit *= 2;
+        int numberDigits = cardNumber.length();
+        int numberSum = 0;
+        boolean isSecond = false;
+        for (int i = numberDigits - 1; i >= 0; i--) {
+            int d = cardNumber.charAt(i) - '0';
+
+            if (isSecond) {
+                d = d * 2;
             }
 
-            if (digit > 9) {
-                digit = (digit % 10) + 1;
-            }
+            numberSum += d / 10;
+            numberSum += d % 10;
 
-            sum += digit;
-            i++;
+            isSecond = !isSecond;
         }
 
-        return sum % 10 == 0;
+        if (numberSum % 10 != 0) {
+            throw new IllegalArgumentException("22");
+        }
+    }
+
+    private void civValidation(String civ) {
+
+        if (!civ.matches("[\\d]{3}")) {
+            throw new IllegalArgumentException("97");
+        }
     }
 }

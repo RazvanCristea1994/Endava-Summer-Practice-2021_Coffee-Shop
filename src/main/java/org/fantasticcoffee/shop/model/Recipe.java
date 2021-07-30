@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
 import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 public class Recipe {
 
+    @NotEmpty(message = "Base Ingredients are required")
     private List<BaseIngredientOnRecipe> baseIngredients = new ArrayList<>();
+
     private List<ExtraIngredientOnRecipe> extraIngredients = new ArrayList<>();
 
     public Recipe(Builder builder) {
