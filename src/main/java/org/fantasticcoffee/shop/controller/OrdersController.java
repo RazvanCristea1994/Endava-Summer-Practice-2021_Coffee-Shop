@@ -3,6 +3,7 @@ package org.fantasticcoffee.shop.controller;
 import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.data.order.OrderResponse;
 import org.fantasticcoffee.shop.facade.order.OrderFacade;
+import org.fantasticcoffee.shop.validator.CardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +18,16 @@ public class OrdersController {
     @Autowired
     private OrderFacade orderFacade;
 
+    @Autowired
+    private CardValidator cardValidator;
+
     @PostMapping("/pay")
     @ResponseBody
-    public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Object> placeOrder(@RequestBody OrderRequest orderRequest) {
 
+        if (!this.cardValidator.isCardNumberValid(orderRequest.getCard())) {
+            return ResponseEntity.badRequest().body("Invalid credit card number.");
+        }
         return ResponseEntity.ok(this.orderFacade.placeOrder(orderRequest));
     }
 
