@@ -1,6 +1,6 @@
 package org.fantasticcoffee.shop.service.impl.factory;
 
-import org.fantasticcoffee.shop.model.StandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
 
 public class CoffeeFactory {
 

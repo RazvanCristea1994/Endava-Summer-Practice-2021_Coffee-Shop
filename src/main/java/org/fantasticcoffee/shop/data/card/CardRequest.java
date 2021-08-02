@@ -1,4 +1,4 @@
-package org.fantasticcoffee.shop.data;
+package org.fantasticcoffee.shop.data.card;
 
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,7 +13,7 @@ public class CardRequest {
     @Pattern(regexp = "[\\d]{16}", message = "Card number length invalid")
     String cardNumber;
     @NotNull(message = "Card holder name requested")
-    @Pattern(regexp = "^[a-z '-]+$", message = "Wrong name format")
+    @Pattern(regexp = "^[a-zA-Z '-]+$", message = "Wrong name format")
     String cardHolderName;
     @DateTimeFormat(pattern = "YYYY-MM-DD")
     LocalDate expiry;

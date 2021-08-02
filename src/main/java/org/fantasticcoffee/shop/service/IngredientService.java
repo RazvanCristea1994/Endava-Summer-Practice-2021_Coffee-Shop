@@ -1,19 +1,15 @@
 package org.fantasticcoffee.shop.service;
 
-import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
-import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
-import org.fantasticcoffee.shop.model.stock.BaseIngredientInStock;
-import org.fantasticcoffee.shop.model.stock.ExtraIngredientInStock;
+import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
+import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
 
 import java.util.List;
 
 public interface IngredientService {
 
-    void decrementExtraIngredient(List<ExtraIngredientOnRecipe> extraIngredientToChange);
+    void decrementIngredient(List<IngredientOnRecipe> ingredientToChange);
 
-    void decrementBaseIngredient(List<BaseIngredientOnRecipe> baseIngredientToChange);
+    List<IngredientInStock> getAllIngredientsInStock();
 
-    public List<ExtraIngredientInStock> getAllExtraIngredientsInStock();
-
-    public List<BaseIngredientInStock> getAllBaseIngredientsInStock();
+    Double getPriceForShots(IngredientOnRecipe ingredient);
 }

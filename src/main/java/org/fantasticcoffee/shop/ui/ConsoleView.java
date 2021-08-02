@@ -1,10 +1,9 @@
-package org.fantasticcoffee.shop.ui;
+/*package org.fantasticcoffee.shop.ui;
 
-import org.fantasticcoffee.shop.model.StandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.WhereToDrink;
 import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredient;
-import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredient;
 import org.fantasticcoffee.shop.model.stock.BaseIngredientInStock;
 import org.fantasticcoffee.shop.model.stock.ExtraIngredientInStock;
 import org.springframework.stereotype.Component;
@@ -324,4 +323,4 @@ public class ConsoleView implements ConsoleController.View {
     private void printIdOnCheck(Integer id) {
         System.out.println("Order ID: " + id);
     }
-}
+}*/

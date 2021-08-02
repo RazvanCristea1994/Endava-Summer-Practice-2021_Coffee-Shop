@@ -1,6 +1,6 @@
 package org.fantasticcoffee.shop.facade.converter.order;
 
-import org.fantasticcoffee.shop.data.CardRequest;
+import org.fantasticcoffee.shop.data.card.CardRequest;
 import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
 import org.fantasticcoffee.shop.data.customizablestandardcoffee.CustomizableStandardCoffeeRequest;
 import org.fantasticcoffee.shop.data.order.OrderRequest;
@@ -29,11 +29,11 @@ public class OrderConverter implements Converter<Order, OrderRequest> {
 
         Order.Builder order = new Order.Builder();
 
-        if (orderRequest.getCustomCoffeeList() != null || !orderRequest.getCustomCoffeeList().isEmpty()) {
+        if (orderRequest.getCustomCoffeeList() != null) {
             order.setCustomCoffeeList(this.customCoffeeRequestConverter.convertAll(orderRequest.getCustomCoffeeList()));
         }
 
-        if (orderRequest.getCustomizableStandardCoffee() != null || !orderRequest.getCustomizableStandardCoffee().isEmpty()) {
+        if (orderRequest.getCustomizableStandardCoffee() != null) {
             order.setCustomizableStandardCoffee(
                     this.customizableStandardCoffeeRequestConverter.convertAll(orderRequest.getCustomizableStandardCoffee()));
         }

@@ -3,8 +3,7 @@ package org.fantasticcoffee.shop.model.coffee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.fantasticcoffee.shop.model.StandardCoffee;
-import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
+import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
 
 import java.util.List;
 
@@ -15,9 +14,11 @@ public class CustomizableStandardCoffee {
 
     private String customerName;
     private StandardCoffee standardCoffee;
-    private List<ExtraIngredientOnRecipe> extraIngredients;
+    private List<IngredientOnRecipe> extraIngredients;
 
-    public CustomizableStandardCoffee(String customerName, StandardCoffee standardCoffee, List<ExtraIngredientOnRecipe> extraIngredients) {
+    public CustomizableStandardCoffee(String customerName,
+                                      StandardCoffee standardCoffee,
+                                      List<IngredientOnRecipe> extraIngredients) {
         this.setCustomerName(customerName);
         this.standardCoffee = standardCoffee;
         this.extraIngredients = extraIngredients;

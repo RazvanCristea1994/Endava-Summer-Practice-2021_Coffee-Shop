@@ -33,6 +33,10 @@ public class DefaultOrderService implements OrderService {
 
         order.setId(++DefaultOrderService.id);
         order.setOrderDateTime(LocalDateTime.now());
+        order.setPrice(getTotalOrderPrice(order));
+
+        order.getCard().setCardNumber(null);
+        order.getCard().setCiv(null);
 
         Optional<Order> result = this.orderRepository.save(order);
         if (!result.isEmpty()) {
@@ -80,22 +84,23 @@ public class DefaultOrderService implements OrderService {
     public Double getTotalProfit() {
 
         Collection<Order> orderCollection = findAll();
-        Double revenueCustomCoffeeTotal = orderCollection.stream()
+
+        double revenueCustomCoffeeTotal = orderCollection.stream()
                 .mapToDouble(order -> order.getCustomCoffeeList().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeePrice(coffee)).sum()).sum();
 
-        Double revenueCustomizableStandardCoffeeTotal = orderCollection.stream()
+        double revenueCustomizableStandardCoffeeTotal = orderCollection.stream()
                 .mapToDouble(order -> order.getCustomizableStandardCoffee().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeePrice(coffee)).sum()).sum();
 
-        Double costCustomCoffeeTotal = orderCollection.stream()
+        double costCustomCoffeeTotal = orderCollection.stream()
                 .mapToDouble(order -> order.getCustomCoffeeList().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeeCost(coffee)).sum()).sum();
 
-        Double costCustomizableStandardCoffeeTotal = orderCollection.stream()
+        double costCustomizableStandardCoffeeTotal = orderCollection.stream()
                 .mapToDouble(order -> order.getCustomizableStandardCoffee().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeeCost(coffee)).sum()).sum();
@@ -104,11 +109,13 @@ public class DefaultOrderService implements OrderService {
     }
 
     public Double getTotalOrderPrice(Order order) {
-        Double customCoffeeTotalOrderPrice = order.getCustomCoffeeList().stream()
+        double customCoffeeTotalOrderPrice = order.getCustomCoffeeList()
+                .stream()
                 .mapToDouble(coffee -> this.coffeeService.getCoffeePrice(coffee))
                 .sum();
 
-        Double customizableStandardCoffeeTotalOrderPrice = order.getCustomizableStandardCoffee().stream()
+        double customizableStandardCoffeeTotalOrderPrice = order.getCustomizableStandardCoffee()
+                .stream()
                 .mapToDouble(coffee -> this.coffeeService.getCoffeePrice(coffee))
                 .sum();
 
@@ -119,28 +126,28 @@ public class DefaultOrderService implements OrderService {
 
         Collection<Order> orderCollection = findAll();
 
-        Double revenueCustomCoffeeToday = orderCollection.stream()
+        double revenueCustomCoffeeToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
                 .mapToDouble(order -> order.getCustomCoffeeList().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeePrice(coffee)).sum()).sum();
 
-        Double revenueCustomizableStandardCoffeeToday = orderCollection.stream()
+        double revenueCustomizableStandardCoffeeToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
                 .mapToDouble(order -> order.getCustomizableStandardCoffee().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeePrice(coffee)).sum()).sum();
 
-        Double costCustomCoffeeToday = orderCollection.stream()
+        double costCustomCoffeeToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
                 .mapToDouble(order -> order.getCustomCoffeeList().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeeCost(coffee)).sum()).sum();
 
-        Double costCustomizableStandardCoffeeToday = orderCollection.stream()
+        double costCustomizableStandardCoffeeToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
                 .mapToDouble(order -> order.getCustomizableStandardCoffee().stream()
@@ -164,14 +171,13 @@ public class DefaultOrderService implements OrderService {
     private void decrementIngredientsInRepo(Order order) {
 
         order.getCustomizableStandardCoffee().forEach(coffee -> {
-            this.ingredientService.decrementBaseIngredient(coffee.getStandardCoffee().getRecipe().getBaseIngredients());
-            this.ingredientService.decrementExtraIngredient(coffee.getStandardCoffee().getRecipe().getExtraIngredients());
-            this.ingredientService.decrementExtraIngredient(coffee.getExtraIngredients());
+            this.ingredientService.decrementIngredient(coffee.getStandardCoffee().getRecipe().getIngredients());
+            this.ingredientService.decrementIngredient(coffee.getExtraIngredients());
         });
 
         order.getCustomCoffeeList().forEach(coffee -> {
-            this.ingredientService.decrementBaseIngredient(coffee.getCustomerMadeRecipe().getBaseIngredients());
-            this.ingredientService.decrementExtraIngredient(coffee.getCustomerMadeRecipe().getExtraIngredients());
+            this.ingredientService.decrementIngredient(coffee.getCustomerMadeRecipe().getIngredients());
+            this.ingredientService.decrementIngredient(coffee.getCustomerMadeRecipe().getIngredients());
         });
     }
 }

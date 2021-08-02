@@ -16,17 +16,23 @@ public class OrderResponse {
     private final List<CustomCoffeeResponse> customCoffeeList;
     private final List<CustomizableStandardCoffeeResponse> customizableStandardCoffee;
     private final WhereToDrink whereToDrink;
+    private final String cardHolderName;
+    private final Double totalPrice;
 
     public OrderResponse(
             Integer id,
             LocalDateTime orderDateTime,
             List<CustomCoffeeResponse> customCoffeeList,
             List<CustomizableStandardCoffeeResponse> customizableStandardCoffee,
-            WhereToDrink whereToDrink) {
+            WhereToDrink whereToDrink,
+            String cardHolderName,
+            Double totalPrice) {
         this.id = id;
         this.orderDateTime = orderDateTime;
         this.customCoffeeList = customCoffeeList;
         this.customizableStandardCoffee = customizableStandardCoffee;
         this.whereToDrink = whereToDrink;
+        this.cardHolderName = cardHolderName;
+        this.totalPrice = totalPrice;
     }
 }

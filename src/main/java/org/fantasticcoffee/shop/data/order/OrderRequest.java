@@ -1,7 +1,7 @@
 package org.fantasticcoffee.shop.data.order;
 
 import lombok.Getter;
-import org.fantasticcoffee.shop.data.CardRequest;
+import org.fantasticcoffee.shop.data.card.CardRequest;
 import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
 import org.fantasticcoffee.shop.data.customizablestandardcoffee.CustomizableStandardCoffeeRequest;
 import org.fantasticcoffee.shop.model.WhereToDrink;

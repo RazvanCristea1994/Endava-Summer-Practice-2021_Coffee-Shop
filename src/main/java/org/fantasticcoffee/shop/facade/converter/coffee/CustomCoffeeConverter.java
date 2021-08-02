@@ -1,6 +1,6 @@
 package org.fantasticcoffee.shop.facade.converter.coffee;
 
-import org.fantasticcoffee.shop.data.RecipeRequest;
+import org.fantasticcoffee.shop.data.recipe.RecipeRequest;
 import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
 import org.fantasticcoffee.shop.facade.converter.Converter;
 import org.fantasticcoffee.shop.model.Recipe;

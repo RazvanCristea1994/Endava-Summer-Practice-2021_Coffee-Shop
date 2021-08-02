@@ -32,7 +32,9 @@ public class OrderResponseConverter implements Converter<OrderResponse, Order> {
                 order.getOrderDateTime(),
                 customCoffeeList,
                 customizableStandardCoffeeResponseList,
-                order.getWhereToDrink()
+                order.getWhereToDrink(),
+                order.getCard().getCardHolderName(),
+                order.getPrice()
         );
     }
 }

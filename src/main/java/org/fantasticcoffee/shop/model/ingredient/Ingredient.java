@@ -1,10 +1,12 @@
-package org.fantasticcoffee.shop.model.ingredientdefinition;
+package org.fantasticcoffee.shop.model.ingredient;
 
 import lombok.Getter;
 
 @Getter
-public enum ExtraIngredient {
+public enum Ingredient {
 
+    ESPRESSO_SHOT("Espresso shot", 7.0, 3.5, 20, "ml"),
+    BLACK_COFFEE("Black coffee", 8.0, 4.0, 20, "ml"),
     MILK("Milk", 3.0, 1.5, 10, "ml"),
     HONEY("Honey", 3.0, 1.5, 10, "g"),
     SYRUP("Syrup", 4.0, 2.0, 10, "ml"),
@@ -20,19 +22,23 @@ public enum ExtraIngredient {
     private final Double ingredientSellingPrice;
     private final Double ingredientCost;
     private final String ingredientName;
-    private final int shotQuantity;
+    private final int quantityPerShot;
     private final String unitOfMeasurement;
 
-    ExtraIngredient(String ingredientName, Double ingredientSellingPrice, Double ingredientCost, int shotQuantity, String unitOfMeasurement) {
+    Ingredient(String ingredientName,
+               Double ingredientSellingPrice,
+               Double ingredientCost,
+               int quantityPerShot,
+               String unitOfMeasurement) {
         this.ingredientSellingPrice = ingredientSellingPrice;
         this.ingredientCost = ingredientCost;
         this.ingredientName = ingredientName;
-        this.shotQuantity = shotQuantity;
+        this.quantityPerShot = quantityPerShot;
         this.unitOfMeasurement = unitOfMeasurement;
     }
 
     @Override
     public String toString() {
-        return String.format("%-30s %-4s %-10s %s$ %n", ingredientName, shotQuantity, unitOfMeasurement, ingredientSellingPrice);
+        return String.format("%-30s %-4s %-10s %s$ %n", ingredientName, quantityPerShot, unitOfMeasurement, ingredientSellingPrice);
     }
 }

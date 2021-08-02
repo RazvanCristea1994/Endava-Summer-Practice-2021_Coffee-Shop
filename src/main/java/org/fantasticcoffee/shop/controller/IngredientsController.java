@@ -1,7 +1,7 @@
 package org.fantasticcoffee.shop.controller;
 
-import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredient;
-import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredient;
+import org.fantasticcoffee.shop.model.ingredient.Ingredient;
+import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
 import org.fantasticcoffee.shop.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +25,15 @@ public class IngredientsController {
     @ResponseBody
     public ResponseEntity<List<Enum>> getAll() {
 
-        List<Enum> ingredientList = new ArrayList<>(EnumSet.allOf(BaseIngredient.class));
-        ingredientList.addAll(new ArrayList<>(EnumSet.allOf(ExtraIngredient.class)));
+        List<Enum> ingredientList = new ArrayList<>(EnumSet.allOf(Ingredient.class));
 
         return ResponseEntity.ok(ingredientList);
+    }
+
+    @GetMapping("/all-stock")
+    @ResponseBody
+    public ResponseEntity<List<IngredientInStock>> getStock() {
+
+        return ResponseEntity.ok(this.ingredientService.getAllIngredientsInStock());
     }
 }

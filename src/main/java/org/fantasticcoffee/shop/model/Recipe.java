@@ -3,8 +3,7 @@ package org.fantasticcoffee.shop.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
-import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
+import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +11,10 @@ import java.util.List;
 @Getter
 public class Recipe {
 
-    private List<BaseIngredientOnRecipe> baseIngredients = new ArrayList<>();
-    private List<ExtraIngredientOnRecipe> extraIngredients = new ArrayList<>();
+    private List<IngredientOnRecipe> ingredients = new ArrayList<>();
 
     private Recipe(Builder builder) {
-        this.baseIngredients = builder.baseIngredientsConfig;
-        this.extraIngredients = builder.extraIngredientConfig;
+        this.ingredients = builder.ingredientsConfig;
     }
 
     @Getter
@@ -25,20 +22,14 @@ public class Recipe {
     @NoArgsConstructor
     public static class Builder {
 
-        private List<BaseIngredientOnRecipe> baseIngredientsConfig;
-        private List<ExtraIngredientOnRecipe> extraIngredientConfig;
+        private List<IngredientOnRecipe> ingredientsConfig;
 
-        public Builder(List<BaseIngredientOnRecipe> baseIngredients, List<ExtraIngredientOnRecipe> extraIngredients) {
-            this.baseIngredientsConfig = baseIngredients;
-            this.extraIngredientConfig = extraIngredients;
+        public Builder(List<IngredientOnRecipe> ingredients) {
+            this.ingredientsConfig = ingredients;
         }
 
-        public Builder(List<BaseIngredientOnRecipe> baseIngredientsConfig) {
-            this.baseIngredientsConfig = baseIngredientsConfig;
-        }
-
-        public void addExtraIngredient(ExtraIngredientOnRecipe ingredient) {
-            this.extraIngredientConfig.add(ingredient);
+        public void addIngredient(IngredientOnRecipe ingredient) {
+            this.ingredientsConfig.add(ingredient);
         }
 
         public Recipe build() {
@@ -48,26 +39,17 @@ public class Recipe {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
 
-        if (!baseIngredients.isEmpty() && !extraIngredients.isEmpty()) {
-            getBaseIngredients(stringBuilder);
-            getExtraIngredients(stringBuilder);
-        } else if (!extraIngredients.isEmpty()) {
-            getExtraIngredients(stringBuilder);
-        } else if (!baseIngredients.isEmpty()) {
-            getBaseIngredients(stringBuilder);
+        StringBuilder stringBuilder = new StringBuilder();
+        if (!ingredients.isEmpty()) {
+            getIngredients(stringBuilder);
         }
+
         return String.valueOf(stringBuilder);
     }
 
-    private void getBaseIngredients(StringBuilder stringBuilder) {
-        baseIngredients.forEach(i ->
-                stringBuilder.append(String.format("%s %s %s %-3s", i.getQuantity(), "x [", i.getBaseIngredient().getIngredientName(), "]")));
-    }
-
-    private void getExtraIngredients(StringBuilder stringBuilder) {
-        extraIngredients.forEach(e ->
-                stringBuilder.append(String.format("%s %1s %s %-3s", e.getQuantity(), "x [", e.getExtraIngredient().getIngredientName(), "]")));
+    private void getIngredients(StringBuilder stringBuilder) {
+        ingredients.forEach(i ->
+                stringBuilder.append(String.format("%s %s %s %-3s", i.getQuantity(), "x [", i.getIngredient().getIngredientName(), "]")));
     }
 }

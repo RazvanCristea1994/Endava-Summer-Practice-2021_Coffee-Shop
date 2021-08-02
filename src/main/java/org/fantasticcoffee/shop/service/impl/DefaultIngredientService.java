@@ -1,13 +1,9 @@
 package org.fantasticcoffee.shop.service.impl;
 
-import org.fantasticcoffee.shop.model.ingredientdefinition.BaseIngredient;
-import org.fantasticcoffee.shop.model.ingredientdefinition.ExtraIngredient;
-import org.fantasticcoffee.shop.model.ingredientonrecipe.BaseIngredientOnRecipe;
-import org.fantasticcoffee.shop.model.ingredientonrecipe.ExtraIngredientOnRecipe;
-import org.fantasticcoffee.shop.model.stock.BaseIngredientInStock;
-import org.fantasticcoffee.shop.model.stock.ExtraIngredientInStock;
-import org.fantasticcoffee.shop.repository.DefaultBaseIngredientRepository;
-import org.fantasticcoffee.shop.repository.DefaultExtraIngredientRepository;
+import org.fantasticcoffee.shop.model.ingredient.Ingredient;
+import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
+import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
+import org.fantasticcoffee.shop.repository.DefaultIngredientRepository;
 import org.fantasticcoffee.shop.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,53 +18,42 @@ public class DefaultIngredientService implements IngredientService {
     private static Integer idBaseIngredient = 0;
 
     @Autowired
-    DefaultExtraIngredientRepository extraIngredientRepository;
-
-    @Autowired
-    DefaultBaseIngredientRepository baseIngredientRepository;
+    DefaultIngredientRepository ingredientRepository;
 
     @PostConstruct
     public void seedStock() {
 
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.MILK, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.HONEY, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.SYRUP, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.STEAMED_MILK, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.MILK_FOAM, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.SWEETENED_CONDENSED_MILK, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.ICE_CREAM, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.WHIPPED_CREAM, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.CINNAMON, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.HOT_WATER, 20).build());
-        this.extraIngredientRepository.save(new ExtraIngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, ExtraIngredient.ICE_CUBES, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.MILK, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.HONEY, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.SYRUP, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.STEAMED_MILK, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.MILK_FOAM, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.SWEETENED_CONDENSED_MILK, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.ICE_CREAM, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.WHIPPED_CREAM, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.CINNAMON, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.HOT_WATER, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idExtraIngredient, Ingredient.ICE_CUBES, 20).build());
 
-        this.baseIngredientRepository.save(new BaseIngredientInStock.Builder(++DefaultIngredientService.idBaseIngredient, BaseIngredient.ESPRESSO_SHOT, 20).build());
-        this.baseIngredientRepository.save(new BaseIngredientInStock.Builder(++DefaultIngredientService.idBaseIngredient, BaseIngredient.BLACK_COFFEE, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idBaseIngredient, Ingredient.ESPRESSO_SHOT, 20).build());
+        this.ingredientRepository.save(new IngredientInStock.Builder(++DefaultIngredientService.idBaseIngredient, Ingredient.BLACK_COFFEE, 20).build());
     }
 
-    public List<ExtraIngredientInStock> getAllExtraIngredientsInStock() {
-        return this.extraIngredientRepository.findAll();
-    }
-
-    public List<BaseIngredientInStock> getAllBaseIngredientsInStock() {
-        return this.baseIngredientRepository.findAll();
+    public List<IngredientInStock> getAllIngredientsInStock() {
+        return this.ingredientRepository.findAll();
     }
 
     @Override
-    public void decrementExtraIngredient(List<ExtraIngredientOnRecipe> extraIngredientToChange) {
+    public void decrementIngredient(List<IngredientOnRecipe> ingredientToChange) {
 
-        extraIngredientToChange.forEach(extraIngredientOnRecipe -> {
-            ExtraIngredientInStock ingredient = this.extraIngredientRepository.find(extraIngredientOnRecipe.getExtraIngredient());
-            ingredient.setQuantity(ingredient.getQuantity() - extraIngredientOnRecipe.getQuantity());
-        });
-    }
-
-    @Override
-    public void decrementBaseIngredient(List<BaseIngredientOnRecipe> baseIngredientToChange) {
-
-        baseIngredientToChange.forEach(baseIngredientOnRecipe -> {
-            BaseIngredientInStock ingredient = this.baseIngredientRepository.find(baseIngredientOnRecipe.getBaseIngredient());
+        ingredientToChange.forEach(baseIngredientOnRecipe -> {
+            IngredientInStock ingredient = this.ingredientRepository.find(baseIngredientOnRecipe.getIngredient());
             ingredient.setQuantity(ingredient.getQuantity() - baseIngredientOnRecipe.getQuantity());
         });
+    }
+
+    @Override
+    public Double getPriceForShots(IngredientOnRecipe ingredient) {
+        return ingredient.getQuantity() * ingredient.getIngredient().getIngredientSellingPrice();
     }
 }

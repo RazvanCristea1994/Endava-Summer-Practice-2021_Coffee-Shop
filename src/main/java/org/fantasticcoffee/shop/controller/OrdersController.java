@@ -5,6 +5,7 @@ import org.fantasticcoffee.shop.data.order.OrderResponse;
 import org.fantasticcoffee.shop.facade.order.OrderFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -22,7 +23,7 @@ public class OrdersController {
     @Autowired
     private OrderFacade orderFacade;
 
-    @PostMapping("/pay")
+    @PostMapping(value = "/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<OrderResponse> placeOrder(
             @Valid @RequestBody OrderRequest orderRequest,
@@ -38,7 +39,8 @@ public class OrdersController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, stringBuilder.toString(), new IllegalArgumentException());
         } else {
             try {
-                return ResponseEntity.ok(this.orderFacade.placeOrder(orderRequest));
+                OrderResponse orderResponse = this.orderFacade.placeOrder(orderRequest);
+                return ResponseEntity.ok(orderResponse);
             } catch (IllegalArgumentException e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
             }
@@ -49,7 +51,8 @@ public class OrdersController {
     @ResponseBody
     public ResponseEntity<List<OrderResponse>> getAll() {
 
-        return ResponseEntity.ok(this.orderFacade.getAll());
+        List<OrderResponse> list = this.orderFacade.getAll();
+        return ResponseEntity.ok(list);
     }
 
     @PutMapping("/update/{id}")

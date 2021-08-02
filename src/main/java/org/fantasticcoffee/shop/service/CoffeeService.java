@@ -1,7 +1,7 @@
 package org.fantasticcoffee.shop.service;
 
 import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
-import org.fantasticcoffee.shop.model.StandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
 import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
 
 public interface CoffeeService {
