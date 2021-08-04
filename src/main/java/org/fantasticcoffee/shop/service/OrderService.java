@@ -1,12 +1,13 @@
 package org.fantasticcoffee.shop.service;
 
 import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
 
 import java.util.List;
 
 public interface OrderService {
 
-    Order placeOrder(Order IOrder);
+    Order placeOrder(Order order, List<IngredientOnRecipe> allIngredientsInOrder);
 
     List<Order> findAll();
 
@@ -21,4 +22,6 @@ public interface OrderService {
     Double getTotalProfitForToday();
 
     void deleteOrder(Integer id);
+
+    List<IngredientOnRecipe> getAllIngredientsForOrder(Order order);
 }

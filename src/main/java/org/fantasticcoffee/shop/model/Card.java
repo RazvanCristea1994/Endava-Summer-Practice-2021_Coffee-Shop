@@ -11,10 +11,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Card {
 
-    String cardHolderName;
-    String cardNumber;
-    LocalDate expiry;
-    String civ;
+    private Integer id;
+    private String cardHolderName;
+    private String cardNumber;
+    private LocalDate expiry;
+    private String civ;
 
     public Card(String cardHolderName,
                 String cardNumber,

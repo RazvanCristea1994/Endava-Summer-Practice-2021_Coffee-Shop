@@ -1,19 +1,19 @@
 package org.fantasticcoffee.shop.service.impl.factory;
 
-import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.StandardRecipe;
 
 public class CoffeeFactory {
 
     private CoffeeFactory() {
     }
 
-    public static StandardCoffeeFactory createStandardCoffee(StandardCoffee standardCoffee) {
+    public static StandardCoffeeFactory createStandardCoffee(StandardRecipe standardRecipe) {
 
-        if (standardCoffee == null) {
+        if (standardRecipe == null) {
             return null;
         }
 
-        return switch (standardCoffee) {
+        return switch (standardRecipe) {
             case ESPRESSO -> new Espresso();
             case MACHIATTO -> new Machiatto();
             case CAFFEE_LATTE -> new CoffeeLatte();

@@ -17,6 +17,6 @@ public class RecipeResponseConverter implements Converter<RecipeResponse, Recipe
     @Override
     public RecipeResponse convert(Recipe recipe) {
 
-        return new RecipeResponse(this.ingredientOnRecipeConverter.convertAll(recipe.getIngredients()));
+        return new RecipeResponse(this.ingredientOnRecipeConverter.convertAll(recipe.getIngredientOnRecipe()));
     }
 }

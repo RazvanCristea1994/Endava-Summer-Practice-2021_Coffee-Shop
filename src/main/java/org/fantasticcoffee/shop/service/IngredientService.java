@@ -1,5 +1,6 @@
 package org.fantasticcoffee.shop.service;
 
+import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
 import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
 
@@ -9,7 +10,9 @@ public interface IngredientService {
 
     void decrementIngredient(List<IngredientOnRecipe> ingredientToChange);
 
-    List<IngredientInStock> getAllIngredientsInStock();
+    Iterable<IngredientInStock> getAllIngredientsInStock();
 
     Double getPriceForShots(IngredientOnRecipe ingredient);
+
+    List<IngredientOnRecipe> checkIngredientInStockForOrder(Order order);
 }

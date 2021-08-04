@@ -39,7 +39,7 @@ public class OrdersController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, stringBuilder.toString(), new IllegalArgumentException());
         } else {
             try {
-                OrderResponse orderResponse = this.orderFacade.placeOrder(orderRequest);
+                OrderResponse orderResponse = this.orderFacade.getOrderFromOrderResponse(orderRequest);
                 return ResponseEntity.ok(orderResponse);
             } catch (IllegalArgumentException e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);

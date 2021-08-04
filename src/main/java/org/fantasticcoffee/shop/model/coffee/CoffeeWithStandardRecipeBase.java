@@ -10,17 +10,17 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CustomizableStandardCoffee {
+public class CoffeeWithStandardRecipeBase {
 
     private String customerName;
-    private StandardCoffee standardCoffee;
+    private StandardRecipe standardRecipe;
     private List<IngredientOnRecipe> extraIngredients;
 
-    public CustomizableStandardCoffee(String customerName,
-                                      StandardCoffee standardCoffee,
-                                      List<IngredientOnRecipe> extraIngredients) {
+    public CoffeeWithStandardRecipeBase(String customerName,
+                                        StandardRecipe standardRecipe,
+                                        List<IngredientOnRecipe> extraIngredients) {
         this.setCustomerName(customerName);
-        this.standardCoffee = standardCoffee;
+        this.standardRecipe = standardRecipe;
         this.extraIngredients = extraIngredients;
     }
 }

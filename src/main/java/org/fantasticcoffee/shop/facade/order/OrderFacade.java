@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OrderFacade {
 
-    OrderResponse placeOrder(OrderRequest orderRequest);
+    OrderResponse getOrderFromOrderResponse(OrderRequest orderRequest);
 
     List<OrderResponse> getAll();
 

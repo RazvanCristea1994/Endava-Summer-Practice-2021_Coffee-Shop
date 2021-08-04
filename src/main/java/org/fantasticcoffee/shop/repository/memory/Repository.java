@@ -1,4 +1,4 @@
-package org.fantasticcoffee.shop.repository;
+package org.fantasticcoffee.shop.repository.memory;
 
 import java.util.Optional;
 

@@ -3,7 +3,7 @@ package org.fantasticcoffee.shop.data.order;
 import lombok.Getter;
 import org.fantasticcoffee.shop.data.card.CardRequest;
 import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
-import org.fantasticcoffee.shop.data.customizablestandardcoffee.CustomizableStandardCoffeeRequest;
+import org.fantasticcoffee.shop.data.customizablestandardcoffee.CoffeeWithStandardRecipeBaseRequest;
 import org.fantasticcoffee.shop.model.WhereToDrink;
 
 import javax.validation.Valid;
@@ -17,7 +17,7 @@ public class OrderRequest {
     private final List<CustomCoffeeRequest> customCoffeeList;
 
     @Valid
-    private final List<CustomizableStandardCoffeeRequest> customizableStandardCoffee;
+    private final List<CoffeeWithStandardRecipeBaseRequest> coffeeWithStandardRecipeBase;
 
     @Valid
     @NotNull(message = "Requested")
@@ -28,12 +28,12 @@ public class OrderRequest {
     private final CardRequest card;
 
     public OrderRequest(List<CustomCoffeeRequest> customCoffeeList,
-                        List<CustomizableStandardCoffeeRequest> customizableStandardCoffee,
+                        List<CoffeeWithStandardRecipeBaseRequest> coffeeWithStandardRecipeBase,
                         WhereToDrink whereToDrink,
                         CardRequest card) {
 
         this.customCoffeeList = customCoffeeList;
-        this.customizableStandardCoffee = customizableStandardCoffee;
+        this.coffeeWithStandardRecipeBase = coffeeWithStandardRecipeBase;
         this.whereToDrink = whereToDrink;
         this.card = card;
     }

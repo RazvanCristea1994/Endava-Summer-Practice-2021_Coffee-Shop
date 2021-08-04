@@ -1,42 +1,48 @@
 package org.fantasticcoffee.shop.service.impl;
 
 import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
-import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
-import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.StandardRecipe;
+import org.fantasticcoffee.shop.model.coffee.CoffeeWithStandardRecipeBase;
+import org.fantasticcoffee.shop.model.ingredient.Ingredient;
 import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
-import org.fantasticcoffee.shop.repository.DefaultIngredientRepository;
+import org.fantasticcoffee.shop.repository.database.IngredientInStockRepository;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service("coffeeService")
 public class DefaultCoffeeService implements CoffeeService {
 
     @Autowired
-    DefaultIngredientRepository ingredientRepository;
+    IngredientInStockRepository ingredientRepository;
 
     public Double getCoffeePrice(CustomCoffee coffee) {
 
         double ingredientsPrice = 0.0;
-        if (!coffee.getCustomerMadeRecipe().getIngredients().isEmpty()) {
-            for (IngredientOnRecipe ingredientOnRecipe : coffee.getCustomerMadeRecipe().getIngredients()) {
+        if (!coffee.getCustomerMadeRecipe().getIngredientOnRecipe().isEmpty()) {
+            for (IngredientOnRecipe ingredientOnRecipe : coffee.getCustomerMadeRecipe().getIngredientOnRecipe()) {
                 ingredientsPrice +=
-                        ingredientOnRecipe.getQuantity() * ingredientOnRecipe.getIngredient().getIngredientSellingPrice();
+                        ingredientOnRecipe.getNumberOfShots() * ingredientOnRecipe.getIngredient().getIngredientSellingPrice();
             }
         }
 
         return ingredientsPrice;
     }
 
-    public Double getCoffeePrice(CustomizableStandardCoffee coffee) {
+    public Double getCoffeePrice(CoffeeWithStandardRecipeBase coffee) {
 
-        double ingredientsInStandardCoffeePrice = getStandardCoffeePrice(coffee.getStandardCoffee());
+        double ingredientsInStandardCoffeePrice = getStandardCoffeePrice(coffee.getStandardRecipe());
 
         double additionalIngredientsPrice = 0.0;
         if (!coffee.getExtraIngredients().isEmpty()) {
             for (IngredientOnRecipe ingredientOnRecipe : coffee.getExtraIngredients()) {
                 additionalIngredientsPrice +=
-                        ingredientOnRecipe.getQuantity() * ingredientOnRecipe.getIngredient().getIngredientSellingPrice();
+                        ingredientOnRecipe.getNumberOfShots() * ingredientOnRecipe.getIngredient().getIngredientSellingPrice();
             }
         }
 
@@ -46,47 +52,70 @@ public class DefaultCoffeeService implements CoffeeService {
     public Double getCoffeeCost(CustomCoffee coffee) {
 
         double additionalIngredientsCost = 0.0;
-        if (!coffee.getCustomerMadeRecipe().getIngredients().isEmpty()) {
-            for (IngredientOnRecipe ingredientOnRecipe : coffee.getCustomerMadeRecipe().getIngredients()) {
+        if (!coffee.getCustomerMadeRecipe().getIngredientOnRecipe().isEmpty()) {
+            for (IngredientOnRecipe ingredientOnRecipe : coffee.getCustomerMadeRecipe().getIngredientOnRecipe()) {
                 additionalIngredientsCost +=
-                        ingredientOnRecipe.getQuantity() * ingredientOnRecipe.getIngredient().getIngredientCost();
+                        ingredientOnRecipe.getNumberOfShots() * ingredientOnRecipe.getIngredient().getIngredientCost();
             }
         }
 
         return additionalIngredientsCost;
     }
 
-    public Double getCoffeeCost(CustomizableStandardCoffee coffee) {
+    public Double getCoffeeCost(CoffeeWithStandardRecipeBase coffee) {
 
         double ingredientsInStandardCoffeeCost = 0.0;
-        if (!coffee.getStandardCoffee().getRecipe().getIngredients().isEmpty()) {
-            for (IngredientOnRecipe ingredientOnRecipe : coffee.getStandardCoffee().getRecipe().getIngredients()) {
+        if (!coffee.getStandardRecipe().getRecipe().getIngredientOnRecipe().isEmpty()) {
+            for (IngredientOnRecipe ingredientOnRecipe : coffee.getStandardRecipe().getRecipe().getIngredientOnRecipe()) {
                 ingredientsInStandardCoffeeCost +=
-                        ingredientOnRecipe.getQuantity() * ingredientOnRecipe.getIngredient().getIngredientCost();
+                        ingredientOnRecipe.getNumberOfShots() * ingredientOnRecipe.getIngredient().getIngredientCost();
             }
         }
 
         double extraIngredientsCost = 0.0;
         if (!coffee.getExtraIngredients().isEmpty()) {
-            for (IngredientOnRecipe extraIngredientOnRecipe : coffee.getStandardCoffee().getRecipe().getIngredients()) {
+            for (IngredientOnRecipe extraIngredientOnRecipe : coffee.getStandardRecipe().getRecipe().getIngredientOnRecipe()) {
                 extraIngredientsCost +=
-                        extraIngredientOnRecipe.getQuantity() * extraIngredientOnRecipe.getIngredient().getIngredientCost();
+                        extraIngredientOnRecipe.getNumberOfShots() * extraIngredientOnRecipe.getIngredient().getIngredientCost();
             }
         }
 
         return ingredientsInStandardCoffeeCost + extraIngredientsCost;
     }
 
-    public Double getStandardCoffeePrice(StandardCoffee standardCoffee) {
+    public Double getStandardCoffeePrice(StandardRecipe standardRecipe) {
 
         double ingredientsInCoffeeTypePrice = 0.0;
-        if (!standardCoffee.getRecipe().getIngredients().isEmpty()) {
-            for (IngredientOnRecipe ingredientOnRecipe : standardCoffee.getRecipe().getIngredients()) {
+        if (!standardRecipe.getRecipe().getIngredientOnRecipe().isEmpty()) {
+            for (IngredientOnRecipe ingredientOnRecipe : standardRecipe.getRecipe().getIngredientOnRecipe()) {
                 ingredientsInCoffeeTypePrice +=
-                        ingredientOnRecipe.getQuantity() * ingredientOnRecipe.getIngredient().getIngredientSellingPrice();
+                        ingredientOnRecipe.getNumberOfShots() * ingredientOnRecipe.getIngredient().getIngredientSellingPrice();
             }
         }
 
         return ingredientsInCoffeeTypePrice;
+    }
+
+    public List<IngredientOnRecipe> getAllIngredientsForCustomCoffee(CustomCoffee coffee) {
+
+        return new ArrayList<>(coffee.getCustomerMadeRecipe().getIngredientOnRecipe());
+    }
+
+    public List<IngredientOnRecipe> getAllIngredientsForCoffeeWithStandardRecipeBase(CoffeeWithStandardRecipeBase coffee) {
+
+        Map<Ingredient, IngredientOnRecipe> allIngredients = coffee.getStandardRecipe().getRecipe().getIngredientOnRecipe()
+                .stream()
+                .collect(Collectors.toMap(IngredientOnRecipe::getIngredient, i -> i));
+
+        for (IngredientOnRecipe ingredientOnRecipe : coffee.getExtraIngredients()) {
+            if (allIngredients.containsKey(ingredientOnRecipe.getIngredient())) {
+                IngredientOnRecipe ingredient = allIngredients.get(ingredientOnRecipe.getIngredient());
+                ingredient.setNumberOfShots(ingredient.getNumberOfShots() + ingredientOnRecipe.getNumberOfShots());
+            } else {
+                allIngredients.putIfAbsent(ingredientOnRecipe.getIngredient(), ingredientOnRecipe);
+            }
+        }
+
+        return new ArrayList<>(allIngredients.values());
     }
 }

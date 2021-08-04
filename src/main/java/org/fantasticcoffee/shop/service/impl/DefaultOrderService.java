@@ -1,10 +1,14 @@
 package org.fantasticcoffee.shop.service.impl;
 
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.repository.Repository;
+import org.fantasticcoffee.shop.model.coffee.CoffeeWithStandardRecipeBase;
+import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
+import org.fantasticcoffee.shop.model.ingredient.Ingredient;
+import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
+import org.fantasticcoffee.shop.repository.memory.Repository;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.fantasticcoffee.shop.service.OrderService;
-import org.fantasticcoffee.shop.validator.CardValidator;
+import org.fantasticcoffee.shop.validator.CardValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +27,14 @@ public class DefaultOrderService implements OrderService {
     @Autowired
     private DefaultIngredientService ingredientService;
     @Autowired
-    private CardValidator cardValidator;
+    private CardValidation cardValidation;
 
     private static Integer id = 0;
 
-    public Order placeOrder(Order order) {
+    @Override
+    public Order placeOrder(Order order, List<IngredientOnRecipe> allIngredientsInOrder) {
 
-        this.cardValidator.cardNumberValidation(order.getCard().getCardNumber());
+        this.cardValidation.cardNumberValidation(order.getCard().getCardNumber());
 
         order.setId(++DefaultOrderService.id);
         order.setOrderDateTime(LocalDateTime.now());
@@ -43,11 +48,12 @@ public class DefaultOrderService implements OrderService {
             DefaultOrderService.id--;
             return null;
         } else {
-            decrementIngredientsInRepo(order);
+            this.ingredientService.decrementIngredient(allIngredientsInOrder);
             return order.duplicate();
         }
     }
 
+    @Override
     public List<Order> findAll() {
 
         Iterable<Order> orders = this.orderRepository.findAll();
@@ -57,12 +63,14 @@ public class DefaultOrderService implements OrderService {
         return orderList;
     }
 
+    @Override
     public Order findOrder(Integer id) {
 
         Optional<Order> result = this.orderRepository.find(id);
         return result.map(Order::duplicate).orElseThrow();
     }
 
+    @Override
     public Order update(Integer id, Order order) {
 
         if (order == null) {
@@ -81,6 +89,7 @@ public class DefaultOrderService implements OrderService {
         return result.map(Order::duplicate).orElse(null);
     }
 
+    @Override
     public Double getTotalProfit() {
 
         Collection<Order> orderCollection = findAll();
@@ -91,7 +100,7 @@ public class DefaultOrderService implements OrderService {
                                 this.coffeeService.getCoffeePrice(coffee)).sum()).sum();
 
         double revenueCustomizableStandardCoffeeTotal = orderCollection.stream()
-                .mapToDouble(order -> order.getCustomizableStandardCoffee().stream()
+                .mapToDouble(order -> order.getCoffeeWithStandardRecipeBase().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeePrice(coffee)).sum()).sum();
 
@@ -101,20 +110,21 @@ public class DefaultOrderService implements OrderService {
                                 this.coffeeService.getCoffeeCost(coffee)).sum()).sum();
 
         double costCustomizableStandardCoffeeTotal = orderCollection.stream()
-                .mapToDouble(order -> order.getCustomizableStandardCoffee().stream()
+                .mapToDouble(order -> order.getCoffeeWithStandardRecipeBase().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeeCost(coffee)).sum()).sum();
 
         return revenueCustomCoffeeTotal + revenueCustomizableStandardCoffeeTotal - costCustomCoffeeTotal - costCustomizableStandardCoffeeTotal;
     }
 
+    @Override
     public Double getTotalOrderPrice(Order order) {
         double customCoffeeTotalOrderPrice = order.getCustomCoffeeList()
                 .stream()
                 .mapToDouble(coffee -> this.coffeeService.getCoffeePrice(coffee))
                 .sum();
 
-        double customizableStandardCoffeeTotalOrderPrice = order.getCustomizableStandardCoffee()
+        double customizableStandardCoffeeTotalOrderPrice = order.getCoffeeWithStandardRecipeBase()
                 .stream()
                 .mapToDouble(coffee -> this.coffeeService.getCoffeePrice(coffee))
                 .sum();
@@ -122,6 +132,7 @@ public class DefaultOrderService implements OrderService {
         return customCoffeeTotalOrderPrice + customizableStandardCoffeeTotalOrderPrice;
     }
 
+    @Override
     public Double getTotalProfitForToday() {
 
         Collection<Order> orderCollection = findAll();
@@ -136,7 +147,7 @@ public class DefaultOrderService implements OrderService {
         double revenueCustomizableStandardCoffeeToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
-                .mapToDouble(order -> order.getCustomizableStandardCoffee().stream()
+                .mapToDouble(order -> order.getCoffeeWithStandardRecipeBase().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeePrice(coffee)).sum()).sum();
 
@@ -150,13 +161,14 @@ public class DefaultOrderService implements OrderService {
         double costCustomizableStandardCoffeeToday = orderCollection.stream()
                 .filter(order -> order.getOrderDateTime()
                         .isAfter(LocalDateTime.now().with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay())))
-                .mapToDouble(order -> order.getCustomizableStandardCoffee().stream()
+                .mapToDouble(order -> order.getCoffeeWithStandardRecipeBase().stream()
                         .mapToDouble(coffee ->
                                 this.coffeeService.getCoffeeCost(coffee)).sum()).sum();
 
         return revenueCustomCoffeeToday + revenueCustomizableStandardCoffeeToday - costCustomCoffeeToday - costCustomizableStandardCoffeeToday;
     }
 
+    @Override
     public void deleteOrder(Integer id) {
 
         this.orderRepository.find(id).ifPresentOrElse(foundOrder -> {
@@ -168,16 +180,32 @@ public class DefaultOrderService implements OrderService {
                 });
     }
 
-    private void decrementIngredientsInRepo(Order order) {
+    public List<IngredientOnRecipe> getAllIngredientsForOrder(Order order) {
 
-        order.getCustomizableStandardCoffee().forEach(coffee -> {
-            this.ingredientService.decrementIngredient(coffee.getStandardCoffee().getRecipe().getIngredients());
-            this.ingredientService.decrementIngredient(coffee.getExtraIngredients());
-        });
+        Map<Ingredient, IngredientOnRecipe> allIngredientsForOrder = new HashMap<>();
 
-        order.getCustomCoffeeList().forEach(coffee -> {
-            this.ingredientService.decrementIngredient(coffee.getCustomerMadeRecipe().getIngredients());
-            this.ingredientService.decrementIngredient(coffee.getCustomerMadeRecipe().getIngredients());
-        });
+        for (CustomCoffee customCoffee : order.getCustomCoffeeList()) {
+            for (IngredientOnRecipe ingredientOnRecipe : this.coffeeService.getAllIngredientsForCustomCoffee(customCoffee)) {
+                if (allIngredientsForOrder.containsKey(ingredientOnRecipe.getIngredient())) {
+                    IngredientOnRecipe ingredient = allIngredientsForOrder.get(ingredientOnRecipe.getIngredient());
+                    ingredient.setNumberOfShots(ingredient.getNumberOfShots() + ingredient.getNumberOfShots());
+                } else {
+                    allIngredientsForOrder.putIfAbsent(ingredientOnRecipe.getIngredient(), ingredientOnRecipe);
+                }
+            }
+        }
+
+        for (CoffeeWithStandardRecipeBase coffeeWithStandardRecipeBase : order.getCoffeeWithStandardRecipeBase()) {
+            for (IngredientOnRecipe ingredientOnRecipe : this.coffeeService.getAllIngredientsForCoffeeWithStandardRecipeBase(coffeeWithStandardRecipeBase)) {
+                if (allIngredientsForOrder.containsKey(ingredientOnRecipe.getIngredient())) {
+                    IngredientOnRecipe ingredient = allIngredientsForOrder.get(ingredientOnRecipe.getIngredient());
+                    ingredient.setNumberOfShots(ingredient.getNumberOfShots() + ingredient.getNumberOfShots());
+                } else {
+                    allIngredientsForOrder.putIfAbsent(ingredientOnRecipe.getIngredient(), ingredientOnRecipe);
+                }
+            }
+        }
+
+        return new ArrayList<>(allIngredientsForOrder.values());
     }
 }

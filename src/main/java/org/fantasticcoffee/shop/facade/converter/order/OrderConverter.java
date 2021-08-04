@@ -2,13 +2,13 @@ package org.fantasticcoffee.shop.facade.converter.order;
 
 import org.fantasticcoffee.shop.data.card.CardRequest;
 import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
-import org.fantasticcoffee.shop.data.customizablestandardcoffee.CustomizableStandardCoffeeRequest;
+import org.fantasticcoffee.shop.data.customizablestandardcoffee.CoffeeWithStandardRecipeBaseRequest;
 import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.facade.converter.Converter;
 import org.fantasticcoffee.shop.model.Card;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
-import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.CoffeeWithStandardRecipeBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class OrderConverter implements Converter<Order, OrderRequest> {
     private Converter<CustomCoffee, CustomCoffeeRequest> customCoffeeRequestConverter;
 
     @Autowired
-    private Converter<CustomizableStandardCoffee, CustomizableStandardCoffeeRequest> customizableStandardCoffeeRequestConverter;
+    private Converter<CoffeeWithStandardRecipeBase, CoffeeWithStandardRecipeBaseRequest> customizableStandardCoffeeRequestConverter;
 
     @Autowired
     private Converter<Card, CardRequest> cardConverter;
@@ -33,9 +33,9 @@ public class OrderConverter implements Converter<Order, OrderRequest> {
             order.setCustomCoffeeList(this.customCoffeeRequestConverter.convertAll(orderRequest.getCustomCoffeeList()));
         }
 
-        if (orderRequest.getCustomizableStandardCoffee() != null) {
-            order.setCustomizableStandardCoffee(
-                    this.customizableStandardCoffeeRequestConverter.convertAll(orderRequest.getCustomizableStandardCoffee()));
+        if (orderRequest.getCoffeeWithStandardRecipeBase() != null) {
+            order.setCoffeeWithStandardRecipeBase(
+                    this.customizableStandardCoffeeRequestConverter.convertAll(orderRequest.getCoffeeWithStandardRecipeBase()));
         }
 
         order.setWhereToDrink(orderRequest.getWhereToDrink());

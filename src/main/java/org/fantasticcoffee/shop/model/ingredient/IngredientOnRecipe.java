@@ -8,10 +8,10 @@ import lombok.Setter;
 public class IngredientOnRecipe {
 
     Ingredient ingredient;
-    int quantity;
+    int numberOfShots;
 
-    public IngredientOnRecipe(Ingredient ingredient, int quantity) {
+    public IngredientOnRecipe(Ingredient ingredient, int numberOfShots) {
         this.ingredient = ingredient;
-        this.quantity = quantity;
+        this.numberOfShots = numberOfShots;
     }
 }

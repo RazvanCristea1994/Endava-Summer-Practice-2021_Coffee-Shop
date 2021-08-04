@@ -2,7 +2,7 @@ package org.fantasticcoffee.shop.data.customizablestandardcoffee;
 
 import lombok.Getter;
 import org.fantasticcoffee.shop.data.ingredient.IngredientOnRecipeRequest;
-import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.StandardRecipe;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Getter
-public class CustomizableStandardCoffeeRequest {
+public class CoffeeWithStandardRecipeBaseRequest {
 
     @NotNull(message = "Customer's name requested")
     @NotBlank(message = "Customer name requested")
@@ -18,16 +18,16 @@ public class CustomizableStandardCoffeeRequest {
     private final String customerName;
 
     @NotNull(message = "Standard Coffee requested")
-    private final StandardCoffee standardCoffee;
+    private final StandardRecipe standardRecipe;
 
     private final List<IngredientOnRecipeRequest> extraIngredients;
 
-    public CustomizableStandardCoffeeRequest(
+    public CoffeeWithStandardRecipeBaseRequest(
             String customerName,
-            StandardCoffee standardCoffee,
+            StandardRecipe standardRecipe,
             List<IngredientOnRecipeRequest> extraIngredients) {
         this.customerName = customerName;
-        this.standardCoffee = standardCoffee;
+        this.standardRecipe = standardRecipe;
         this.extraIngredients = extraIngredients;
     }
 }

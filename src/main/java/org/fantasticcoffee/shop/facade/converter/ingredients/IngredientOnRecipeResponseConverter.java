@@ -16,7 +16,7 @@ public class IngredientOnRecipeResponseConverter implements Converter<Ingredient
     @Override
     public IngredientOnRecipeResponse convert(IngredientOnRecipe ingredient) {
         return new IngredientOnRecipeResponse(ingredient.getIngredient(),
-                ingredient.getQuantity(),
+                ingredient.getNumberOfShots(),
                 this.ingredientService.getPriceForShots(ingredient));
     }
 }

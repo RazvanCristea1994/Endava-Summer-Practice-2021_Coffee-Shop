@@ -2,23 +2,23 @@ package org.fantasticcoffee.shop.data.customizablestandardcoffee;
 
 import lombok.Getter;
 import org.fantasticcoffee.shop.data.ingredient.IngredientOnRecipeResponse;
-import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.StandardRecipe;
 
 import java.util.List;
 
 @Getter
-public class CustomizableStandardCoffeeResponse {
+public class CoffeeWithStandardRecipeBaseResponse {
 
     private final String customerName;
-    private final StandardCoffee standardCoffee;
+    private final StandardRecipe standardRecipe;
     private final List<IngredientOnRecipeResponse> extraIngredients;
 
-    public CustomizableStandardCoffeeResponse(
+    public CoffeeWithStandardRecipeBaseResponse(
             String customerName,
-            StandardCoffee standardCoffee,
+            StandardRecipe standardRecipe,
             List<IngredientOnRecipeResponse> extraIngredients) {
         this.customerName = customerName;
-        this.standardCoffee = standardCoffee;
+        this.standardRecipe = standardRecipe;
         this.extraIngredients = extraIngredients;
     }
 }

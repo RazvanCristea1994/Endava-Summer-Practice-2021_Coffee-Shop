@@ -1,4 +1,4 @@
-package org.fantasticcoffee.shop.repository;
+package org.fantasticcoffee.shop.repository.memory;
 
 import org.fantasticcoffee.shop.model.ingredient.Ingredient;
 import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository("ingredientsRepository")
+@Repository("ingredientsRepositoryMemory")
 public class DefaultIngredientRepository {
 
     private List<IngredientInStock> database;

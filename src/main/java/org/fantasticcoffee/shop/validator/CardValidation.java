@@ -3,7 +3,7 @@ package org.fantasticcoffee.shop.validator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CardValidator {
+public class CardValidation {
 
     public void cardNumberValidation(String cardNumber) {
 

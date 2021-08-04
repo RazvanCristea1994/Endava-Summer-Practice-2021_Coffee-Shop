@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
-import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.CoffeeWithStandardRecipeBase;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class Order {
     private Integer id;
     private LocalDateTime orderDateTime;
     private List<CustomCoffee> customCoffeeList;
-    private List<CustomizableStandardCoffee> customizableStandardCoffee;
+    private List<CoffeeWithStandardRecipeBase> coffeeWithStandardRecipeBase;
     private WhereToDrink whereToDrink;
     private Card card;
     private Double price;
@@ -27,7 +27,7 @@ public class Order {
         this.id = builder.id;
         this.orderDateTime = builder.orderDateTime;
         this.customCoffeeList = builder.customCoffeeList;
-        this.customizableStandardCoffee = builder.customizableStandardCoffee;
+        this.coffeeWithStandardRecipeBase = builder.coffeeWithStandardRecipeBase;
         this.whereToDrink = builder.whereToDrink;
         this.card = builder.card;
         this.price = builder.price;
@@ -41,7 +41,7 @@ public class Order {
         private Integer id;
         private LocalDateTime orderDateTime;
         private List<CustomCoffee> customCoffeeList = new ArrayList<>();
-        private List<CustomizableStandardCoffee> customizableStandardCoffee = new ArrayList<>();
+        private List<CoffeeWithStandardRecipeBase> coffeeWithStandardRecipeBase = new ArrayList<>();
         private WhereToDrink whereToDrink;
         private Card card;
         private Double price;
@@ -50,8 +50,8 @@ public class Order {
             this.customCoffeeList.add(coffee);
         }
 
-        public void addCustomizableStandardCoffee(CustomizableStandardCoffee coffee) {
-            this.customizableStandardCoffee.add(coffee);
+        public void addCustomizableStandardCoffee(CoffeeWithStandardRecipeBase coffee) {
+            this.coffeeWithStandardRecipeBase.add(coffee);
         }
 
         public Order build() {
@@ -65,7 +65,7 @@ public class Order {
         builder.setId(this.getId());
         builder.setOrderDateTime(this.orderDateTime);
         builder.setCustomCoffeeList(this.customCoffeeList);
-        builder.setCustomizableStandardCoffee(this.customizableStandardCoffee);
+        builder.setCoffeeWithStandardRecipeBase(this.coffeeWithStandardRecipeBase);
         builder.setWhereToDrink(this.whereToDrink);
         builder.setCard(this.card);
         builder.setPrice(this.price);

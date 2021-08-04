@@ -32,7 +32,7 @@ public class IngredientsController {
 
     @GetMapping("/all-stock")
     @ResponseBody
-    public ResponseEntity<List<IngredientInStock>> getStock() {
+    public ResponseEntity<Iterable<IngredientInStock>> getStock() {
 
         return ResponseEntity.ok(this.ingredientService.getAllIngredientsInStock());
     }

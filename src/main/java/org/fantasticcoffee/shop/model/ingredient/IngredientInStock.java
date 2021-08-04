@@ -4,39 +4,44 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class IngredientInStock {
+@Entity
+@Table(name = "ingredients_in_stock")
+public class IngredientInStock implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Integer id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ingredient", unique = true)
     private Ingredient ingredient;
-    private int quantity;
+
+    @Column
+    private int numberOfShots;
 
     @Setter
     public static class Builder {
 
-        private Integer id;
         private Ingredient ingredient;
-        private int quantity;
+        private int numberOfShots;
 
-        public Builder(Integer id, Ingredient ingredient, int quantity) {
-            this.id = id;
+        public Builder(Ingredient ingredient, int numberOfShots) {
             this.ingredient = ingredient;
-            this.quantity = quantity;
-        }
-
-        public Builder(Ingredient ingredient, int quantity) {
-            this.ingredient = ingredient;
-            this.quantity = quantity;
+            this.numberOfShots = numberOfShots;
         }
 
         public IngredientInStock build() {
 
             IngredientInStock ingredientInStock = new IngredientInStock();
-            ingredientInStock.id = this.id;
             ingredientInStock.ingredient = this.ingredient;
-            ingredientInStock.quantity = this.quantity;
+            ingredientInStock.numberOfShots = this.numberOfShots;
 
             return ingredientInStock;
         }

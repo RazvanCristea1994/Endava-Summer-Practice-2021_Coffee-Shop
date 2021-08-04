@@ -1,25 +1,25 @@
 package org.fantasticcoffee.shop.facade.converter.coffee;
 
-import org.fantasticcoffee.shop.data.customizablestandardcoffee.CustomizableStandardCoffeeRequest;
+import org.fantasticcoffee.shop.data.customizablestandardcoffee.CoffeeWithStandardRecipeBaseRequest;
 import org.fantasticcoffee.shop.data.ingredient.IngredientOnRecipeRequest;
 import org.fantasticcoffee.shop.facade.converter.Converter;
-import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.CoffeeWithStandardRecipeBase;
 import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomizableStandardCoffeeConverter implements Converter<CustomizableStandardCoffee, CustomizableStandardCoffeeRequest> {
+public class CustomizableStandardCoffeeConverter implements Converter<CoffeeWithStandardRecipeBase, CoffeeWithStandardRecipeBaseRequest> {
 
     @Autowired
     private Converter<IngredientOnRecipe, IngredientOnRecipeRequest> ingredientOnRecipeConverter;
 
     @Override
-    public CustomizableStandardCoffee convert(CustomizableStandardCoffeeRequest customizableStandardCoffeeRequest) {
+    public CoffeeWithStandardRecipeBase convert(CoffeeWithStandardRecipeBaseRequest coffeeWithStandardRecipeBaseRequest) {
 
-        return new CustomizableStandardCoffee(
-                customizableStandardCoffeeRequest.getCustomerName(),
-                customizableStandardCoffeeRequest.getStandardCoffee(),
-                this.ingredientOnRecipeConverter.convertAll(customizableStandardCoffeeRequest.getExtraIngredients()));
+        return new CoffeeWithStandardRecipeBase(
+                coffeeWithStandardRecipeBaseRequest.getCustomerName(),
+                coffeeWithStandardRecipeBaseRequest.getStandardRecipe(),
+                this.ingredientOnRecipeConverter.convertAll(coffeeWithStandardRecipeBaseRequest.getExtraIngredients()));
     }
 }

@@ -11,10 +11,10 @@ import java.util.List;
 @Getter
 public class Recipe {
 
-    private List<IngredientOnRecipe> ingredients = new ArrayList<>();
+    private List<IngredientOnRecipe> ingredientOnRecipe = new ArrayList<>();
 
     private Recipe(Builder builder) {
-        this.ingredients = builder.ingredientsConfig;
+        this.ingredientOnRecipe = builder.ingredientsConfig;
     }
 
     @Getter
@@ -41,15 +41,15 @@ public class Recipe {
     public String toString() {
 
         StringBuilder stringBuilder = new StringBuilder();
-        if (!ingredients.isEmpty()) {
-            getIngredients(stringBuilder);
+        if (!ingredientOnRecipe.isEmpty()) {
+            getIngredientOnRecipe(stringBuilder);
         }
 
         return String.valueOf(stringBuilder);
     }
 
-    private void getIngredients(StringBuilder stringBuilder) {
-        ingredients.forEach(i ->
-                stringBuilder.append(String.format("%s %s %s %-3s", i.getQuantity(), "x [", i.getIngredient().getIngredientName(), "]")));
+    private void getIngredientOnRecipe(StringBuilder stringBuilder) {
+        ingredientOnRecipe.forEach(i ->
+                stringBuilder.append(String.format("%s %s %s %-3s", i.getNumberOfShots(), "x [", i.getIngredient().getIngredientName(), "]")));
     }
 }

@@ -8,7 +8,7 @@ import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
 import java.util.Arrays;
 
 @Getter
-public enum StandardCoffee {
+public enum StandardRecipe {
 
     ESPRESSO("Espresso", new Recipe.Builder(Arrays.asList(
             new IngredientOnRecipe(Ingredient.ESPRESSO_SHOT, 2))).build()),
@@ -36,7 +36,7 @@ public enum StandardCoffee {
     private String name;
     private Recipe recipe;
 
-    StandardCoffee(String name, Recipe recipe) {
+    StandardRecipe(String name, Recipe recipe) {
         this.name = name;
         this.recipe = recipe;
     }

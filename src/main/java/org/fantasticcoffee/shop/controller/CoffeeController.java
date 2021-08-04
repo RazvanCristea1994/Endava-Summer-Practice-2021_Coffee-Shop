@@ -1,6 +1,6 @@
 package org.fantasticcoffee.shop.controller;
 
-import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
+import org.fantasticcoffee.shop.model.coffee.StandardRecipe;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class CoffeeController {
     @ResponseBody
     public ResponseEntity<List<Enum>> getAll() {
 
-        List<Enum> standardCoffeeList = new ArrayList<>(EnumSet.allOf(StandardCoffee.class));
+        List<Enum> standardCoffeeList = new ArrayList<>(EnumSet.allOf(StandardRecipe.class));
         return ResponseEntity.ok(standardCoffeeList);
     }
 }

@@ -1,9 +1,9 @@
-package org.fantasticcoffee.shop.repository;
+package org.fantasticcoffee.shop.repository.memory;
 
 import org.fantasticcoffee.shop.model.Order;
 import org.springframework.stereotype.Repository;
 
-@Repository("orderRepository")
+@Repository("orderRepositoryMemory")
 public class DefaultOrderRepository extends DefaultInMemoryRepository<Order> {
 
     @Override
