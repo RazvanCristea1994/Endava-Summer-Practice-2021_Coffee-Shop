@@ -32,8 +32,9 @@ public class DefaultOrderService implements OrderService {
     private static Integer id = 0;
 
     @Override
-    public Order placeOrder(Order order, List<IngredientOnRecipe> allIngredientsInOrder) {
+    public Order placeOrder(Order order) {
 
+        List<IngredientOnRecipe> allIngredientsInOrder = ingredientService.checkIngredientInStockForOrder(order);
         this.cardValidation.cardNumberValidation(order.getCard().getCardNumber());
 
         order.setId(++DefaultOrderService.id);

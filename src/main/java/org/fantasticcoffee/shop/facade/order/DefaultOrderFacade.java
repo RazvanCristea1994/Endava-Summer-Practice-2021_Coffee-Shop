@@ -28,8 +28,7 @@ public class DefaultOrderFacade implements OrderFacade {
     public OrderResponse getOrderFromOrderResponse(OrderRequest orderRequest) {
 
         Order order = orderRequestConverter.convert(orderRequest);
-        List<IngredientOnRecipe> ingredients = ingredientService.checkIngredientInStockForOrder(order);
-        Order placedOrder = orderService.placeOrder(order, ingredients);
+        Order placedOrder = orderService.placeOrder(order);
         return orderConverter.convert(placedOrder);
     }
 
