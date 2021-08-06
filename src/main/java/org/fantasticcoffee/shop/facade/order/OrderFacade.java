@@ -2,12 +2,15 @@ package org.fantasticcoffee.shop.facade.order;
 
 import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.data.order.OrderResponse;
+import org.fantasticcoffee.shop.model.Order;
 
 import java.util.List;
 
 public interface OrderFacade {
 
-    OrderResponse getOrderFromOrderResponse(OrderRequest orderRequest);
+    Order getOrder(OrderRequest orderRequest);
+
+    OrderResponse getOrderResponse(Order order);
 
     List<OrderResponse> getAll();
 

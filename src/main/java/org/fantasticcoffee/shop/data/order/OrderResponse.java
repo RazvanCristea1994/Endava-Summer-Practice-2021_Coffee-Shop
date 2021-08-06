@@ -1,8 +1,8 @@
 package org.fantasticcoffee.shop.data.order;
 
 import lombok.Getter;
-import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeResponse;
-import org.fantasticcoffee.shop.data.customizablestandardcoffee.CoffeeWithStandardRecipeBaseResponse;
+import org.fantasticcoffee.shop.data.card.CardResponse;
+import org.fantasticcoffee.shop.data.customcoffee.CoffeeResponse;
 import org.fantasticcoffee.shop.model.WhereToDrink;
 
 import java.time.LocalDateTime;
@@ -12,27 +12,30 @@ import java.util.List;
 public class OrderResponse {
 
     private final Integer id;
+    private final String customerName;
     private final LocalDateTime orderDateTime;
-    private final List<CustomCoffeeResponse> customCoffeeList;
-    private final List<CoffeeWithStandardRecipeBaseResponse> customizableStandardCoffee;
+    private final List<CoffeeResponse> coffeeList;
     private final WhereToDrink whereToDrink;
-    private final String cardHolderName;
-    private final Double totalPrice;
+    private final CardResponse cardResponse;
+    private final Double totalOrderPrice;
+    private final Double todayProfit;
 
     public OrderResponse(
             Integer id,
+            String customerName,
             LocalDateTime orderDateTime,
-            List<CustomCoffeeResponse> customCoffeeList,
-            List<CoffeeWithStandardRecipeBaseResponse> customizableStandardCoffee,
+            List<CoffeeResponse> coffeeList,
             WhereToDrink whereToDrink,
-            String cardHolderName,
-            Double totalPrice) {
+            CardResponse cardResponse,
+            Double totalOrderPrice,
+            Double todayProfit) {
         this.id = id;
         this.orderDateTime = orderDateTime;
-        this.customCoffeeList = customCoffeeList;
-        this.customizableStandardCoffee = customizableStandardCoffee;
+        this.coffeeList = coffeeList;
         this.whereToDrink = whereToDrink;
-        this.cardHolderName = cardHolderName;
-        this.totalPrice = totalPrice;
+        this.customerName = customerName;
+        this.cardResponse = cardResponse;
+        this.totalOrderPrice = totalOrderPrice;
+        this.todayProfit = todayProfit;
     }
 }

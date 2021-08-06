@@ -1,9 +1,10 @@
 package org.fantasticcoffee.shop.service;
 
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
+import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
 
@@ -23,5 +24,5 @@ public interface OrderService {
 
     void deleteOrder(Integer id);
 
-    List<IngredientOnRecipe> getAllIngredientsForOrder(Order order);
+    Map<IngredientInStock, Integer> getAllIngredientsForOrder(Order order);
 }

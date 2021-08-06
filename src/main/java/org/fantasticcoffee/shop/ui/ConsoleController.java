@@ -3,7 +3,7 @@ package org.fantasticcoffee.shop.ui;
 
 import org.fantasticcoffee.shop.model.WhereToDrink;
 import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
-import org.fantasticcoffee.shop.model.Recipe;
+import org.fantasticcoffee.shop.model.recipe.Recipe;
 import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.coffee.CustomizableStandardCoffee;

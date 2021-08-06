@@ -27,7 +27,7 @@ public abstract class DefaultInMemoryRepository<T> implements Repository<T> {
     }
 
     @Override
-    public Iterable<T> findAll() {
+    public List<T> findAll() {
 
         List<T> results = new ArrayList<>();
         for (T entity : database.values()) {

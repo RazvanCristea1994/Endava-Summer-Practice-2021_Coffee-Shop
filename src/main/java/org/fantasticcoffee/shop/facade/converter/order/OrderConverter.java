@@ -1,26 +1,22 @@
 package org.fantasticcoffee.shop.facade.converter.order;
 
 import org.fantasticcoffee.shop.data.card.CardRequest;
-import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
-import org.fantasticcoffee.shop.data.customizablestandardcoffee.CoffeeWithStandardRecipeBaseRequest;
+import org.fantasticcoffee.shop.data.customcoffee.CoffeeRequest;
 import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.facade.converter.Converter;
 import org.fantasticcoffee.shop.model.Card;
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
-import org.fantasticcoffee.shop.model.coffee.CoffeeWithStandardRecipeBase;
+import org.fantasticcoffee.shop.model.Coffee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 @Component
 public class OrderConverter implements Converter<Order, OrderRequest> {
 
     @Autowired
-    private Converter<CustomCoffee, CustomCoffeeRequest> customCoffeeRequestConverter;
-
-    @Autowired
-    private Converter<CoffeeWithStandardRecipeBase, CoffeeWithStandardRecipeBaseRequest> customizableStandardCoffeeRequestConverter;
-
+    private Converter<Coffee, CoffeeRequest> coffeeConverter;
     @Autowired
     private Converter<Card, CardRequest> cardConverter;
 
@@ -29,17 +25,14 @@ public class OrderConverter implements Converter<Order, OrderRequest> {
 
         Order.Builder order = new Order.Builder();
 
-        if (orderRequest.getCustomCoffeeList() != null) {
-            order.setCustomCoffeeList(this.customCoffeeRequestConverter.convertAll(orderRequest.getCustomCoffeeList()));
+        order.setCustomerName(orderRequest.getCustomerName());
+        if (orderRequest.getCoffeeList() != null) {
+            order.setCoffeeList(this.coffeeConverter.convertAll(orderRequest.getCoffeeList()));
+        } else {
+            order.setCoffeeList(new ArrayList<>());
         }
-
-        if (orderRequest.getCoffeeWithStandardRecipeBase() != null) {
-            order.setCoffeeWithStandardRecipeBase(
-                    this.customizableStandardCoffeeRequestConverter.convertAll(orderRequest.getCoffeeWithStandardRecipeBase()));
-        }
-
+        order.setCard(this.cardConverter.convert(orderRequest.getCardRequest()));
         order.setWhereToDrink(orderRequest.getWhereToDrink());
-        order.setCard(this.cardConverter.convert(orderRequest.getCard()));
 
         return order.build();
     }

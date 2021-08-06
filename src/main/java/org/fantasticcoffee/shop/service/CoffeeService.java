@@ -1,31 +1,23 @@
 package org.fantasticcoffee.shop.service;
 
-import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
-import org.fantasticcoffee.shop.model.coffee.StandardRecipe;
-import org.fantasticcoffee.shop.model.coffee.CoffeeWithStandardRecipeBase;
-import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
+import org.fantasticcoffee.shop.model.Coffee;
+import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
+import org.fantasticcoffee.shop.model.recipe.StandardRecipeInStock;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CoffeeService {
 
-    Double getCoffeePrice(CustomCoffee customCoffee);
+    Double getCoffeePrice(Coffee coffee);
 
+    Double getCoffeeCost(Coffee coffee);
 
-    Double getCoffeePrice(CoffeeWithStandardRecipeBase customCoffee);
+    Map<IngredientInStock, Integer> getAllCoffeeIngredients(Coffee coffee);
 
+    List<StandardRecipeInStock> getStandardRecipeList();
 
-    Double getCoffeeCost(CustomCoffee customCoffee);
+    StandardRecipeInStock getCoffee(String standardCoffeeName);
 
-
-    Double getCoffeeCost(CoffeeWithStandardRecipeBase customCoffee);
-
-
-    Double getStandardCoffeePrice(StandardRecipe standardRecipe);
-
-
-    List<IngredientOnRecipe> getAllIngredientsForCustomCoffee(CustomCoffee coffee);
-
-
-    List<IngredientOnRecipe> getAllIngredientsForCoffeeWithStandardRecipeBase(CoffeeWithStandardRecipeBase coffee);
+    StandardRecipeInStock createStandardCoffee(String standardRecipeName);
 }

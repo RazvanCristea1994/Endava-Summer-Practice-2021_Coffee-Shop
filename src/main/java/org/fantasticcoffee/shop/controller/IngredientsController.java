@@ -1,7 +1,7 @@
 package org.fantasticcoffee.shop.controller;
 
-import org.fantasticcoffee.shop.model.ingredient.Ingredient;
-import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
+import org.fantasticcoffee.shop.data.ingredient.IngredientInStockResponse;
+import org.fantasticcoffee.shop.facade.ingredient.IngredientFacade;
 import org.fantasticcoffee.shop.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 @RestController
@@ -20,20 +18,15 @@ public class IngredientsController {
 
     @Autowired
     IngredientService ingredientService;
-
-    @GetMapping("/all")
-    @ResponseBody
-    public ResponseEntity<List<Enum>> getAll() {
-
-        List<Enum> ingredientList = new ArrayList<>(EnumSet.allOf(Ingredient.class));
-
-        return ResponseEntity.ok(ingredientList);
-    }
+    @Autowired
+    IngredientFacade ingredientFacade;
 
     @GetMapping("/all-stock")
     @ResponseBody
-    public ResponseEntity<Iterable<IngredientInStock>> getStock() {
+    public ResponseEntity<List<IngredientInStockResponse>> getStock() {
 
-        return ResponseEntity.ok(this.ingredientService.getAllIngredientsInStock());
+        List<IngredientInStockResponse> ingredientInStockListResponse =
+                this.ingredientFacade.getIngredientInStockResponse(this.ingredientService.getAllIngredientsInStock());
+        return ResponseEntity.ok(ingredientInStockListResponse);
     }
 }

@@ -1,12 +1,13 @@
 package org.fantasticcoffee.shop.repository.memory;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface Repository<T> {
 
     Optional<T> save(T entity);
 
-    Iterable<T> findAll();
+    List<T> findAll();
 
     Optional<T> find(Integer id);
 

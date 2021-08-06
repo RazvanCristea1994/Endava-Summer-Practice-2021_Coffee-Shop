@@ -1,8 +1,7 @@
 package org.fantasticcoffee.shop.service.impl;
 
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.model.ingredient.Ingredient;
-import org.fantasticcoffee.shop.model.ingredient.IngredientOnRecipe;
+import org.fantasticcoffee.shop.model.ingredient.ChosenIngredientIngredientInStock;
 import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
 import org.fantasticcoffee.shop.repository.database.IngredientInStockRepository;
 import org.fantasticcoffee.shop.service.IngredientService;
@@ -10,8 +9,10 @@ import org.fantasticcoffee.shop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service("ingredientService")
 public class DefaultIngredientService implements IngredientService {
@@ -21,57 +22,61 @@ public class DefaultIngredientService implements IngredientService {
     @Autowired
     OrderService orderService;
 
-    @PostConstruct
-    public void seedStock() {
+    public List<IngredientInStock> getAllIngredientsInStock() {
 
-     /*   this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.MILK, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.HONEY, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.SYRUP, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.STEAMED_MILK, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.MILK_FOAM, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.SWEETENED_CONDENSED_MILK, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.ICE_CREAM, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.WHIPPED_CREAM, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.CINNAMON, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.HOT_WATER, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.ICE_CUBES, 20).build());
+        Iterable<IngredientInStock> ingredientsInStock = this.ingredientRepository.findAll();
+        List<IngredientInStock> ingredientListInStock = new ArrayList<>();
+        ingredientsInStock.forEach(ingredientListInStock::add);
 
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.ESPRESSO_SHOT, 20).build());
-        this.ingredientRepository.save(new IngredientInStock.Builder(Ingredient.BLACK_COFFEE, 20).build());
-   */
-    }
-
-    public Iterable<IngredientInStock> getAllIngredientsInStock() {
-        return this.ingredientRepository.findAll();
+        return ingredientListInStock;
     }
 
     @Override
-    public void decrementIngredient(List<IngredientOnRecipe> ingredientToChange) {
+    public void decrementIngredient(Map<IngredientInStock, Integer> ingredientsToChange) {
 
-        ingredientToChange.forEach(ingredientOnRecipe -> {
-            IngredientInStock ingredient = this.ingredientRepository.findByIngredient(ingredientOnRecipe.getIngredient());
-            ingredient.setNumberOfShots(ingredient.getNumberOfShots() - ingredientOnRecipe.getNumberOfShots());
-            this.ingredientRepository.save(ingredient);
-        });
+        ingredientsToChange.forEach(
+                (ingredientInStock, shotsNumber) -> {
+                    IngredientInStock ingredient = this.ingredientRepository.findByName(ingredientInStock.getName());
+                    ingredient.setNumberOfShots(ingredient.getNumberOfShots() - shotsNumber);
+                    this.ingredientRepository.save(ingredient);
+                });
     }
 
     @Override
-    public Double getPriceForShots(IngredientOnRecipe ingredient) {
+    public Double getPriceForShots(ChosenIngredientIngredientInStock ingredient) {
         return ingredient.getNumberOfShots() * ingredient.getIngredient().getIngredientSellingPrice();
     }
 
     @Override
-    public List<IngredientOnRecipe> checkIngredientInStockForOrder(Order order) {
+    public Map<IngredientInStock, Integer> checkIngredientInStockForOrder(Order order) {
 
-        List<IngredientOnRecipe> ingredientsOnRecipe = this.orderService.getAllIngredientsForOrder(order);
-        Long nr = ingredientsOnRecipe
-                .stream()
-                .filter(ingredient -> ingredient.getNumberOfShots() > this.ingredientRepository.findByIngredient(ingredient.getIngredient()).getNumberOfShots())
-                .count();
+        Map<IngredientInStock, Integer> allIngredientsForOrder = this.orderService.getAllIngredientsForOrder(order);
+        StringBuilder message = new StringBuilder();
 
-        if (nr > 0) {
-            throw new IllegalArgumentException("We do not have enough ingredients for this order.");
+        allIngredientsForOrder.forEach(
+                (ingredientInStock, shotsInOrder) -> {
+                    if (shotsInOrder > this.ingredientRepository
+                            .findByName(ingredientInStock.getName())
+                            .getNumberOfShots()) {
+                        message.append(ingredientInStock.getName() + " ");
+                    }
+                }
+        );
+
+        if (message.length() != 0) {
+            throw new IllegalArgumentException("We do not have enough " + message + " in stock.");
         }
-        return ingredientsOnRecipe;
+
+        return allIngredientsForOrder;
+    }
+
+    @Override
+    public IngredientInStock getByName(String ingredientInStockName) {
+
+        IngredientInStock ingredient = this.ingredientRepository.findByName(ingredientInStockName);
+        if (ingredient == null) {
+            throw new NoSuchElementException("We do not have the ingredient you are looking for");
+        }
+        return ingredient;
     }
 }

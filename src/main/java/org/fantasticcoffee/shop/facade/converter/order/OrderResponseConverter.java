@@ -1,40 +1,37 @@
 package org.fantasticcoffee.shop.facade.converter.order;
 
-import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeResponse;
-import org.fantasticcoffee.shop.data.customizablestandardcoffee.CoffeeWithStandardRecipeBaseResponse;
+import org.fantasticcoffee.shop.data.card.CardResponse;
+import org.fantasticcoffee.shop.data.customcoffee.CoffeeResponse;
 import org.fantasticcoffee.shop.data.order.OrderResponse;
 import org.fantasticcoffee.shop.facade.converter.Converter;
+import org.fantasticcoffee.shop.model.Card;
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.model.coffee.CustomCoffee;
-import org.fantasticcoffee.shop.model.coffee.CoffeeWithStandardRecipeBase;
+import org.fantasticcoffee.shop.model.Coffee;
+import org.fantasticcoffee.shop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class OrderResponseConverter implements Converter<OrderResponse, Order> {
 
     @Autowired
-    private Converter<CustomCoffeeResponse, CustomCoffee> customCoffeeConverter;
-
+    private Converter<CoffeeResponse, Coffee> coffeeResponseConverter;
     @Autowired
-    private Converter<CoffeeWithStandardRecipeBaseResponse, CoffeeWithStandardRecipeBase> customizableStandardCoffeeConverter;
+    private Converter<CardResponse, Card> cardResponseConverter;
+    @Autowired
+    private OrderService orderService;
 
     @Override
     public OrderResponse convert(Order order) {
 
-        List<CustomCoffeeResponse> customCoffeeList = this.customCoffeeConverter.convertAll(order.getCustomCoffeeList());
-        List<CoffeeWithStandardRecipeBaseResponse> coffeeWithStandardRecipeBaseResponseList = this.customizableStandardCoffeeConverter.convertAll(order.getCoffeeWithStandardRecipeBase());
-
         return new OrderResponse(
                 order.getId(),
+                order.getCustomerName(),
                 order.getOrderDateTime(),
-                customCoffeeList,
-                coffeeWithStandardRecipeBaseResponseList,
+                this.coffeeResponseConverter.convertAll(order.getCoffeeList()),
                 order.getWhereToDrink(),
-                order.getCard().getCardHolderName(),
-                order.getPrice()
-        );
+                this.cardResponseConverter.convert(order.getCard()),
+                order.getPrice(),
+                this.orderService.getTotalProfitForToday());
     }
 }

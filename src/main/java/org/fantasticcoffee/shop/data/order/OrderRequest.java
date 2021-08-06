@@ -2,22 +2,25 @@ package org.fantasticcoffee.shop.data.order;
 
 import lombok.Getter;
 import org.fantasticcoffee.shop.data.card.CardRequest;
-import org.fantasticcoffee.shop.data.customcoffee.CustomCoffeeRequest;
-import org.fantasticcoffee.shop.data.customizablestandardcoffee.CoffeeWithStandardRecipeBaseRequest;
+import org.fantasticcoffee.shop.data.customcoffee.CoffeeRequest;
 import org.fantasticcoffee.shop.model.WhereToDrink;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Getter
 public class OrderRequest {
 
-    @Valid
-    private final List<CustomCoffeeRequest> customCoffeeList;
+    @NotNull(message = "Customer name requested")
+    @NotBlank(message = "Customer name cannot be blank")
+    @Pattern(regexp = "^[a-zA-Z '-]+$", message = "Wrong name format")
+    private String customerName;
 
     @Valid
-    private final List<CoffeeWithStandardRecipeBaseRequest> coffeeWithStandardRecipeBase;
+    private final List<CoffeeRequest> coffeeList;
 
     @Valid
     @NotNull(message = "Requested")
@@ -25,16 +28,15 @@ public class OrderRequest {
 
     @Valid
     @NotNull(message = "Credit card details are requested")
-    private final CardRequest card;
+    private final CardRequest cardRequest;
 
-    public OrderRequest(List<CustomCoffeeRequest> customCoffeeList,
-                        List<CoffeeWithStandardRecipeBaseRequest> coffeeWithStandardRecipeBase,
+    public OrderRequest(String customerName,
+                        List<CoffeeRequest> coffeeList,
                         WhereToDrink whereToDrink,
-                        CardRequest card) {
-
-        this.customCoffeeList = customCoffeeList;
-        this.coffeeWithStandardRecipeBase = coffeeWithStandardRecipeBase;
+                        CardRequest cardRequest) {
+        this.customerName = customerName;
+        this.coffeeList = coffeeList;
         this.whereToDrink = whereToDrink;
-        this.card = card;
+        this.cardRequest = cardRequest;
     }
 }

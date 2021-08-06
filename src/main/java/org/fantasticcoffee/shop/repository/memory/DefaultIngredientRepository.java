@@ -1,6 +1,5 @@
 package org.fantasticcoffee.shop.repository.memory;
 
-import org.fantasticcoffee.shop.model.ingredient.Ingredient;
 import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
 import org.springframework.stereotype.Repository;
 
@@ -33,10 +32,10 @@ public class DefaultIngredientRepository {
         return Optional.ofNullable(database.get(id));
     }
 
-    public IngredientInStock find(Ingredient ingredient) {
+    public IngredientInStock find(IngredientInStock ingredient) {
 
         return database.stream()
-                .filter(ingredientInStock -> ingredientInStock.getIngredient() == ingredient)
+                .filter(ingredientInStock -> ingredientInStock == ingredient)
                 .findFirst()
                 .orElseThrow();
     }

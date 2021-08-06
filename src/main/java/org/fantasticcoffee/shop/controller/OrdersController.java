@@ -3,6 +3,8 @@ package org.fantasticcoffee.shop.controller;
 import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.data.order.OrderResponse;
 import org.fantasticcoffee.shop.facade.order.OrderFacade;
+import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,10 +24,12 @@ public class OrdersController {
 
     @Autowired
     private OrderFacade orderFacade;
+    @Autowired
+    private OrderService orderService;
 
     @PostMapping(value = "/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<OrderResponse> placeOrder(
+    public ResponseEntity<OrderResponse> makeOrderPayment(
             @Valid @RequestBody OrderRequest orderRequest,
             BindingResult bindingResult) {
 
@@ -36,11 +40,16 @@ public class OrdersController {
             errorList.forEach(errorField ->
                     stringBuilder.append(errorField.getDefaultMessage()));
 
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, stringBuilder.toString(), new IllegalArgumentException());
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    stringBuilder.toString(),
+                    new IllegalArgumentException());
         } else {
             try {
-                OrderResponse orderResponse = this.orderFacade.getOrderFromOrderResponse(orderRequest);
-                return ResponseEntity.ok(orderResponse);
+                Order order =
+                        this.orderService.placeOrder(this.orderFacade.getOrder(orderRequest));
+
+                return ResponseEntity.ok(this.orderFacade.getOrderResponse(order));
             } catch (IllegalArgumentException e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
             }
