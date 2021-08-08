@@ -1,12 +1,14 @@
 package org.fantasticcoffee.shop.service.impl;
 
 import org.fantasticcoffee.shop.model.Coffee;
-import org.fantasticcoffee.shop.model.StandardRecipeIngredientInStock;
-import org.fantasticcoffee.shop.model.ingredient.ChosenIngredientIngredientInStock;
-import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
-import org.fantasticcoffee.shop.model.recipe.StandardRecipeInStock;
-import org.fantasticcoffee.shop.repository.database.IngredientInStockRepository;
-import org.fantasticcoffee.shop.repository.database.StandardRecipeInStockRepository;
+import org.fantasticcoffee.shop.model.JoinClasses.StandardRecipeIngredient;
+import org.fantasticcoffee.shop.model.JoinClasses.CoffeeIngredient;
+import org.fantasticcoffee.shop.model.Ingredient;
+import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.model.StandardRecipe;
+import org.fantasticcoffee.shop.repository.database.CoffeeRepository;
+import org.fantasticcoffee.shop.repository.database.IngredientRepository;
+import org.fantasticcoffee.shop.repository.database.StandardRecipeRepository;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,17 +22,26 @@ import java.util.stream.Collectors;
 public class DefaultCoffeeService implements CoffeeService {
 
     @Autowired
-    IngredientInStockRepository ingredientRepository;
+    IngredientRepository ingredientRepository;
     @Autowired
-    StandardRecipeInStockRepository standardRecipeInStockRepository;
+    StandardRecipeRepository standardRecipeRepository;
+    @Autowired
+    CoffeeRepository coffeeRepository;
+
+    public void save(Order order) {
+        order.getCoffeeList().forEach(coffee -> {
+            coffee.setOrder(order);
+            this.coffeeRepository.save(coffee);
+        });
+    }
 
     public Double getCoffeePrice(Coffee coffee) {
 
         double standardRecipePrice = 0.0;
-        standardRecipePrice += coffee.getStandardRecipe().getIngredientOnRecipeList()
+        standardRecipePrice += coffee.getStandardRecipe().getIngredientList()
                 .stream()
                 .mapToDouble(ingredient ->
-                        ingredient.getNumberOfShots() * ingredient.getIngredientInStock().getIngredientSellingPrice())
+                        ingredient.getNumberOfShots() * ingredient.getIngredient().getIngredientSellingPrice())
                 .sum();
 
         double additionalIngredientsPrice = 0.0;
@@ -46,10 +57,10 @@ public class DefaultCoffeeService implements CoffeeService {
     public Double getCoffeeCost(Coffee coffee) {
 
         double standardRecipeCost = 0.0;
-        standardRecipeCost += coffee.getStandardRecipe().getIngredientOnRecipeList()
+        standardRecipeCost += coffee.getStandardRecipe().getIngredientList()
                 .stream()
                 .mapToDouble(ingredient ->
-                        ingredient.getNumberOfShots() * ingredient.getIngredientInStock().getIngredientCost())
+                        ingredient.getNumberOfShots() * ingredient.getIngredient().getIngredientCost())
                 .sum();
 
         double additionalIngredientsCost = 0.0;
@@ -62,56 +73,56 @@ public class DefaultCoffeeService implements CoffeeService {
         return standardRecipeCost + additionalIngredientsCost;
     }
 
-    public Map<IngredientInStock, Integer> getAllCoffeeIngredients(Coffee coffee) {
+    public Map<Ingredient, Integer> getAllCoffeeIngredients(Coffee coffee) {
 
-        Map<IngredientInStock, Integer> ingredientList = coffee.getStandardRecipe().getIngredientOnRecipeList()
+        Map<Ingredient, Integer> ingredientList = coffee.getStandardRecipe().getIngredientList()
                 .stream()
-                .collect(Collectors.toMap(StandardRecipeIngredientInStock::getIngredientInStock,
+                .collect(Collectors.toMap(StandardRecipeIngredient::getIngredient,
                         ingredient -> ingredient.getNumberOfShots()));
 
-        for (ChosenIngredientIngredientInStock chosenIngredientIngredientInStock : coffee.getChosenIngredients()) {
-            if (ingredientList.containsKey(chosenIngredientIngredientInStock.getIngredient())) {
-                int existingNumberOfShots = ingredientList.get(chosenIngredientIngredientInStock.getIngredient());
-                int moreShots = chosenIngredientIngredientInStock.getNumberOfShots();
+        for (CoffeeIngredient coffeeIngredient : coffee.getChosenIngredients()) {
+            if (ingredientList.containsKey(coffeeIngredient.getIngredient())) {
+                int existingNumberOfShots = ingredientList.get(coffeeIngredient.getIngredient());
+                int moreShots = coffeeIngredient.getNumberOfShots();
                 ingredientList.put(
-                        chosenIngredientIngredientInStock.getIngredient(),
+                        coffeeIngredient.getIngredient(),
                         existingNumberOfShots + moreShots);
             } else {
                 ingredientList.putIfAbsent(
-                        chosenIngredientIngredientInStock.getIngredient(),
-                        chosenIngredientIngredientInStock.getNumberOfShots());
+                        coffeeIngredient.getIngredient(),
+                        coffeeIngredient.getNumberOfShots());
             }
         }
 
         return ingredientList;
     }
 
-    public List<StandardRecipeInStock> getStandardRecipeList() {
+    public List<StandardRecipe> getStandardRecipeList() {
 
-        Iterable<StandardRecipeInStock> recipes = this.standardRecipeInStockRepository.findAll();
-        List<StandardRecipeInStock> recipeList = new ArrayList<>();
+        Iterable<StandardRecipe> recipes = this.standardRecipeRepository.findAll();
+        List<StandardRecipe> recipeList = new ArrayList<>();
         recipes.forEach(recipeList::add);
 
         return recipeList;
     }
 
-    public StandardRecipeInStock getCoffee(String standardCoffeeName) {
-        return this.standardRecipeInStockRepository.findByName(standardCoffeeName);
+    public StandardRecipe getCoffee(String standardCoffeeName) {
+        return this.standardRecipeRepository.findByName(standardCoffeeName);
     }
 
-    public StandardRecipeInStock createStandardCoffee(String standardRecipeName) {
+    public StandardRecipe createStandardCoffee(String standardRecipeName) {
 
         if (standardRecipeName == null) {
             return null;
         }
 
         return switch (standardRecipeName.toUpperCase()) {
-            case "ESPRESSO" -> this.standardRecipeInStockRepository.findByName("ESPRESSO");
-            case "MACHIATTO" -> this.standardRecipeInStockRepository.findByName("MACHIATTO");
-            case "CAFFEE_LATTE" -> this.standardRecipeInStockRepository.findByName("CAFFEE_LATTE");
-            case "CAPPUCCINO" -> this.standardRecipeInStockRepository.findByName("CAPPUCCINO");
-            case "CAFFEE_MIEL" -> this.standardRecipeInStockRepository.findByName("CAFFEE_MIEL");
-            case "CUSTOM" -> this.standardRecipeInStockRepository.findByName("CUSTOM");
+            case "ESPRESSO" -> this.standardRecipeRepository.findByName("ESPRESSO");
+            case "MACHIATTO" -> this.standardRecipeRepository.findByName("MACHIATTO");
+            case "CAFFEE_LATTE" -> this.standardRecipeRepository.findByName("CAFFEE_LATTE");
+            case "CAPPUCCINO" -> this.standardRecipeRepository.findByName("CAPPUCCINO");
+            case "CAFFEE_MIEL" -> this.standardRecipeRepository.findByName("CAFFEE_MIEL");
+            case "CUSTOM" -> this.standardRecipeRepository.findByName("CUSTOM");
             default -> throw new IllegalStateException("Unexpected value: " + standardRecipeName);
         };
     }

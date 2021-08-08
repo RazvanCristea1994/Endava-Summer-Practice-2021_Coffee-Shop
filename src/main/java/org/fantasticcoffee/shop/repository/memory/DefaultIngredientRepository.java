@@ -1,6 +1,6 @@
 package org.fantasticcoffee.shop.repository.memory;
 
-import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
+import org.fantasticcoffee.shop.model.Ingredient;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -10,13 +10,13 @@ import java.util.Optional;
 @Repository("ingredientsRepositoryMemory")
 public class DefaultIngredientRepository {
 
-    private List<IngredientInStock> database;
+    private List<Ingredient> database;
 
     public DefaultIngredientRepository() {
         this.database = new ArrayList<>();
     }
 
-    public boolean save(IngredientInStock ingredient) {
+    public boolean save(Ingredient ingredient) {
 
         if (ingredient == null) {
             throw new IllegalArgumentException("Ingredient cannot be null");
@@ -24,7 +24,7 @@ public class DefaultIngredientRepository {
         return database.add(ingredient);
     }
 
-    public Optional<IngredientInStock> find(Integer id) {
+    public Optional<Ingredient> find(Integer id) {
 
         if (id == null) {
             throw new IllegalArgumentException("ID cannot be null");
@@ -32,19 +32,19 @@ public class DefaultIngredientRepository {
         return Optional.ofNullable(database.get(id));
     }
 
-    public IngredientInStock find(IngredientInStock ingredient) {
+    public Ingredient find(Ingredient ingredient) {
 
         return database.stream()
-                .filter(ingredientInStock -> ingredientInStock == ingredient)
+                .filter(foundIngredient -> foundIngredient == ingredient)
                 .findFirst()
                 .orElseThrow();
     }
 
-    public Optional<IngredientInStock> update(Integer id, IngredientInStock ingredient) {
+    public Optional<Ingredient> update(Integer id, Ingredient ingredient) {
         return Optional.ofNullable(database.set(id, ingredient));
     }
 
-    public List<IngredientInStock> findAll() {
+    public List<Ingredient> findAll() {
         return database;
     }
 }

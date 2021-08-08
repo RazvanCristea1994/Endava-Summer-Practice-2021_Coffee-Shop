@@ -1,26 +1,47 @@
 package org.fantasticcoffee.shop.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.fantasticcoffee.shop.model.ingredient.ChosenIngredientIngredientInStock;
-import org.fantasticcoffee.shop.model.recipe.StandardRecipeInStock;
+import org.fantasticcoffee.shop.model.JoinClasses.CoffeeIngredient;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
+@Entity
 @NoArgsConstructor
-public class Coffee {
+@AllArgsConstructor
+public class Coffee implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    private Integer id;
+
+    @Column(nullable = false)
     private String coffeeName;
-    private StandardRecipeInStock standardRecipe;
-    private List<ChosenIngredientIngredientInStock> chosenIngredients;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "standard_recipe_id", nullable = false)
+    private StandardRecipe standardRecipe;
+
+    @OneToMany(mappedBy = "coffee")
+    private List<CoffeeIngredient> chosenIngredients;
+
+    @Column(nullable = false)
     private double price;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
     public Coffee(String coffeeName,
-                  StandardRecipeInStock standardRecipe,
-                  List<ChosenIngredientIngredientInStock> chosenIngredients,
+                  StandardRecipe standardRecipe,
+                  List<CoffeeIngredient> chosenIngredients,
                   double price) {
         this.coffeeName = coffeeName;
         this.standardRecipe = standardRecipe;
@@ -29,8 +50,8 @@ public class Coffee {
     }
 
     public Coffee(String coffeeName,
-                  StandardRecipeInStock standardRecipe,
-                  List<ChosenIngredientIngredientInStock> chosenIngredients) {
+                  StandardRecipe standardRecipe,
+                  List<CoffeeIngredient> chosenIngredients) {
         this.coffeeName = coffeeName;
         this.standardRecipe = standardRecipe;
         this.chosenIngredients = chosenIngredients;

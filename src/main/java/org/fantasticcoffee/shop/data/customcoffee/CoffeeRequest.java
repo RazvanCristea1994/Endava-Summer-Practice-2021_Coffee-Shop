@@ -1,8 +1,8 @@
 package org.fantasticcoffee.shop.data.customcoffee;
 
 import lombok.Getter;
-import org.fantasticcoffee.shop.data.ingredient.ChosenIngredientRequest;
-import org.fantasticcoffee.shop.data.standardrecipeinstock.StandardRecipeInStockRequest;
+import org.fantasticcoffee.shop.data.ingredient.IngredientChosenRequest;
+import org.fantasticcoffee.shop.data.standardrecipe.StandardRecipeRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -16,22 +16,22 @@ public class CoffeeRequest {
 
     @NotNull(message = "Customer's name requested")
     @NotBlank(message = "Blank name is not allowed")
-    @Pattern(regexp = "^[a-zA-Z '-]+$", message = "Wrong name format")
+    @Pattern(regexp = "^[a-zA-Z0-9 .'-]+$", message = "Wrong name format")
     private final String coffeeName;
 
     @Valid
-    private StandardRecipeInStockRequest standardRecipe;
+    private final StandardRecipeRequest standardRecipe;
 
     @Valid
-    private final List<ChosenIngredientRequest> chosenIngredients;
+    private final List<IngredientChosenRequest> chosenIngredients;
 
     public CoffeeRequest(
             String coffeeName,
-            StandardRecipeInStockRequest standardRecipe,
-            List<ChosenIngredientRequest> chosenIngredients
+            StandardRecipeRequest standardRecipe,
+            List<IngredientChosenRequest> chosenIngredients
     ) {
         this.coffeeName = coffeeName;
-        this.standardRecipe = (standardRecipe == null ? new StandardRecipeInStockRequest("CUSTOM") : standardRecipe);
+        this.standardRecipe = (standardRecipe == null ? new StandardRecipeRequest("CUSTOM") : standardRecipe);
         this.chosenIngredients = (chosenIngredients == null ? new ArrayList<>() : chosenIngredients);
     }
 }

@@ -7,16 +7,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-public class ChosenIngredientRequest {
+public class IngredientChosenRequest {
 
     @NotNull(message = "You have to choose an ingredient")
     @NotBlank(message = "Ingredient name cannot be blank")
-    String ingredient;
+    private final String ingredient;
 
     @Min(value = 1, message = "The quantity must be at least 1")
-    int numberOfShots;
+    private final int numberOfShots;
 
-    public ChosenIngredientRequest(String ingredient, int numberOfShots) {
+    public IngredientChosenRequest(String ingredient, int numberOfShots) {
         this.ingredient = ingredient;
         this.numberOfShots = numberOfShots;
     }

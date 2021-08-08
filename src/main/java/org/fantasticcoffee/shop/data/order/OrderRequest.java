@@ -3,7 +3,7 @@ package org.fantasticcoffee.shop.data.order;
 import lombok.Getter;
 import org.fantasticcoffee.shop.data.card.CardRequest;
 import org.fantasticcoffee.shop.data.customcoffee.CoffeeRequest;
-import org.fantasticcoffee.shop.model.WhereToDrink;
+import org.fantasticcoffee.shop.model.OrderType;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -17,14 +17,14 @@ public class OrderRequest {
     @NotNull(message = "Customer name requested")
     @NotBlank(message = "Customer name cannot be blank")
     @Pattern(regexp = "^[a-zA-Z '-]+$", message = "Wrong name format")
-    private String customerName;
+    private final String customerName;
 
     @Valid
     private final List<CoffeeRequest> coffeeList;
 
     @Valid
     @NotNull(message = "Requested")
-    private final WhereToDrink whereToDrink;
+    private final OrderType orderType;
 
     @Valid
     @NotNull(message = "Credit card details are requested")
@@ -32,11 +32,11 @@ public class OrderRequest {
 
     public OrderRequest(String customerName,
                         List<CoffeeRequest> coffeeList,
-                        WhereToDrink whereToDrink,
+                        OrderType orderType,
                         CardRequest cardRequest) {
         this.customerName = customerName;
         this.coffeeList = coffeeList;
-        this.whereToDrink = whereToDrink;
+        this.orderType = orderType;
         this.cardRequest = cardRequest;
     }
 }

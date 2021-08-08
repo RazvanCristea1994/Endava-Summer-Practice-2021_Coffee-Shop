@@ -1,12 +1,12 @@
 package org.fantasticcoffee.shop.facade.converter.coffee;
 
 import org.fantasticcoffee.shop.data.customcoffee.CoffeeRequest;
-import org.fantasticcoffee.shop.data.ingredient.ChosenIngredientRequest;
-import org.fantasticcoffee.shop.data.standardrecipeinstock.StandardRecipeInStockRequest;
+import org.fantasticcoffee.shop.data.ingredient.IngredientChosenRequest;
+import org.fantasticcoffee.shop.data.standardrecipe.StandardRecipeRequest;
 import org.fantasticcoffee.shop.facade.converter.Converter;
 import org.fantasticcoffee.shop.model.Coffee;
-import org.fantasticcoffee.shop.model.ingredient.ChosenIngredientIngredientInStock;
-import org.fantasticcoffee.shop.model.recipe.StandardRecipeInStock;
+import org.fantasticcoffee.shop.model.JoinClasses.CoffeeIngredient;
+import org.fantasticcoffee.shop.model.StandardRecipe;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,19 +15,19 @@ import org.springframework.stereotype.Component;
 public class CoffeeConverter implements Converter<Coffee, CoffeeRequest> {
 
     @Autowired
-    Converter<ChosenIngredientIngredientInStock, ChosenIngredientRequest> ingredientOnRecipeConverter;
+    private Converter<CoffeeIngredient, IngredientChosenRequest> ingredientConverter;
     @Autowired
-    Converter<StandardRecipeInStock, StandardRecipeInStockRequest> standardRecipeInStockConverter;
+    private Converter<StandardRecipe, StandardRecipeRequest> standardRecipeConverter;
     @Autowired
-    CoffeeService coffeeService;
+    private CoffeeService coffeeService;
 
     @Override
     public Coffee convert(CoffeeRequest coffeeRequest) {
 
         Coffee coffee = new Coffee(
                 coffeeRequest.getCoffeeName(),
-                this.standardRecipeInStockConverter.convert(coffeeRequest.getStandardRecipe()),
-                this.ingredientOnRecipeConverter.convertAll(coffeeRequest.getChosenIngredients()));
+                this.standardRecipeConverter.convert(coffeeRequest.getStandardRecipe()),
+                this.ingredientConverter.convertAll(coffeeRequest.getChosenIngredients()));
         coffee.setPrice(this.coffeeService.getCoffeePrice(coffee));
 
         return coffee;

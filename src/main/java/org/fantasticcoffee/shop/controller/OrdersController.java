@@ -1,5 +1,6 @@
 package org.fantasticcoffee.shop.controller;
 
+import org.fantasticcoffee.shop.data.ResponseWithObject;
 import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.data.order.OrderResponse;
 import org.fantasticcoffee.shop.facade.order.OrderFacade;
@@ -29,7 +30,7 @@ public class OrdersController {
 
     @PostMapping(value = "/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<OrderResponse> makeOrderPayment(
+    public ResponseEntity<ResponseWithObject<OrderResponse>> makeOrderPayment(
             @Valid @RequestBody OrderRequest orderRequest,
             BindingResult bindingResult) {
 
@@ -46,10 +47,10 @@ public class OrdersController {
                     new IllegalArgumentException());
         } else {
             try {
-                Order order =
-                        this.orderService.placeOrder(this.orderFacade.getOrder(orderRequest));
-
-                return ResponseEntity.ok(this.orderFacade.getOrderResponse(order));
+                Order order = this.orderService.placeOrder(this.orderFacade.getOrder(orderRequest));
+                OrderResponse orderResponse = this.orderFacade.getOrderResponse(order);
+                ResponseWithObject<OrderResponse> response = new ResponseWithObject<>(orderResponse);
+                return ResponseEntity.ok(response);
             } catch (IllegalArgumentException e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
             }

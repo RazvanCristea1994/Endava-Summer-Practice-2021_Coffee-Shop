@@ -1,21 +1,21 @@
 package org.fantasticcoffee.shop.service;
 
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.model.ingredient.ChosenIngredientIngredientInStock;
-import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
+import org.fantasticcoffee.shop.model.JoinClasses.CoffeeIngredient;
+import org.fantasticcoffee.shop.model.Ingredient;
 
 import java.util.List;
 import java.util.Map;
 
 public interface IngredientService {
 
-    void decrementIngredient(Map<IngredientInStock, Integer> ingredientToChange);
+    void decrementIngredient(Map<Ingredient, Integer> ingredientToChange);
 
-    List<IngredientInStock> getAllIngredientsInStock();
+    List<Ingredient> getAllIngredients();
 
-    Double getPriceForShots(ChosenIngredientIngredientInStock ingredient);
+    Double getPriceForShots(CoffeeIngredient ingredient);
 
-    Map<IngredientInStock, Integer> checkIngredientInStockForOrder(Order order);
+    Map<Ingredient, Integer> checkIngredientsForOrder(Order order);
 
-    IngredientInStock getByName(String ingredientInStockName);
+    Ingredient getByName(String ingredient);
 }

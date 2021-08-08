@@ -1,10 +1,12 @@
-package org.fantasticcoffee.shop.model.ingredient;
+package org.fantasticcoffee.shop.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import org.fantasticcoffee.shop.model.StandardRecipeIngredientInStock;
+import org.fantasticcoffee.shop.model.JoinClasses.CoffeeIngredient;
+import org.fantasticcoffee.shop.model.JoinClasses.StandardRecipeIngredient;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,31 +20,35 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
-@Table(name = "ingredients_in_stock")
-public class IngredientInStock implements Serializable {
+@Table(name = "ingredients")
+@NoArgsConstructor
+@AllArgsConstructor
+public class Ingredient implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Integer id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
-    @Column
+    @Column(nullable = false)
     private int numberOfShots;
-    @Column
+    @Column(nullable = false)
     private Double ingredientSellingPrice;
-    @Column
+    @Column(nullable = false)
     private Double ingredientCost;
-    @Column
+    @Column(nullable = false)
     private Double quantityPerShot;
-    @Column
+    @Column(nullable = false)
     private String unitOfMeasurement;
 
-    @OneToMany(mappedBy = "ingredientInStock")
-    private List<StandardRecipeIngredientInStock> standardRecipeInStock;
+    @OneToMany(mappedBy = "ingredient")
+    private List<StandardRecipeIngredient> standardRecipe;
+
+    @OneToMany(mappedBy = "ingredient")
+    private List<CoffeeIngredient> coffeeIngredient;
 
     @Setter
     public static class Builder {
@@ -55,13 +61,13 @@ public class IngredientInStock implements Serializable {
             this.numberOfShots = numberOfShots;
         }
 
-        public IngredientInStock build() {
+        public Ingredient build() {
 
-            IngredientInStock ingredientInStock = new IngredientInStock();
-            ingredientInStock.name = this.name;
-            ingredientInStock.numberOfShots = this.numberOfShots;
+            Ingredient ingredient = new Ingredient();
+            ingredient.name = this.name;
+            ingredient.numberOfShots = this.numberOfShots;
 
-            return ingredientInStock;
+            return ingredient;
         }
     }
 }

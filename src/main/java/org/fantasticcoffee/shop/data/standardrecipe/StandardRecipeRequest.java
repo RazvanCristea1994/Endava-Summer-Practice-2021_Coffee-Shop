@@ -1,4 +1,4 @@
-package org.fantasticcoffee.shop.data.standardrecipeinstock;
+package org.fantasticcoffee.shop.data.standardrecipe;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StandardRecipeInStockRequest {
+public class StandardRecipeRequest {
 
     @NotNull(message = "Standard recipe name requested")
     @NotBlank(message = "Standard recipe cannot be blank")

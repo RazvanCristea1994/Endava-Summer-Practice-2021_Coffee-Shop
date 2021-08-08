@@ -32,7 +32,7 @@ public class OrderConverter implements Converter<Order, OrderRequest> {
             order.setCoffeeList(new ArrayList<>());
         }
         order.setCard(this.cardConverter.convert(orderRequest.getCardRequest()));
-        order.setWhereToDrink(orderRequest.getWhereToDrink());
+        order.setOrderType(orderRequest.getOrderType());
 
         return order.build();
     }

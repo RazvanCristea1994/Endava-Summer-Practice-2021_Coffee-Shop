@@ -1,8 +1,8 @@
 package org.fantasticcoffee.shop.facade.standardrecipe;
 
-import org.fantasticcoffee.shop.data.standardrecipeinstock.StandardRecipeInStockResponse;
+import org.fantasticcoffee.shop.data.standardrecipe.StandardRecipeResponse;
 import org.fantasticcoffee.shop.facade.converter.Converter;
-import org.fantasticcoffee.shop.model.recipe.StandardRecipeInStock;
+import org.fantasticcoffee.shop.model.StandardRecipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +12,10 @@ import java.util.List;
 public class DefaultStandardRecipe implements StandardRecipeFacade {
 
     @Autowired
-    Converter<StandardRecipeInStockResponse, StandardRecipeInStock> standardRecipeInStockResponseConverter;
+    Converter<StandardRecipeResponse, StandardRecipe> standardRecipeResponseConverter;
 
     @Override
-    public List<StandardRecipeInStockResponse> getStandardRecipeResponse(List<StandardRecipeInStock> standardRecipeInStock) {
-        return this.standardRecipeInStockResponseConverter.convertAll(standardRecipeInStock);
+    public List<StandardRecipeResponse> getStandardRecipeResponse(List<StandardRecipe> standardRecipe) {
+        return this.standardRecipeResponseConverter.convertAll(standardRecipe);
     }
 }

@@ -1,23 +1,26 @@
 package org.fantasticcoffee.shop.service;
 
 import org.fantasticcoffee.shop.model.Coffee;
-import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
-import org.fantasticcoffee.shop.model.recipe.StandardRecipeInStock;
+import org.fantasticcoffee.shop.model.Ingredient;
+import org.fantasticcoffee.shop.model.Order;
+import org.fantasticcoffee.shop.model.StandardRecipe;
 
 import java.util.List;
 import java.util.Map;
 
 public interface CoffeeService {
 
+    void save(Order order);
+
     Double getCoffeePrice(Coffee coffee);
 
     Double getCoffeeCost(Coffee coffee);
 
-    Map<IngredientInStock, Integer> getAllCoffeeIngredients(Coffee coffee);
+    Map<Ingredient, Integer> getAllCoffeeIngredients(Coffee coffee);
 
-    List<StandardRecipeInStock> getStandardRecipeList();
+    List<StandardRecipe> getStandardRecipeList();
 
-    StandardRecipeInStock getCoffee(String standardCoffeeName);
+    StandardRecipe getCoffee(String standardCoffeeName);
 
-    StandardRecipeInStock createStandardCoffee(String standardRecipeName);
+    StandardRecipe createStandardCoffee(String standardRecipeName);
 }

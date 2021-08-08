@@ -1,6 +1,7 @@
 package org.fantasticcoffee.shop.controller;
 
-import org.fantasticcoffee.shop.data.standardrecipeinstock.StandardRecipeInStockResponse;
+import org.fantasticcoffee.shop.data.ResponseWithList;
+import org.fantasticcoffee.shop.data.standardrecipe.StandardRecipeResponse;
 import org.fantasticcoffee.shop.facade.standardrecipe.StandardRecipeFacade;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,11 @@ public class CoffeeController {
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List<StandardRecipeInStockResponse>> getAll() {
-        List<StandardRecipeInStockResponse> standardRecipeList
+    public ResponseEntity<ResponseWithList<StandardRecipeResponse>> getAll() {
+        List<StandardRecipeResponse> standardRecipeResponseList
                 = this.standardRecipeFacade.getStandardRecipeResponse(this.coffeeService.getStandardRecipeList());
-        return ResponseEntity.ok(standardRecipeList);
+        ResponseWithList<StandardRecipeResponse> response = new ResponseWithList<>(standardRecipeResponseList);
+
+        return ResponseEntity.ok(response);
     }
 }

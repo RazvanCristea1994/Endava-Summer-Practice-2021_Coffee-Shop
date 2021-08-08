@@ -1,10 +1,12 @@
-package org.fantasticcoffee.shop.model.recipe;
+package org.fantasticcoffee.shop.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import org.fantasticcoffee.shop.model.StandardRecipeIngredientInStock;
+import org.fantasticcoffee.shop.model.JoinClasses.StandardRecipeIngredient;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,27 +14,29 @@ import javax.persistence.Table;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
-@Table(name = "standard_recipe_in_stock")
-public class StandardRecipeInStock {
+@Table(name = "standard_recipe")
+@NoArgsConstructor
+@AllArgsConstructor
+public class StandardRecipe implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "standard_recipe_id")
+    @Column
     private Integer id;
 
     @Column(name = "standard_recipe", unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "standardRecipeInStock")
-    private List<StandardRecipeIngredientInStock> ingredientOnRecipeList;
+    @OneToMany(mappedBy = "standardRecipe")
+    private List<StandardRecipeIngredient> ingredientList;
 
-    public StandardRecipeInStock(String name) {
+    public StandardRecipe(String name) {
         this.name = name;
     }
 }

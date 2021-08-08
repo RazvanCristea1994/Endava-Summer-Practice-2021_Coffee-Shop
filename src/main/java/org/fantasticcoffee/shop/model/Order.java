@@ -1,24 +1,46 @@
 package org.fantasticcoffee.shop.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@Entity
 @NoArgsConstructor
-public class Order {
+@AllArgsConstructor
+@Table(name = "orders")
+public class Order implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Integer id;
+
+    @Column(nullable = false)
     private String customerName;
+
+    @Column
     private LocalDateTime orderDateTime;
+
+    @OneToMany(mappedBy = "order")
     private List<Coffee> coffeeList;
-    private WhereToDrink whereToDrink;
+
+    @Enumerated(EnumType.STRING)
+    private OrderType orderType;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "card_id", nullable = false)
     private Card card;
+
+    @Column(nullable = false)
     private Double price;
 
     private Order(Builder builder) {
@@ -26,7 +48,7 @@ public class Order {
         this.customerName = builder.customerName;
         this.orderDateTime = builder.orderDateTime;
         this.coffeeList = builder.coffeeList;
-        this.whereToDrink = builder.whereToDrink;
+        this.orderType = builder.orderType;
         this.card = builder.card;
         this.price = builder.price;
     }
@@ -40,7 +62,7 @@ public class Order {
         private String customerName;
         private LocalDateTime orderDateTime;
         private List<Coffee> coffeeList = new ArrayList<>();
-        private WhereToDrink whereToDrink;
+        private OrderType orderType;
         private Card card;
         private Double price;
 
@@ -51,18 +73,5 @@ public class Order {
         public Order build() {
             return new Order(this);
         }
-    }
-
-    public Order duplicate() {
-
-        Order.Builder builder = new Order.Builder();
-        builder.setId(this.getId());
-        builder.setCustomerName(this.getCustomerName());
-        builder.setOrderDateTime(this.orderDateTime);
-        builder.setCoffeeList(this.coffeeList);
-        builder.setWhereToDrink(this.whereToDrink);
-        builder.setCard(this.card);
-        builder.setPrice(this.price);
-        return builder.build();
     }
 }

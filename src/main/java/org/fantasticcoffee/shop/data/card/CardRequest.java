@@ -11,14 +11,14 @@ import java.time.LocalDate;
 public class CardRequest {
 
     @Pattern(regexp = "[\\d]{16}", message = "Card number length invalid")
-    String cardNumber;
+    private final String cardNumber;
     @NotNull(message = "Card holder name requested")
     @Pattern(regexp = "^[a-zA-Z '-]+$", message = "Wrong name format")
-    String cardHolderName;
+    private final String cardHolderName;
     @DateTimeFormat(pattern = "YYYY-MM-DD")
-    LocalDate expiry;
+    private final LocalDate expiry;
     @Pattern(regexp = "[\\d]{3}", message = "Civ length must be 3")
-    String civ;
+    private final String civ;
 
     public CardRequest(String cardNumber,
                        String cardHolderName, LocalDate expiry,

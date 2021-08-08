@@ -1,6 +1,7 @@
 package org.fantasticcoffee.shop.controller;
 
-import org.fantasticcoffee.shop.data.ingredient.IngredientInStockResponse;
+import org.fantasticcoffee.shop.data.ResponseWithList;
+import org.fantasticcoffee.shop.data.ingredient.IngredientDetailedResponse;
 import org.fantasticcoffee.shop.facade.ingredient.IngredientFacade;
 import org.fantasticcoffee.shop.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,12 @@ public class IngredientsController {
 
     @GetMapping("/all-stock")
     @ResponseBody
-    public ResponseEntity<List<IngredientInStockResponse>> getStock() {
+    public ResponseEntity<ResponseWithList<IngredientDetailedResponse>> getStock() {
 
-        List<IngredientInStockResponse> ingredientInStockListResponse =
-                this.ingredientFacade.getIngredientInStockResponse(this.ingredientService.getAllIngredientsInStock());
-        return ResponseEntity.ok(ingredientInStockListResponse);
+        List<IngredientDetailedResponse> ingredientListResponse =
+                this.ingredientFacade.getIngredientResponse(this.ingredientService.getAllIngredients());
+        ResponseWithList response = new ResponseWithList<>(ingredientListResponse);
+
+        return ResponseEntity.ok(response);
     }
 }

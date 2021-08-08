@@ -1,8 +1,8 @@
 package org.fantasticcoffee.shop.data.customcoffee;
 
 import lombok.Getter;
-import org.fantasticcoffee.shop.data.ingredient.ChosenIngredientResponse;
-import org.fantasticcoffee.shop.data.standardrecipeinstock.StandardRecipeInStockResponse;
+import org.fantasticcoffee.shop.data.ingredient.IngredientChosenResponse;
+import org.fantasticcoffee.shop.data.standardrecipe.StandardRecipeResponse;
 
 import java.util.List;
 
@@ -10,13 +10,13 @@ import java.util.List;
 public class CoffeeResponse {
 
     private final String customerName;
-    private StandardRecipeInStockResponse standardRecipe;
-    private List<ChosenIngredientResponse> chosenIngredients;
-    private double price;
+    private final StandardRecipeResponse standardRecipe;
+    private final List<IngredientChosenResponse> chosenIngredients;
+    private final double price;
 
     public CoffeeResponse(String customerName,
-                          StandardRecipeInStockResponse standardRecipe,
-                          List<ChosenIngredientResponse> chosenIngredients,
+                          StandardRecipeResponse standardRecipe,
+                          List<IngredientChosenResponse> chosenIngredients,
                           double price) {
         this.customerName = customerName;
         this.standardRecipe = standardRecipe;

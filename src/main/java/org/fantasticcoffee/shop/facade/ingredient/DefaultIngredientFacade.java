@@ -1,8 +1,8 @@
 package org.fantasticcoffee.shop.facade.ingredient;
 
-import org.fantasticcoffee.shop.data.ingredient.IngredientInStockResponse;
+import org.fantasticcoffee.shop.data.ingredient.IngredientDetailedResponse;
 import org.fantasticcoffee.shop.facade.converter.Converter;
-import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
+import org.fantasticcoffee.shop.model.Ingredient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +12,10 @@ import java.util.List;
 public class DefaultIngredientFacade implements IngredientFacade {
 
     @Autowired
-    Converter<IngredientInStockResponse, IngredientInStock> ingredientInStockResponseConverter;
+    Converter<IngredientDetailedResponse, Ingredient> ingredientResponseConverter;
 
     @Override
-    public List<IngredientInStockResponse> getIngredientInStockResponse(List<IngredientInStock> ingredientInStock) {
-        return this.ingredientInStockResponseConverter.convertAll(ingredientInStock);
+    public List<IngredientDetailedResponse> getIngredientResponse(List<Ingredient> ingredient) {
+        return this.ingredientResponseConverter.convertAll(ingredient);
     }
 }

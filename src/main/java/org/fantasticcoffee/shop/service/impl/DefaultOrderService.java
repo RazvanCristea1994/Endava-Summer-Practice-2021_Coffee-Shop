@@ -2,8 +2,8 @@ package org.fantasticcoffee.shop.service.impl;
 
 import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.Order;
-import org.fantasticcoffee.shop.model.ingredient.IngredientInStock;
-import org.fantasticcoffee.shop.repository.memory.Repository;
+import org.fantasticcoffee.shop.model.Ingredient;
+import org.fantasticcoffee.shop.repository.database.OrderRepository;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.fantasticcoffee.shop.service.IngredientService;
 import org.fantasticcoffee.shop.service.OrderService;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class DefaultOrderService implements OrderService {
 
     @Autowired
-    private Repository<Order> orderRepository;
+    private OrderRepository orderRepository;
     @Autowired
     private CoffeeService coffeeService;
     @Autowired
@@ -34,29 +34,20 @@ public class DefaultOrderService implements OrderService {
     @Autowired
     private CardValidation cardValidation;
 
-    private static Integer id = 0;
-
     @Override
     public Order placeOrder(Order order) {
 
-        Map<IngredientInStock, Integer> allIngredientsInOrder = ingredientService.checkIngredientInStockForOrder(order);
+        Map<Ingredient, Integer> allIngredientsInOrder = ingredientService.checkIngredientsForOrder(order);
         this.cardValidation.cardNumberValidation(order.getCard().getCardNumber());
 
-        order.setId(++DefaultOrderService.id);
         order.setOrderDateTime(LocalDateTime.now());
         order.setPrice(getTotalOrderPrice(order));
 
-        order.getCard().setCardNumber(null);
-        order.getCard().setCiv(null);
+        Order result = this.orderRepository.save(order);
+        this.coffeeService.save(order);
+        this.ingredientService.decrementIngredient(allIngredientsInOrder);
 
-        Optional<Order> result = this.orderRepository.save(order);
-        if (result.isPresent()) {
-            DefaultOrderService.id--;
-            return null;
-        } else {
-            this.ingredientService.decrementIngredient(allIngredientsInOrder);
-            return order.duplicate();
-        }
+        return result;
     }
 
     @Override
@@ -72,8 +63,8 @@ public class DefaultOrderService implements OrderService {
     @Override
     public Order findOrder(Integer id) {
 
-        Optional<Order> result = this.orderRepository.find(id);
-        return result.map(Order::duplicate).orElseThrow();
+        Optional<Order> result = this.orderRepository.findById(id);
+        return result.orElseThrow();
     }
 
     @Override
@@ -83,16 +74,14 @@ public class DefaultOrderService implements OrderService {
             throw new IllegalArgumentException("Illegal attempt! Please specify one of the orders you want to update");
         }
 
-        Optional<Order> oldOrder = this.orderRepository.find(id);
+        Optional<Order> oldOrder = this.orderRepository.findById(id);
         if (oldOrder.isEmpty()) {
             throw new NoSuchElementException("The order to change was not found");
         }
 
         order.setOrderDateTime(LocalDateTime.now());
         order.setId(id);
-        Optional<Order> result = this.orderRepository.update(order);
-
-        return result.map(Order::duplicate).orElse(null);
+        return this.orderRepository.save(order);
     }
 
     @Override
@@ -147,27 +136,25 @@ public class DefaultOrderService implements OrderService {
     @Override
     public void deleteOrder(Integer id) {
 
-        this.orderRepository.find(id).ifPresentOrElse(foundOrder -> {
-                    orderRepository.delete(id);
-                    DefaultOrderService.id--;
-                },
+        this.orderRepository.findById(id).ifPresentOrElse(
+                foundOrder -> orderRepository.delete(foundOrder),
                 () -> {
                     throw new NoSuchElementException("The specified element does not exist");
                 });
     }
 
-    public Map<IngredientInStock, Integer> getAllIngredientsForOrder(Order order) {
+    public Map<Ingredient, Integer> getAllIngredientsForOrder(Order order) {
 
-        Map<IngredientInStock, Integer> allIngredientsForOrder = new HashMap<>();
+        Map<Ingredient, Integer> allIngredientsForOrder = new HashMap<>();
 
         for (Coffee coffee : order.getCoffeeList()) {
             this.coffeeService.getAllCoffeeIngredients(coffee).forEach(
-                    (ingredientInStock, shots) -> {
-                        if (allIngredientsForOrder.containsKey(ingredientInStock)) {
-                            int existingNumberOfShots = allIngredientsForOrder.get(ingredientInStock);
-                            allIngredientsForOrder.put(ingredientInStock, existingNumberOfShots + shots);
+                    (ingredient, shots) -> {
+                        if (allIngredientsForOrder.containsKey(ingredient)) {
+                            int existingNumberOfShots = allIngredientsForOrder.get(ingredient);
+                            allIngredientsForOrder.put(ingredient, existingNumberOfShots + shots);
                         } else {
-                            allIngredientsForOrder.putIfAbsent(ingredientInStock, shots);
+                            allIngredientsForOrder.putIfAbsent(ingredient, shots);
                         }
                     });
         }

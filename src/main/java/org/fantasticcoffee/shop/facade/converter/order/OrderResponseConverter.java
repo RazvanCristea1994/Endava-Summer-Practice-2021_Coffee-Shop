@@ -29,7 +29,7 @@ public class OrderResponseConverter implements Converter<OrderResponse, Order> {
                 order.getCustomerName(),
                 order.getOrderDateTime(),
                 this.coffeeResponseConverter.convertAll(order.getCoffeeList()),
-                order.getWhereToDrink(),
+                order.getOrderType(),
                 this.cardResponseConverter.convert(order.getCard()),
                 order.getPrice(),
                 this.orderService.getTotalProfitForToday());

@@ -1,11 +1,11 @@
 package org.fantasticcoffee.shop.facade.standardrecipe;
 
-import org.fantasticcoffee.shop.data.standardrecipeinstock.StandardRecipeInStockResponse;
-import org.fantasticcoffee.shop.model.recipe.StandardRecipeInStock;
+import org.fantasticcoffee.shop.data.standardrecipe.StandardRecipeResponse;
+import org.fantasticcoffee.shop.model.StandardRecipe;
 
 import java.util.List;
 
 public interface StandardRecipeFacade {
 
-    List<StandardRecipeInStockResponse> getStandardRecipeResponse(List<StandardRecipeInStock> standardRecipeInStock);
+    List<StandardRecipeResponse> getStandardRecipeResponse(List<StandardRecipe> standardRecipe);
 }

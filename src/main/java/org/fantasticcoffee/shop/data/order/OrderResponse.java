@@ -3,7 +3,7 @@ package org.fantasticcoffee.shop.data.order;
 import lombok.Getter;
 import org.fantasticcoffee.shop.data.card.CardResponse;
 import org.fantasticcoffee.shop.data.customcoffee.CoffeeResponse;
-import org.fantasticcoffee.shop.model.WhereToDrink;
+import org.fantasticcoffee.shop.model.OrderType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +15,7 @@ public class OrderResponse {
     private final String customerName;
     private final LocalDateTime orderDateTime;
     private final List<CoffeeResponse> coffeeList;
-    private final WhereToDrink whereToDrink;
+    private final OrderType orderType;
     private final CardResponse cardResponse;
     private final Double totalOrderPrice;
     private final Double todayProfit;
@@ -25,14 +25,14 @@ public class OrderResponse {
             String customerName,
             LocalDateTime orderDateTime,
             List<CoffeeResponse> coffeeList,
-            WhereToDrink whereToDrink,
+            OrderType orderType,
             CardResponse cardResponse,
             Double totalOrderPrice,
             Double todayProfit) {
         this.id = id;
         this.orderDateTime = orderDateTime;
         this.coffeeList = coffeeList;
-        this.whereToDrink = whereToDrink;
+        this.orderType = orderType;
         this.customerName = customerName;
         this.cardResponse = cardResponse;
         this.totalOrderPrice = totalOrderPrice;
