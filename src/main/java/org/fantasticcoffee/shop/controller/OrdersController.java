@@ -1,5 +1,6 @@
 package org.fantasticcoffee.shop.controller;
 
+import org.apache.log4j.Logger;
 import org.fantasticcoffee.shop.data.ResponseWithObject;
 import org.fantasticcoffee.shop.data.order.OrderRequest;
 import org.fantasticcoffee.shop.data.order.OrderResponse;
@@ -11,7 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -27,6 +36,8 @@ public class OrdersController {
     @Autowired
     private OrderService orderService;
 
+    static Logger log = Logger.getLogger(OrdersController.class.getName());
+
     @PostMapping(value = "/pay")
     @ResponseBody
     public ResponseEntity<ResponseWithObject<OrderResponse>> makeOrderPayment(
@@ -37,9 +48,9 @@ public class OrdersController {
 
             StringBuilder stringBuilder = new StringBuilder();
             List<FieldError> errorList = bindingResult.getFieldErrors();
-            errorList.forEach(errorField ->
-                    stringBuilder.append(errorField.getDefaultMessage()));
+            errorList.forEach(errorField -> stringBuilder.append(errorField.getDefaultMessage()));
 
+            log.error(stringBuilder.toString());
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     stringBuilder.toString(),
@@ -51,6 +62,7 @@ public class OrdersController {
                 ResponseWithObject<OrderResponse> response = new ResponseWithObject<>(orderResponse);
                 return ResponseEntity.ok(response);
             } catch (Exception e) {
+                log.error(e.getMessage());
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
             }
         }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.Scanner;
 
 @Component("input")
-public class Input {
+public class Utils {
 
     private Scanner scanner = new Scanner(System.in).useDelimiter("\n");
 

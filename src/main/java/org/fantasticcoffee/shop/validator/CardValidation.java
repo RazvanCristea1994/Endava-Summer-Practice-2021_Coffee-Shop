@@ -1,9 +1,12 @@
 package org.fantasticcoffee.shop.validator;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CardValidation {
+
+    static Logger log = Logger.getLogger(CardValidation.class.getName());
 
     public static void cardNumberValidation(String cardNumber) {
 
@@ -24,6 +27,7 @@ public class CardValidation {
         }
 
         if (numberSum % 10 != 0) {
+            log.error("Card number invalid");
             throw new IllegalArgumentException("Card number invalid");
         }
     }

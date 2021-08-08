@@ -18,9 +18,9 @@ import java.util.NoSuchElementException;
 public class DefaultIngredientService implements IngredientService {
 
     @Autowired
-    IngredientRepository ingredientRepository;
+    private IngredientRepository ingredientRepository;
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
 
     public List<Ingredient> getAllIngredients() {
 
@@ -64,7 +64,7 @@ public class DefaultIngredientService implements IngredientService {
         );
 
         if (message.length() != 0) {
-            throw new IllegalArgumentException("We do not have enough " + message + "in stock. We apologize for the inconvenience.");
+            throw new IllegalArgumentException(message + "not available anymore.");
         }
 
         return allIngredientsForOrder;
@@ -75,8 +75,7 @@ public class DefaultIngredientService implements IngredientService {
 
         Ingredient ingredient = this.ingredientRepository.findByName(ingredientToFind);
         if (ingredient == null) {
-            throw new NoSuchElementException("We do not have the ingredient `" + ingredientToFind + "`. " +
-                    "Please check our ingredients and make sure the spelling is correct");
+            throw new NoSuchElementException("Unexpected value: " + ingredientToFind);
         }
         return ingredient;
     }

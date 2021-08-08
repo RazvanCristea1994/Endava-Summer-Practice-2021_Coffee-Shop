@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class IngredientChosenRequest {
 
-    @NotNull(message = "You have to choose an ingredient")
-    @NotBlank(message = "Ingredient name cannot be blank")
+    @NotNull(message = "You have to choose an ingredient ")
+    @NotBlank(message = "Ingredient name cannot be blank ")
     private final String ingredient;
 
     @Min(value = 1, message = "The quantity must be at least 1")

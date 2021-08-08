@@ -1,5 +1,6 @@
 package org.fantasticcoffee.shop.service.impl;
 
+import org.apache.log4j.Logger;
 import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.Ingredient;
@@ -32,6 +33,8 @@ public class DefaultOrderService implements OrderService {
     private CoffeeService coffeeService;
     @Autowired
     private IngredientService ingredientService;
+
+    private static final Logger log = Logger.getLogger(DefaultOrderService.class.getName());
 
     @Override
     public Order placeOrder(Order order) {
@@ -71,11 +74,13 @@ public class DefaultOrderService implements OrderService {
     public Order update(Integer id, Order order) {
 
         if (order == null) {
+            log.error("Null order");
             throw new IllegalArgumentException("Illegal attempt! Please specify one of the orders you want to update");
         }
 
         Optional<Order> oldOrder = this.orderRepository.findById(id);
         if (oldOrder.isEmpty()) {
+            log.error("Order not found");
             throw new NoSuchElementException("The order to change was not found");
         }
 
@@ -139,7 +144,8 @@ public class DefaultOrderService implements OrderService {
         this.orderRepository.findById(id).ifPresentOrElse(
                 foundOrder -> orderRepository.delete(foundOrder),
                 () -> {
-                    throw new NoSuchElementException("The specified element does not exist");
+                    log.error("Order not found");
+                    throw new NoSuchElementException("The specified order does not exist");
                 });
     }
 

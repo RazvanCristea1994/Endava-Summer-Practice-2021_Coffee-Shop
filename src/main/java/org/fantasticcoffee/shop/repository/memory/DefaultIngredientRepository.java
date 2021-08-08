@@ -1,5 +1,6 @@
 package org.fantasticcoffee.shop.repository.memory;
 
+import org.apache.log4j.Logger;
 import org.fantasticcoffee.shop.model.Ingredient;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,8 @@ public class DefaultIngredientRepository {
 
     private List<Ingredient> database;
 
+    private static final Logger log = Logger.getLogger(DefaultIngredientRepository.class.getName());
+
     public DefaultIngredientRepository() {
         this.database = new ArrayList<>();
     }
@@ -19,6 +22,7 @@ public class DefaultIngredientRepository {
     public boolean save(Ingredient ingredient) {
 
         if (ingredient == null) {
+            log.error("Null ingredient");
             throw new IllegalArgumentException("Ingredient cannot be null");
         }
         return database.add(ingredient);
@@ -27,6 +31,7 @@ public class DefaultIngredientRepository {
     public Optional<Ingredient> find(Integer id) {
 
         if (id == null) {
+            log.error("Null ingredient id");
             throw new IllegalArgumentException("ID cannot be null");
         }
         return Optional.ofNullable(database.get(id));

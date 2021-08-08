@@ -20,7 +20,7 @@ public class OrderRequest {
     private final String customerName;
 
     @Valid
-    @NotNull(message = "Coffee list cannot be null")
+    @NotNull(message = "Coffee list cannot be null ")
     private final List<CoffeeRequest> coffeeList;
 
     @Valid

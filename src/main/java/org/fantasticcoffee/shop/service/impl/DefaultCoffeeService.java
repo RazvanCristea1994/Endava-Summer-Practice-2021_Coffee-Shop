@@ -1,5 +1,6 @@
 package org.fantasticcoffee.shop.service.impl;
 
+import org.apache.log4j.Logger;
 import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.JoinClasses.StandardRecipeIngredient;
 import org.fantasticcoffee.shop.model.JoinClasses.CoffeeIngredient;
@@ -22,11 +23,11 @@ import java.util.stream.Collectors;
 public class DefaultCoffeeService implements CoffeeService {
 
     @Autowired
-    IngredientRepository ingredientRepository;
+    private StandardRecipeRepository standardRecipeRepository;
     @Autowired
-    StandardRecipeRepository standardRecipeRepository;
-    @Autowired
-    CoffeeRepository coffeeRepository;
+    private CoffeeRepository coffeeRepository;
+
+    private static final Logger log = Logger.getLogger(DefaultCoffeeService.class.getName());
 
     public void save(Order order) {
         order.getCoffeeList().forEach(coffee -> {
@@ -123,7 +124,10 @@ public class DefaultCoffeeService implements CoffeeService {
             case "CAPPUCCINO" -> this.standardRecipeRepository.findByName("CAPPUCCINO");
             case "CAFFEE_MIEL" -> this.standardRecipeRepository.findByName("CAFFEE_MIEL");
             case "CUSTOM" -> this.standardRecipeRepository.findByName("CUSTOM");
-            default -> throw new IllegalStateException("Unexpected value: " + standardRecipeName);
+            default -> {
+                log.error("Unexpected value: " + standardRecipeName);
+                throw new IllegalStateException("Unexpected value: " + standardRecipeName);
+            }
         };
     }
 }
