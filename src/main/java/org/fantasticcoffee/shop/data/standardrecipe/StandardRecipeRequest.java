@@ -14,7 +14,6 @@ import javax.validation.constraints.Pattern;
 public class StandardRecipeRequest {
 
     @NotNull(message = "Standard recipe name requested")
-    @NotBlank(message = "Standard recipe cannot be blank")
     @Pattern(regexp = "(?i)^(ESPRESSO|MACHIATTO|CAFFEE_LATTE|CAPPUCCINO|CAFFEE_MIEL|CUSTOM)$")
     private String standardRecipeName;
 }

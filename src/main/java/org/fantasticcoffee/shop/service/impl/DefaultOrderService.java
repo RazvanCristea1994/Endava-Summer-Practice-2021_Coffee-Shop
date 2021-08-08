@@ -8,6 +8,7 @@ import org.fantasticcoffee.shop.service.CoffeeService;
 import org.fantasticcoffee.shop.service.IngredientService;
 import org.fantasticcoffee.shop.service.OrderService;
 import org.fantasticcoffee.shop.validator.CardValidation;
+import org.fantasticcoffee.shop.validator.CoffeeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,14 +32,13 @@ public class DefaultOrderService implements OrderService {
     private CoffeeService coffeeService;
     @Autowired
     private IngredientService ingredientService;
-    @Autowired
-    private CardValidation cardValidation;
 
     @Override
     public Order placeOrder(Order order) {
 
+        CoffeeValidator.coffeeCheck(order);
         Map<Ingredient, Integer> allIngredientsInOrder = ingredientService.checkIngredientsForOrder(order);
-        this.cardValidation.cardNumberValidation(order.getCard().getCardNumber());
+        CardValidation.cardNumberValidation(order.getCard().getCardNumber());
 
         order.setOrderDateTime(LocalDateTime.now());
         order.setPrice(getTotalOrderPrice(order));

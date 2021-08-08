@@ -10,13 +10,16 @@ import java.time.LocalDate;
 @Getter
 public class CardRequest {
 
+    @NotNull(message = "Card number cannot be null ")
     @Pattern(regexp = "[\\d]{16}", message = "Card number length invalid")
     private final String cardNumber;
-    @NotNull(message = "Card holder name requested")
+    @NotNull(message = "Card holder name requested ")
     @Pattern(regexp = "^[a-zA-Z '-]+$", message = "Wrong name format")
     private final String cardHolderName;
+    @NotNull(message = "Expiry is required")
     @DateTimeFormat(pattern = "YYYY-MM-DD")
     private final LocalDate expiry;
+    @NotNull(message = "Civ number cannot be null ")
     @Pattern(regexp = "[\\d]{3}", message = "Civ length must be 3")
     private final String civ;
 

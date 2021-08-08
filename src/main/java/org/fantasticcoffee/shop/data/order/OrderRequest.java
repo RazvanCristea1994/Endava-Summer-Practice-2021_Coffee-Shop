@@ -14,20 +14,21 @@ import java.util.List;
 @Getter
 public class OrderRequest {
 
-    @NotNull(message = "Customer name requested")
-    @NotBlank(message = "Customer name cannot be blank")
-    @Pattern(regexp = "^[a-zA-Z '-]+$", message = "Wrong name format")
+    @NotNull(message = "Customer name requested ")
+    @NotBlank(message = "Customer name cannot be blank ")
+    @Pattern(regexp = "^[a-zA-Z '-]+$", message = "Wrong name format ")
     private final String customerName;
 
     @Valid
+    @NotNull(message = "Coffee list cannot be null")
     private final List<CoffeeRequest> coffeeList;
 
     @Valid
-    @NotNull(message = "Requested")
+    @NotNull(message = "Order type requested ")
     private final OrderType orderType;
 
     @Valid
-    @NotNull(message = "Credit card details are requested")
+    @NotNull(message = "Credit card details are requested ")
     private final CardRequest cardRequest;
 
     public OrderRequest(String customerName,

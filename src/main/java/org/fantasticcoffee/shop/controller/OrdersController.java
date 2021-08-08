@@ -8,7 +8,6 @@ import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -51,7 +50,7 @@ public class OrdersController {
                 OrderResponse orderResponse = this.orderFacade.getOrderResponse(order);
                 ResponseWithObject<OrderResponse> response = new ResponseWithObject<>(orderResponse);
                 return ResponseEntity.ok(response);
-            } catch (IllegalArgumentException e) {
+            } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
             }
         }

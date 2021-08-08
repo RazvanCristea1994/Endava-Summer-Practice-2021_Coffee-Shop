@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CardValidation {
 
-    public void cardNumberValidation(String cardNumber) {
+    public static void cardNumberValidation(String cardNumber) {
 
         int numberDigits = cardNumber.length();
         int numberSum = 0;

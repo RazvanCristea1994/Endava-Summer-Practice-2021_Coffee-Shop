@@ -75,7 +75,8 @@ public class DefaultIngredientService implements IngredientService {
 
         Ingredient ingredient = this.ingredientRepository.findByName(ingredientToFind);
         if (ingredient == null) {
-            throw new NoSuchElementException("We do not have the ingredient you are looking for");
+            throw new NoSuchElementException("We do not have the ingredient `" + ingredientToFind + "`. " +
+                    "Please check our ingredients and make sure the spelling is correct");
         }
         return ingredient;
     }
