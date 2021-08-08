@@ -23,7 +23,7 @@ public class CoffeeController {
     @Autowired
     StandardRecipeFacade standardRecipeFacade;
 
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/all")
     @ResponseBody
     public ResponseEntity<ResponseWithList<StandardRecipeResponse>> getAll() {
         List<StandardRecipeResponse> standardRecipeResponseList

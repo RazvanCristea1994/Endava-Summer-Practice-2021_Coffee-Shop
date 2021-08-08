@@ -28,7 +28,7 @@ public class OrdersController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping(value = "/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/pay")
     @ResponseBody
     public ResponseEntity<ResponseWithObject<OrderResponse>> makeOrderPayment(
             @Valid @RequestBody OrderRequest orderRequest,
