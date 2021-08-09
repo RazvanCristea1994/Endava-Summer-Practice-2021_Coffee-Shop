@@ -22,7 +22,7 @@ public class IngredientDetailedResponse {
         this.quantityPerShot = quantityPerShot;
         this.unitOfMeasurement = unitOfMeasurement;
 
-        if (availableNumberOfShots <= 3) {
+        if (availableNumberOfShots < 6) {
             this.alertMessage = "Warning! Stock almost empty!";
         } else {
             this.alertMessage = null;

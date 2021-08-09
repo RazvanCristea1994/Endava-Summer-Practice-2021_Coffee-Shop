@@ -25,11 +25,11 @@ public class Coffee implements Serializable {
     @Column(nullable = false)
     private String coffeeName;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "standard_recipe_id", nullable = false)
     private StandardRecipe standardRecipe;
 
-    @OneToMany(mappedBy = "coffee")
+    @OneToMany(mappedBy = "coffee", cascade = CascadeType.REMOVE)
     private List<CoffeeIngredient> chosenIngredients;
 
     @Column(nullable = false)

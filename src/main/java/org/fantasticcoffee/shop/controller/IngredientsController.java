@@ -28,7 +28,7 @@ public class IngredientsController {
 
         List<IngredientDetailedResponse> ingredientListResponse =
                 this.ingredientFacade.getIngredientResponse(this.ingredientService.getAllIngredients());
-        ResponseWithList response = new ResponseWithList<>(ingredientListResponse);
+        ResponseWithList<IngredientDetailedResponse> response = new ResponseWithList<>(ingredientListResponse);
 
         return ResponseEntity.ok(response);
     }

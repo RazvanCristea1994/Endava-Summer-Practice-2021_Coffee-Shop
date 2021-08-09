@@ -30,13 +30,13 @@ public class Order implements Serializable {
     @Column
     private LocalDateTime orderDateTime;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
     private List<Coffee> coffeeList;
 
     @Enumerated(EnumType.STRING)
     private OrderType orderType;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "card_id", nullable = false)
     private Card card;
 

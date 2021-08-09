@@ -8,7 +8,6 @@ import org.fantasticcoffee.shop.model.Ingredient;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.StandardRecipe;
 import org.fantasticcoffee.shop.repository.database.CoffeeRepository;
-import org.fantasticcoffee.shop.repository.database.IngredientRepository;
 import org.fantasticcoffee.shop.repository.database.StandardRecipeRepository;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.springframework.beans.factory.annotation.Autowired;

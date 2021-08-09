@@ -8,18 +8,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class CoffeeValidator {
 
-    private final static Logger log = Logger.getLogger(CoffeeValidator.class.getName());
+    private static final Logger log = Logger.getLogger(CoffeeValidator.class.getName());
 
     public static void coffeeCheck(Order order) {
 
         order.getCoffeeList().forEach(coffee -> {
 
-            if (coffee.getChosenIngredients().isEmpty()) {
+            if (coffee.getChosenIngredients().isEmpty() && coffee.getStandardRecipe().getIngredientList().isEmpty()) {
                 log.error("Error. At least one coffee was empty");
                 throw new IllegalArgumentException("Error. At least one coffee was empty. ");
             }
 
-            if (!coffee.getChosenIngredients().isEmpty()) {
+            if (!coffee.getChosenIngredients().isEmpty() && coffee.getStandardRecipe().getIngredientList().isEmpty()) {
                 int coffeeShotsCount = 0;
                 for (CoffeeIngredient ingredient : coffee.getChosenIngredients()) {
                     if ("ESPRESSO_SHOT".equalsIgnoreCase(ingredient.getIngredient().getName()) ||

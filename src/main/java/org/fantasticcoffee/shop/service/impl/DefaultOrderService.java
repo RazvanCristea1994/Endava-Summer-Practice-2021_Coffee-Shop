@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.fantasticcoffee.shop.model.Coffee;
 import org.fantasticcoffee.shop.model.Order;
 import org.fantasticcoffee.shop.model.Ingredient;
+import org.fantasticcoffee.shop.repository.database.CardRepository;
 import org.fantasticcoffee.shop.repository.database.OrderRepository;
 import org.fantasticcoffee.shop.service.CoffeeService;
 import org.fantasticcoffee.shop.service.IngredientService;
@@ -33,6 +34,8 @@ public class DefaultOrderService implements OrderService {
     private CoffeeService coffeeService;
     @Autowired
     private IngredientService ingredientService;
+    @Autowired
+    private CardRepository cardRepository;
 
     private static final Logger log = Logger.getLogger(DefaultOrderService.class.getName());
 
@@ -46,6 +49,7 @@ public class DefaultOrderService implements OrderService {
         order.setOrderDateTime(LocalDateTime.now());
         order.setPrice(getTotalOrderPrice(order));
 
+        this.cardRepository.save(order.getCard());
         Order result = this.orderRepository.save(order);
         this.coffeeService.save(order);
         this.ingredientService.decrementIngredient(allIngredientsInOrder);
