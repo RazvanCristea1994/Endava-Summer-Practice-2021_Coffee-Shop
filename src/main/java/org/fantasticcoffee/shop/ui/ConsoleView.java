@@ -1,4 +1,7 @@
-/*package org.fantasticcoffee.shop.ui;
+/*
+                                            Depricated after implementing REST Controller
+
+package org.fantasticcoffee.shop.ui;
 
 import org.fantasticcoffee.shop.model.coffee.StandardCoffee;
 import org.fantasticcoffee.shop.model.Order;
